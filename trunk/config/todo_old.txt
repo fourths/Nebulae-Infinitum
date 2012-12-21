@@ -1,0 +1,44 @@
+mod_template.php (moderator administration)
+update scratch flash player/sb2.js?? (maybe w/ other option for 1.4vs2.0flash/java/etc.)
+multiple pages (jquery or plain JS [prob latter]) for creation display on userpage
+creation updating (upload -> function)
+related creations on creation page (other by user/their favs? discuss)
+external links under aboutme on userpage (w/ edit in preferences / link on page?)
+disable activity notifications for certain things (in prefs w/ link on msg)
+dropdown for content advisory?? popup upon view (based on user settings)??
+change description to cut off at height
+change icon chunk to div (creation)
+page setup->function
+comment deletion
+
+large projects:
+friending/following system
+forums (fluxbb/connected / custom?)
+ - create forum account upon registering
+search system using mysql wildcards
+index.php with rows for newest, highest rated, most views, bar on side for staff picks, news bar at top, etc. etc.
+
+long-term/cleanup:
+easy install/setup instructions
+full info section
+generate thumbnails for tiff, svg (imagemagick?)
+rtf uploading -> parse to html and then bbcode? (new bbc function with SetTagMarker)
+change mysql_fetch_row to mysql_fetch_assoc, replace references with human-readable indices, change order of mysql table structure
+data/projects -> data/creations
+
+bugs/ephemera to fix:
+"this user has no favourites" for each hidden favourite
+don't alert when commenting on own creation
+remove html while quoting
+
+ideas (possibly for future releases / if requested):
+(maxy) creation showdown type thing
+(maxy) link with scratch account->import profile photo, etc.
+alerts for @mention
+specialised headers
+thumbs scale w/out distortion
+
+tasks for others:
+info section writing
+icons for hide, censor, delete
+? icon for help popups
