@@ -103,7 +103,7 @@ function reply(id){
 		quotetext.innerHTML=comment[id].childNodes[3].innerHTML;
 		if(quotetext.querySelector(".bbcode_quote")!=null)quotetext.removeChild(quotetext.querySelector(".bbcode_quote"));
 		//set the html contained by the div to a form which uses the specified id for determining which form is submitted
-		replybox[id].innerHTML='<form method="post" style="position:relative;top:10px;left:-5px;"><input type="hidden" name="reply" /><textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:50px;width:95%;max-height:150px;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]'+$.trim(quotetext.innerHTML)+'[/quote]\r\n</textarea><br/><input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/></form>';
+		replybox[id].innerHTML='<form method="post" style="position:relative;top:10px;left:-5px;"><input type="hidden" name="reply" /><textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:50px;width:95%;max-height:150px;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'[/quote]\r\n</textarea><br/><input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/></form>';
 		//add the new div as a child of the comment
 		comment[id].appendChild(replybox[id]);
 	}
@@ -247,6 +247,7 @@ while($commentrow = mysql_fetch_array($comments)){
 <div class="cright">
 	<div class="ctitle"><? echo stripslashes($creationdata['1']); 
 	if ($creationdata[3] ==  $luserdata[0] || $luserdata[3] == "admin" || $luserdata[3] == "mod") echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creationdata[0].'">edit</a>)</span>'; ?></div>
+	<div class="cinfo">
 	<?
 	if (!empty($userdata[9])) echo '<img class="cicon" src="data/usericons/'.$userdata['9'].'"/>';
 	else echo '<img class="cicon" src="data/usericons/default.png"/>';
@@ -293,19 +294,10 @@ while($commentrow = mysql_fetch_array($comments)){
 			break;
 	}
 	?>
-	</div><br/><br/><br/>
+	</div><div style="clear:both"></div></div>
 	<? if (!empty($creationdata[9])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creationdata[9])).'</div>';
 	if (!empty($creationdata[10])) echo '<br/><div class="ccontent"><strong>Content advisory</strong><br/>This project includes '.stripslashes($creationdata[10]).'. (<a href="flag.php?id='.$creationdata[0].'">flag creation</a>)</div>'; ?>
 	
-	<?
-	//Scratch player
-	if ($creationdata[7] == "sb2" && !empty($luserdata)){
-		echo '<br/><div class="ccontent"><strong>Change player</strong><br/>';
-		if ($luserdata[16] == "js") echo 'You are currently using sb2.js (<a href="creation.php?id='.$creationdata[0].'&action=player&player=flash">Flash</a> | <a href="info/js.php">about</a>)';
-		if ($luserdata[16] == "flash") echo 'You are currently using Flash (<a href="creation.php?id='.$creationdata[0].'&action=player&player=js">sb2.js</a> | <a href="info/js.php">about</a>)';
-		echo '</div>';
-	}
-	?>
 </div>
 
 <div style="height:5px;width:800px;clear:both;"></div>
