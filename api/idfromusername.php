@@ -22,12 +22,12 @@ $result = mysql_query("SELECT * FROM users WHERE username = '$username'") or die
 if (!$result) {
     die("");
 }
-$userdata = mysql_fetch_row($result);
+$user = mysql_fetch_array($result);
 
 //If username is not a valid user, die
-if (!$userdata){
+if (!$user){
 	die("");
 }
 
-echo $userdata[0];
+echo $user['id'];
 ?>

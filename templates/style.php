@@ -346,7 +346,6 @@ td.comment{
 	position:relative;
 }
 .creationblockthumb{
-	<?//background-color:white;?>
 	border:1px solid black;
 	width:133px;
 	height:100px;

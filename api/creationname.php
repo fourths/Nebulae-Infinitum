@@ -21,13 +21,13 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die("");
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	die("");
 }
 
-echo stripslashes($creationdata[1]);
+echo stripslashes($creation[1]);
 
 ?>

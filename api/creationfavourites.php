@@ -21,14 +21,14 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die("");
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	die("");
 }
 
-$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creationdata[0]"));
+$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creation[0]"));
 
 echo $favourites;
 

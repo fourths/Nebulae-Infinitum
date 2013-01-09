@@ -21,7 +21,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		die(mysql_error());
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
 
 //Get creation ID from URL
@@ -37,37 +37,37 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die(mysql_error());
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	include_once("errors/404.php");
 	exit();
 }
 
 //If user doesn't own project & isn't admin or mod, die
-if ($luserdata[0] != $creationdata[3] && $luserdata[3] != "admin" && $luserdata[3] != "mod"){
+if ($cur_user['id'] != $creation['ownerid'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod"){
 	include_once("errors/403.php");
 	exit();
 }
 
 //If creation is censored and user isn't admin or mod, die
-if ($creationdata[6] == "censored" && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "censored" && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_censored.php");
 	exit();
 }
 //If creation is deleted and user isn't admin or mod, die
-if ($creationdata[6] == "deleted" && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/404.php");
 	exit();
 }
 
 //Check if user is banned or deleted
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }
@@ -88,23 +88,23 @@ if (isset($_POST['update'])) {
 	mysql_query("UPDATE creations SET advisory='".addslashes(htmlspecialchars($_POST['advisory']))."' WHERE id='$creationid'") or die(mysql_error());
 	if (addslashes($_POST['hidden']) != "no" && addslashes(htmlspecialchars($_POST['hidden'])) != "byowner" && addslashes($_POST['hidden']) != "censored" && addslashes($_POST['hidden']) != "deleted") $hidden = "no";
 	else $hidden = addslashes($_POST['hidden']);
-	$curhid = mysql_fetch_row(mysql_query("SELECT hidden FROM creations WHERE id='$creationid'"));
-	if ($luserdata[3] != "admin" && $luserdata[3] != "mod" && $hidden == "censored") $hidden = "byowner";
+	$curhid = mysql_fetch_array(mysql_query("SELECT hidden FROM creations WHERE id='$creationid'"));
+	if ($cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" && $hidden == "censored") $hidden = "byowner";
 	if ($hidden=="flagged") $hidden = "byowner";
 	if ($hidden=="no"&&($curhid[0]=="flagged"||$curhid[0]=="approved")) $hidden="approved";
 	mysql_query("UPDATE creations SET hidden='".$hidden."' WHERE id='$creationid'") or die(mysql_error());
-	if ($hidden=="censored") mysql_query("DELETE FROM flags WHERE creationid=".$creationdata[0]." AND type='creation'");
+	if ($hidden=="censored") mysql_query("DELETE FROM flags WHERE creationid=".$creation[0]." AND type='creation'");
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 //Creation deletion/undeletion
 if (isset($_POST['delete'])) {
-	if ($luserdata[0] != $creationdata[3] && $luserdata[3] != "admin" && $luserdata[3] != "mod") die("Insufficient permissions.");
+	if ($cur_user['id'] != $creation['ownerid'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") die("Insufficient permissions.");
 	mysql_query("UPDATE creations SET hidden='deleted' WHERE id='$creationid'") or die(mysql_error());
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 
 if (isset($_POST['undelete'])) {
-	if ($luserdata[3] != "admin" && $luserdata[3] != "mod") die("Insufficient permissions.");
+	if ($cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") die("Insufficient permissions.");
 	mysql_query("UPDATE creations SET hidden='no' WHERE id='$creationid'") or die(mysql_error());
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }

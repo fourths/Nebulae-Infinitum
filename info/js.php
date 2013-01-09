@@ -15,12 +15,12 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		echo "Could not run query: " . mysql_error() and die;
 	}
-	$luserdata = mysql_fetch_row($lresult);
-	if ($luserdata[6] == "banned") {
+	$cur_user = mysql_fetch_array($lresult);
+	if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 	}
-	else if ($luserdata[6] == "deleted") {
+	else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 	}
@@ -36,7 +36,7 @@ if (isset($_GET["player"])) {
 		header("location: js.php");
 		exit();
 	}
-	mysql_query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='$luserdata[0]'") or die(mysql_error());
+	mysql_query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='$cur_user['id']'") or die(mysql_error());
 	header("location: js.php");
 	exit();
 }
@@ -56,7 +56,7 @@ if (isset($_GET["player"])) {
 sb2.js is a brand new player for Scratch projects, created by RHY3756547. It compiles projects made with the Scratch 2.0 editor to Javascript, and then runs them. In general, it is much faster than the Flash player currently in use on Scratch, but it's still in development and may have bugs and features yet to be added. Despite this, we're allowing users to choose whether they'd like to use it to view Scratch 2.0 projects.
 <br/><br/>
 <?
-if (!empty($_SESSION['SESS_MEMBER_ID'])) {echo 'You are currently using '; if ($luserdata[16] == "js") echo 'sb2.js. If you would like to switch back to the Flash player, click <a href="js.php?player=flash">here</a>.<br/><br/><br/>'; else echo 'the Flash player. If you would like to switch to sb2.js, click <a href="js.php?player=js">here</a>.<br/><br/><br/>';
+if (!empty($_SESSION['SESS_MEMBER_ID'])) {echo 'You are currently using '; if ($cur_user[16] == "js") echo 'sb2.js. If you would like to switch back to the Flash player, click <a href="js.php?player=flash">here</a>.<br/><br/><br/>'; else echo 'the Flash player. If you would like to switch to sb2.js, click <a href="js.php?player=js">here</a>.<br/><br/><br/>';
 } else echo "<br/>"; 
 ?>
 

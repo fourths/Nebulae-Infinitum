@@ -72,7 +72,7 @@ if (isset($_POST['rsubmit'])) {
 		die("The passwords do not match.");
 	}
 	if (mysql_num_rows(mysql_query("SELECT * FROM users WHERE username='$_POST[user]'"))>0) die("That username is already in use.");
-	$max = mysql_fetch_row(mysql_query("SELECT MAX(id) FROM users")) or die(mysql_error());
+	$max = mysql_fetch_array(mysql_query("SELECT MAX(id) FROM users")) or die(mysql_error());
 	$userip = $_SERVER['REMOTE_ADDR'];
 	mysql_query("INSERT INTO users (id,username,password,email,registerip) VALUES ($max[0]+1,'".addslashes($_POST[user])."','".nebulae_hash($_POST[pass])."','$_POST[email]','$userip')");
 	//Inserting optional values

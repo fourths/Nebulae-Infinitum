@@ -18,7 +18,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		echo "Could not run query: " . mysql_error() and die;
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
 
 //Get creation ID from URL
@@ -34,10 +34,10 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die(mysql_error());
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	include_once("errors/404.php");
 	exit();
 }
@@ -50,54 +50,54 @@ while($row = mysql_fetch_array($fresult)){
 	$flags[$i] = $row[2];
 	$i++;
 }
-$farray=mysql_fetch_row(mysql_query("SELECT hidden FROM creations WHERE id = ".$creationdata[0]));
+$farray=mysql_fetch_array(mysql_query("SELECT hidden FROM creations WHERE id = ".$creation[0]));
 if (!empty($flags)){
 	if (count(array_unique($flags))>=FLAGS_REQUIRED&&$farray[0]=="no") {
-		mysql_query("UPDATE creations SET hidden='flagged' WHERE id='$creationdata[0]'") or die(mysql_error());
-		mysql_query("DELETE FROM flags WHERE creationid=".$creationdata[0]." AND type='creation'");
+		mysql_query("UPDATE creations SET hidden='flagged' WHERE id='$creation[0]'") or die(mysql_error());
+		mysql_query("DELETE FROM flags WHERE creationid=".$creation[0]." AND type='creation'");
 	}
 }
 
 
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }
-if ($creationdata[6] == "byowner" && $luserdata[0] != $userdata[0] && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "byowner" && $cur_user['id'] != $user[0] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_hidden.php");
 	exit();
 }
-if (($creationdata[6] == "censored" || $creationdata[6] == "flagged")&& $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if (($creation['hidden'] == "censored" || $creation['hidden'] == "flagged")&& $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_censored.php");
 	exit();
 }
 //If creation is deleted and user isn't admin or mod, die
-if ($creationdata[6] == "deleted" && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/404.php");
 	exit();
 }
 
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	if (mysql_num_rows(mysql_query("SELECT * FROM views WHERE viewip='$_SERVER[REMOTE_ADDR]' AND creationid=$creationdata[0]"))==0){
-		mysql_query("INSERT INTO views (creationid, viewip) VALUES ($creationdata[0], '$_SERVER[REMOTE_ADDR]')");
+	if (mysql_num_rows(mysql_query("SELECT * FROM views WHERE viewip='$_SERVER[REMOTE_ADDR]' AND creationid=$creation[0]"))==0){
+		mysql_query("INSERT INTO views (creationid, viewip) VALUES ($creation[0], '$_SERVER[REMOTE_ADDR]')");
 	}
 
-	if (mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creationdata[0] AND userid=$luserdata[0]"))!=0){
+	if (mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creation[0] AND userid=$cur_user['id']"))!=0){
 		$favourited = true;
 	}
 	else $favourited = false;
 }
 
 //Get creation owner info from database
-$result = mysql_query("SELECT * FROM users WHERE id = $creationdata[3]");
+$result = mysql_query("SELECT * FROM users WHERE id = $creation['ownerid']");
 if (!$result) {
     die(mysql_error());
 }
-$userdata = mysql_fetch_row($result);
+$user = mysql_fetch_array($result);
 
 //Get if the action is favouriting
 if (isset($_GET["action"])) if ($_GET["action"] == "favourite") {
@@ -106,13 +106,13 @@ if (isset($_GET["action"])) if ($_GET["action"] == "favourite") {
 		exit();
 	}
 	if (!$favourited){
-		mysql_query("INSERT INTO favourites (creationid, userid) VALUES ($creationdata[0], $luserdata[0])");
+		mysql_query("INSERT INTO favourites (creationid, userid) VALUES ($creation[0], $cur_user['id'])");
 		$favourited = true;
 		header("location: creation.php?id=$creationid");
 		exit();
 	}
 	else if ($favourited){
-		mysql_query("DELETE FROM favourites WHERE creationid=$creationdata[0] AND userid=$luserdata[0]");
+		mysql_query("DELETE FROM favourites WHERE creationid=$creation[0] AND userid=$cur_user['id']");
 		$favourited = false;
 		header("location: creation.php?id=$creationid");
 		exit();
@@ -133,11 +133,11 @@ if (isset($_GET["action"])) if ($_GET["action"] == "rate") {
 		header("location: creation.php?id=$creationid");
 		exit();
 	}
-	if (mysql_num_rows(mysql_query("SELECT * FROM ratings WHERE userid='$luserdata[0]' AND creationid='$creationdata[0]'"))==0){
-		mysql_query("INSERT INTO ratings (creationid, userid, rating) VALUES ($creationdata[0], $luserdata[0], ".$_GET["rating"].")") or die(mysql_error());
+	if (mysql_num_rows(mysql_query("SELECT * FROM ratings WHERE userid='$cur_user['id']' AND creationid='$creation[0]'"))==0){
+		mysql_query("INSERT INTO ratings (creationid, userid, rating) VALUES ($creation[0], $cur_user['id'], ".$_GET["rating"].")") or die(mysql_error());
 		header("location: creation.php?id=$creationid");
 	}
-	mysql_query("UPDATE ratings SET rating='".$_GET["rating"]."' WHERE userid='$luserdata[0]' AND creationid='$creationdata[0]'") or die(mysql_error());
+	mysql_query("UPDATE ratings SET rating='".$_GET["rating"]."' WHERE userid='$cur_user['id']' AND creationid='$creation[0]'") or die(mysql_error());
 	header("location: creation.php?id=$creationid");
 	exit();
 }
@@ -156,41 +156,41 @@ if (isset($_GET["action"])) if ($_GET["action"] == "player"){
 		header("location: creation.php?id=$creationid");
 		exit();
 	}
-	mysql_query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='$luserdata[0]'") or die(mysql_error());
+	mysql_query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='$cur_user['id']'") or die(mysql_error());
 	header("location: creation.php?id=$creationid");
 	exit();
 }
 
-$views = mysql_num_rows(mysql_query("SELECT * FROM views WHERE creationid=$creationdata[0]"));
-mysql_query("UPDATE creations SET views=".$views." WHERE id=$creationdata[0]");
-$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creationdata[0]"));
-mysql_query("UPDATE creations SET favourites=".$favourites." WHERE id=$creationdata[0]");
+$views = mysql_num_rows(mysql_query("SELECT * FROM views WHERE creationid=$creation[0]"));
+mysql_query("UPDATE creations SET views=".$views." WHERE id=$creation[0]");
+$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creation[0]"));
+mysql_query("UPDATE creations SET favourites=".$favourites." WHERE id=$creation[0]");
 $i = 0;
 //Get ratings
-$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creationdata[0]");
+$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creation[0]");
 while($row = mysql_fetch_array($result)){
 	$ratings[$i] = $row[0];
 	$i++;
 }
 if (empty($ratings[0])) $ratings[0] = 0;
-$lrating = mysql_fetch_row(mysql_query("SELECT rating FROM ratings WHERE creationid=$creationdata[0]"));
-$comments = mysql_query("SELECT * FROM comments WHERE creationid=$creationdata[0] ORDER BY timestamp DESC,userid DESC");
+$lrating = mysql_fetch_array(mysql_query("SELECT rating FROM ratings WHERE creationid=$creation[0]"));
+$comments = mysql_query("SELECT * FROM comments WHERE creationid=$creation[0] ORDER BY timestamp DESC,userid DESC");
 
 //If creation ID is a number and corresponds to valid data in the database, display creation
-if ($creationdata[2] == "artwork") require_once("templates/artwork_template.php");
-if ($creationdata[2] == "scratch") require_once("templates/scratch_template.php");
-if ($creationdata[2] == "flash") require_once("templates/flash_template.php");
-if ($creationdata[2] == "writing") require_once("templates/writing_template.php");
-if ($creationdata[2] == "audio") require_once("templates/audio_template.php");
+if ($creation['type'] == "artwork") require_once("templates/artwork_template.php");
+if ($creation['type'] == "scratch") require_once("templates/scratch_template.php");
+if ($creation['type'] == "flash") require_once("templates/flash_template.php");
+if ($creation['type'] == "writing") require_once("templates/writing_template.php");
+if ($creation['type'] == "audio") require_once("templates/audio_template.php");
 
 if (isset($_POST['newcomment'])) {
 	if (!empty($_POST['commenttext']) && strlen(trim($_POST['commenttext']))>0) {
 		if (!empty($_SESSION['SESS_MEMBER_ID'])){
-			mysql_query("INSERT INTO comments (creationid, userid, comment) VALUES ($creationdata[0], $luserdata[0], '".strip_tags(trim(addslashes($_POST[commenttext]))." "."')")) or die(mysql_error());
+			mysql_query("INSERT INTO comments (creationid, userid, comment) VALUES ($creation[0], $cur_user['id'], '".strip_tags(trim(addslashes($_POST[commenttext]))." "."')")) or die(mysql_error());
 			$commentid=mysql_insert_id();
 			//send notification about the comment
-			$notificationmessage='You have received a new comment by [url=user.php?id='.$luserdata[0].']'.$luserdata[1].'[/url] on your creation [url=creation.php?id='.$creationdata[0].'#'.$commentid.']'.$creationdata[1].'[/url]!';
-			mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creationdata[3].",".$luserdata[0].",'".addslashes($notificationmessage)."','notification')");
+			$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation[0].'#'.$commentid.']'.$creation[1].'[/url]!';
+			mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
 			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 			exit();
 		}
@@ -198,18 +198,18 @@ if (isset($_POST['newcomment'])) {
 }
 if (isset($_POST['reply'])){
 	mysql_data_seek($comments,0);
-	while ($commentdata=mysql_fetch_row($comments)){
+	while ($commentdata=mysql_fetch_array($comments)){
 		if (isset($_POST['msgsubmit'.$commentdata[4]])&&strlen(trim($_POST['msgsubmit'.$commentdata[4]]))>0){
 			if (!empty($_SESSION['SESS_MEMBER_ID'])){
-				mysql_query("INSERT INTO comments (creationid, userid, comment) VALUES ($creationdata[0], $luserdata[0], '".trim(addslashes($_POST["msgbody".$commentdata[4]]))." "."')") or die(mysql_error());
+				mysql_query("INSERT INTO comments (creationid, userid, comment) VALUES ($creation[0], $cur_user['id'], '".trim(addslashes($_POST["msgbody".$commentdata[4]]))." "."')") or die(mysql_error());
 				$commentid=mysql_insert_id();
 				//send notification about the comment
-				$notificationmessage='You have received a new comment by [url=user.php?id='.$luserdata[0].']'.$luserdata[1].'[/url] on your creation [url=creation.php?id='.$creationdata[0].'#'.$commentid.']'.addslashes($creationdata[1]).'[/url]!';
-				mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creationdata[3].",".$luserdata[0].",'".$notificationmessage."','notification')");
-				$cuserdata = mysql_fetch_row(mysql_query("SELECT * FROM users WHERE id=$commentdata[4]"));
-				if($cuserdata[0]!=$creationdata[3]){
-					$notificationmessage='Your comment on the creation [url=creation.php?id='.$creationdata[0].'#'.$commentid.']'.addslashes($creationdata[1]).'[/url] has been replied to by [url=user.php?id='.$luserdata[0].']'.$luserdata[1].'[/url]!';
-					mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$cuserdata[0].",".$luserdata[0].",'".$notificationmessage."','notification')");
+				$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation[0].'#'.$commentid.']'.addslashes($creation[1]).'[/url]!';
+				mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
+				$cuserdata = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=$commentdata[4]"));
+				if($cuserdata[0]!=$creation['ownerid']){
+					$notificationmessage='Your comment on the creation [url=creation.php?id='.$creation[0].'#'.$commentid.']'.addslashes($creation[1]).'[/url] has been replied to by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url]!';
+					mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$cuserdata[0].",".$cur_user['id'].",'".$notificationmessage."','notification')");
 				}
 				echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 				exit();

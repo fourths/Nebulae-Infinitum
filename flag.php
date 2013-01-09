@@ -10,7 +10,7 @@ if (!$connection){die("Could not connect to database: " . mysql_error());}
 mysql_select_db(MYSQL_DATABASE, $connection);
 
 //Set flag type (creation/comment)
-if (isset($_GET["type"]) && $_GET["type"] == "comment") {
+if (isset($_GET['type']) && $_GET['type'] == "comment") {
 	$type = "comment";
 }
 else $type="creation";
@@ -26,12 +26,12 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		die(mysql_error());
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
 
 //Get creation ID from URL
 //If creation ID not found or is NaN, die
-if (isset($_GET["id"])) $creationid = htmlspecialchars($_GET["id"]);
+if (isset($_GET['id'])) $creationid = htmlspecialchars($_GET['id']);
 if (!$creationid || strcspn($creationid,"0123456789")>0){
 	include_once("errors/404.php");
 	exit();
@@ -42,45 +42,45 @@ $result = mysql_query("SELECT * FROM ".$type."s WHERE id = $creationid");
 if (!$result) {
     die(mysql_error());
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If the action specified in the URL is approve, then mark the comment as approved
-if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="approve"&&($luserdata[3] == "admin"||$luserdata[3]== "mod")){
-	mysql_query("UPDATE comments SET status='approved' WHERE id=$creationdata[4]") or die(mysql_error());
-	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationdata[1]'>");
+if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="approve"&&($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
+	mysql_query("UPDATE comments SET status='approved' WHERE id=$creation[4]") or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creation[1]'>");
 }
 //And same for censor
 //Note: the user performing either of these actions must be logged into a moderator or administrator account
-if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="censor"&&($luserdata[3] == "admin"||$luserdata[3]== "mod")){
-	mysql_query("UPDATE comments SET status='censored' WHERE id=$creationdata[4]") or die(mysql_error());
-	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationdata[1]'>");
+if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="censor"&&($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
+	mysql_query("UPDATE comments SET status='censored' WHERE id=$creation[4]") or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creation[1]'>");
 }
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	include_once("errors/404.php");
 	exit();
 }
 
 if ($type=="creation"){
 	//If creation is censored already, die
-	if ($creationdata[6] == "censored") {
+	if ($creation['hidden'] == "censored") {
 		include_once("errors/creation_censored.php");
 		exit();
 	}
 	//If creation is deleted, die
-	if ($creationdata[6] == "deleted") {
+	if ($creation['hidden'] == "deleted") {
 		include_once("errors/404.php");
 		exit();
 	}
 }
 
 //Check if user is banned or deleted
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }
@@ -92,12 +92,12 @@ if (isset($_POST['flag'])){
 		die("Please enter a reason why you are flagging this $type.");
 	}
 	if ($type=="creation"){
-		mysql_query("INSERT INTO flags (creationid, userid, content, type) VALUES ($creationdata[0], $luserdata[0], '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'creation')") or die(mysql_error());
+		mysql_query("INSERT INTO flags (creationid, userid, content, type) VALUES ($creation[0], $cur_user['id'], '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'creation')") or die(mysql_error());
 		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 	}
 	else if ($type=="comment"){
-		mysql_query("INSERT INTO flags (creationid, userid, content, type) VALUES ($creationdata[4], $luserdata[0], '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'comment')") or die(mysql_error());
-		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationdata[1]'>";
+		mysql_query("INSERT INTO flags (creationid, userid, content, type) VALUES ($creation[4], $cur_user['id'], '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'comment')") or die(mysql_error());
+		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creation[1]'>";
 	}
 }
 

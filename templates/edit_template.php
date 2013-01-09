@@ -11,11 +11,11 @@
 <div class="container">
 	<h2>Edit creation</h2>
 	<form method="post" enctype="multipart/form-data">
-	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creationdata[1])?>">
+	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creation[1])?>">
 	<div>
 	<?php
 	$selected='selected="selected"';
-	switch($creationdata[14]){
+	switch($creation['license']){
 		case 'copyright':
 			$a=$selected;
 			break;
@@ -60,26 +60,26 @@
 	<option value="cc-by-nc" <?php echo $f ?>>CC-BY-NC</option>
 	<option value="cc-by-nc-nd" <?php echo $g ?>>CC-BY-NC-ND</option>
 	<option value="cc-by-nc-sa" <?php echo $h ?>>CC-BY-NC-SA</option>
-	<?php if($creationdata[2]=="scratch"||$creationdata[2]=="flash"||$creationdata[2]=="writing") '<option value="mit" '.$i.'>MIT License</option>
+	<?php if($creation['type']=="scratch"||$creation['type']=="flash"||$creation['type']=="writing") '<option value="mit" '.$i.'>MIT License</option>
 	<option value="gpl" '.$j.'>GNU GPLv3</option>
 	<option value="bsd" '.$k.'>New BSD License</option>'; ?>
 	</select> (<a href="info/licenses.php">info</a>)
 	</div>
-	<textarea name="description" style="width:350px;height:100px;resize:none;font-family:Arial,Helvetica,sans-serif;" placeholder="Describe your creation..."><?=stripslashes($creationdata[9])?></textarea><br/>
-	<textarea name="advisory" style="width:350px;height:50px;resize:none;font-family:Arial,Helvetica,sans-serif;" placeholder="Content advisory; this project includes..."><?=stripslashes($creationdata[10])?></textarea><br/>
+	<textarea name="description" style="width:350px;height:100px;resize:none;font-family:Arial,Helvetica,sans-serif;" placeholder="Describe your creation..."><?=stripslashes($creation['descr'])?></textarea><br/>
+	<textarea name="advisory" style="width:350px;height:50px;resize:none;font-family:Arial,Helvetica,sans-serif;" placeholder="Content advisory; this project includes..."><?=stripslashes($creation['advisory'])?></textarea><br/>
 	<?
-	if ($creationdata[6] == "no" || $creationdata[6] == "approved") $nselected = 'selected="selected"';
-	else if ($creationdata[6] == "byowner" || $creationdata[6] == "deleted") $hselected = 'selected="selected"';
-	else if ($creationdata[6] == "censored" || $creationdata[6] == "flagged") $cselected = 'selected="selected"';
+	if ($creation['hidden'] == "no" || $creation['hidden'] == "approved") $nselected = 'selected="selected"';
+	else if ($creation['hidden'] == "byowner" || $creation['hidden'] == "deleted") $hselected = 'selected="selected"';
+	else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") $cselected = 'selected="selected"';
 	?>
 	<label for="hidden">Hidden?</label><br/>
 	<select name="hidden" style="margin-left:0px;">
 	<option value="no" <?=$nselected?>>Not hidden</option>
 	<option value="byowner" <?=$hselected?>>Hidden</option>
-	<? if ($luserdata[3]=="admin" || $luserdata[3]=="mod") echo '<option value="censored" '.$cselected.'>Censored</option>';?>
+	<? if ($cur_user['rank']=="admin" || $cur_user['rank']=="mod") echo '<option value="censored" '.$cselected.'>Censored</option>';?>
 	</select><br/>
 	<input type="submit" name="update" value="Update" style="margin-left:0px;"/>&nbsp;
-	<? if ($creationdata[6] == "deleted") echo '<input type="submit" name="undelete" value="Undelete" />'; else echo '<input type="submit" name="delete" value="Delete" />'; ?>
+	<? if ($creation['hidden'] == "deleted") echo '<input type="submit" name="undelete" value="Undelete" />'; else echo '<input type="submit" name="delete" value="Delete" />'; ?>
 	</form>
 </body>
 </html>
