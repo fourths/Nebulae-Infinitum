@@ -53,21 +53,21 @@ function reply(id){
 <body>
 <? require_once("header.php"); ?>
 <div class="container">
-<?if ($luserdata[3]=="admin"&&isset($visitinguser)) echo '<h3 style="margin:0px;">'.$visitinguser.'\'s messages</h3>'?>
+<?if ($cur_user['rank']=="admin"&&isset($visitinguser)) echo '<h3 style="margin:0px;">'.$visitinguser.'\'s messages</h3>'?>
 <h1 style="margin-bottom:0px;">Administrator messages</h1>
 <?php
 if(!empty($admin) && mysql_num_rows($admin)>0){
 	mysql_data_seek($admin,0);
 	for ($i=0;$i<mysql_num_rows($admin);$i++){
-		$pmdata=mysql_fetch_row($admin);
-		if($pmdata[3]==2&&($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		$pmdata=mysql_fetch_array($admin);
+		if($pmdata[3]==2&&($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			if (file_exists("data/usericons/".$pmdata[2].".png")) $micon=$pmdata[7]=="specific"?"data/usericons/".$pmdata[2].".png":"data/usericons/admin.png";
 			else $micon=$pmdata[7]=="specific"?"data/usericons/default.png":"data/usericons/admin.png";
 			$usr=$pmdata[7]=="specific"?'<a href="user.php?id='.$pmdata[2].'">'.get_username_from_id($pmdata[2]).'</a>':'<a href="info/admin.php">Administrator</a>';
 			echo '<pre class="pm"><a class="deletebutton" href="messages.php?action=delete&id='.$pmdata[0].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername">'.$usr.' <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($pmdata[4])).') <span style="color:red;font-weight:bold">(deleted)</span></span></div><div class="pmtext">'.bbcode_parse(stripslashes($pmdata[5])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$admins++;
 		}
-		else if ($pmdata[3]<2||($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		else if ($pmdata[3]<2||($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			if (file_exists("data/usericons/".$pmdata[2].".png")) $micon=$pmdata[7]=="specific"?"data/usericons/".$pmdata[2].".png":"data/usericons/admin.png";
 			else $micon=$pmdata[7]=="specific"?"data/usericons/default.png":"data/usericons/admin.png";
 			$usr=$pmdata[7]=="specific"?'<a href="user.php?id='.$pmdata[2].'">'.get_username_from_id($pmdata[2]).'</a>':'<a href="info/admin.php">Administrator</a>';
@@ -84,12 +84,12 @@ else echo "You have no administrator messages.";
 if(!empty($notifications) && mysql_num_rows($notifications)>0){
 	mysql_data_seek($notifications,0);
 	for ($i=0;$i<mysql_num_rows($notifications);$i++){
-		$pmdata=mysql_fetch_row($notifications);
-		if ($pmdata[3]==2&&($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		$pmdata=mysql_fetch_array($notifications);
+		if ($pmdata[3]==2&&($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			echo '<pre class="pm"><div class="pmusername"><a class="deletebutton" href="messages.php?action=delete&id='.$pmdata[0].'"></a><strong style="font-size:12px;">'.date("M d, Y G:i T", strtotime($pmdata[4])).'</strong> <span style="color:red;font-weight:bold">(deleted)</span></div><div class="pmtext">'.bbcode_parse(stripslashes($pmdata[5])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$note++;
 		}
-		else if ($pmdata[3]<2||($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		else if ($pmdata[3]<2||($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			if($pmdata[3]==2) $deleted='<span style="color:red;font-weight:bold">(deleted)</span>';
 			echo '<pre class="pm"><div class="pmusername"><a class="deletebutton" href="messages.php?action=delete&id='.$pmdata[0].'"></a><strong style="font-size:12px;">'.date("M d, Y G:i T", strtotime($pmdata[4])).'</strong>'.$deleted.'</div><div class="pmtext">'.bbcode_parse(stripslashes($pmdata[5])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$note++;
@@ -104,13 +104,13 @@ else echo "You have no activity notifications.";
 if(!empty($private) && mysql_num_rows($private)>0){
 	mysql_data_seek($private,0);
 	for ($i=0;$i<mysql_num_rows($private);$i++){
-		$pmdata=mysql_fetch_row($private);
-		if ($pmdata[3]==2&&($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		$pmdata=mysql_fetch_array($private);
+		if ($pmdata[3]==2&&($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			$micon=file_exists("data/usericons/".$pmdata[2].".png")?"data/usericons/".$pmdata[2].".png":"data/usericons/default.png";
 			echo '<pre class="pm" id="'.$pmdata[0].'"><a class="deletebutton" href="messages.php?action=delete&id='.$pmdata[0].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$pmdata[2].'">'.get_username_from_id($pmdata[2]).'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($pmdata[4])).') (<a id="replylink" href="javascript:reply('.$pmdata[0].')">reply</a>) <span style="color:red;font-weight:bold">(deleted)</span></span></div><div class="pmtext">'.bbcode_parse(stripslashes($pmdata[5])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$pm++;
 		}
-		else if ($pmdata[3]<2||($luserdata[3]=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$luserdata[0])){
+		else if ($pmdata[3]<2||($cur_user['rank']=="admin"&&$pmdata[3]==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			if($pmdata[3]==2) $deleted='<span style="color:red;font-weight:bold">(deleted)</span>';
 			$micon=file_exists("data/usericons/".$pmdata[2].".png")?"data/usericons/".$pmdata[2].".png":"data/usericons/default.png";
 			echo '<pre class="pm" id="'.$pmdata[0].'"><a class="deletebutton" href="messages.php?action=delete&id='.$pmdata[0].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$pmdata[2].'">'.get_username_from_id($pmdata[2]).'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($pmdata[4])).') (<a id="replylink" href="javascript:reply('.$pmdata[0].')">reply</a>) '.$deleted.'</span></div><div class="pmtext">'.bbcode_parse(stripslashes($pmdata[5])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';

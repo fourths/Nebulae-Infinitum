@@ -20,13 +20,13 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		die(mysql_error());
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }
@@ -37,7 +37,7 @@ require_once("templates/upload_template.php");
 if (isset($_POST['submit'])) {
 	$gentxt=false;
 	$ext = strtolower(substr(strrchr($_FILES['creationfile']['name'], '.'), 1));
-	$timestamp = mysql_fetch_row(mysql_query("SELECT NOW()"));
+	$timestamp = mysql_fetch_array(mysql_query("SELECT NOW()"));
 	if (empty($_FILES['creationfile']) || !file_exists($_FILES['creationfile']['tmp_name'])) {
 		die("Please select a file for your creation.");
 	}
@@ -113,7 +113,7 @@ if (isset($_POST['submit'])) {
 		mysql_query("INSERT INTO creations (name,type,ownerid,created,filetype) VALUES ('".addslashes($_POST['title'])."','writing',".$_SESSION['SESS_MEMBER_ID'].",'$timestamp[0]','$ext')") or die(mysql_error());
 	}
 	else die("Unsupported file type.");
-	$cid = mysql_fetch_row(mysql_query("SELECT id FROM creations WHERE ownerid=".$_SESSION['SESS_MEMBER_ID']." AND name='".addslashes($_POST['title'])."' AND created='$timestamp[0]'")) or die(mysql_error());
+	$cid = mysql_fetch_array(mysql_query("SELECT id FROM creations WHERE ownerid=".$_SESSION['SESS_MEMBER_ID']." AND name='".addslashes($_POST['title'])."' AND created='$timestamp[0]'")) or die(mysql_error());
 	
 	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") mysql_query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$cid[0]'") or die(mysql_error());
 	else mysql_query("UPDATE creations SET license='copyright' WHERE id='$cid[0]'") or die(mysql_error());

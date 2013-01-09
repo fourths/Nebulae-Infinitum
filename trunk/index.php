@@ -15,13 +15,13 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		echo "Could not run query: " . mysql_error() and die;
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }

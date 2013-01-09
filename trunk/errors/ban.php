@@ -12,8 +12,8 @@
 <div class="container">
 <h1>Account banned</h1>
 <img src="errors/ban.png"/><br/>
-Your account has been banned<? if (!empty($userdata[7])) echo " until $userdata[7]"; else echo " until further notice"; ?>.<br/>
-<? if (!empty($userdata[15])) echo "<div>Reason:</div><div>$userdata[15]</div>"; ?>
+Your account has been banned<? if (!empty($user[7])) echo " until $user[7]"; else echo " until further notice"; ?>.<br/>
+<? if (!empty($user[15])) echo "<div>Reason:</div><div>$user[15]</div>"; ?>
 Contact the site administrator at <? echo '<a href="mailto:'.ADMIN_EMAIL.'">'.ADMIN_EMAIL.'</a>';?> for more details.
 <br/>
 <a href=".">Back to home</a>

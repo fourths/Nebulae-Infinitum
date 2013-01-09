@@ -22,11 +22,11 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		die(mysql_error());
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
 
 //Test whether current user is admin and, if not, reject them brutally (403 'em)
-if ($luserdata[3] != "admin" && $luserdata[3] != "mod"){
+if ($cur_user['rank'] != "admin" && $cur_user['rank'] != "mod"){
 	require_once("errors/403.php");
 }
 
@@ -56,8 +56,8 @@ switch($mode){
 		break;
 	default:
 		//Show the mods a different page than the admins with less stuff 'n' stuff
-		if ($luserdata[3] == "mod") require_once("templates/mod_template.php");
-		else if ($luserdata[3] == "admin") require_once("templates/admin_template.php");
+		if ($cur_user['rank'] == "mod") require_once("templates/mod_template.php");
+		else if ($cur_user['rank'] == "admin") require_once("templates/admin_template.php");
 }
 
 //If submit pressed on preferences, redirect to that user's preferences
@@ -76,7 +76,7 @@ if (isset($_POST['msgsubmit'])){
 if (isset($_POST['adminmessagesubmit'])){
 	$recipientid = get_id_from_username(addslashes($_POST['recipientusername']));
 	$admintype=($_POST['showuser']==1)?"generic":"specific";
-	mysql_query("INSERT INTO messages (recipientid,senderid,message,type,admintype) VALUES (".$recipientid.",".$luserdata[0].",'".addslashes($_POST['adminmessage'])."','admin','".$admintype."')");
+	mysql_query("INSERT INTO messages (recipientid,senderid,message,type,admintype) VALUES (".$recipientid.",".$cur_user['id'].",'".addslashes($_POST['adminmessage'])."','admin','".$admintype."')");
 	die("Your message has been sent.");
 }
 ?>

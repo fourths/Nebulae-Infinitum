@@ -13,15 +13,15 @@
 	<div class="flagblock">
 	<table>
 	<?
-	if (isset($flags)&&(int) mysql_fetch_row($flags)!=0){
+	if (isset($flags)&&(int) mysql_fetch_array($flags)!=0){
 	mysql_data_seek($flags,0);
-		while($flag=mysql_fetch_row($flags)){
+		while($flag=mysql_fetch_array($flags)){
 			if($flag[5]=="creation"){
-				$creationname=mysql_fetch_row(mysql_query("SELECT name FROM creations WHERE id=".$flag[3]));
+				$creationname=mysql_fetch_array(mysql_query("SELECT name FROM creations WHERE id=".$flag[3]));
 				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted creation</span>":'<a class="td" href="creation.php?id='.$flag[3].'">'.$creationname[0].'</a>';
 			}
 			else if ($flag[5]=="comment"){
-				$creationname=mysql_fetch_row(mysql_query("SELECT comment FROM comments WHERE id=".$flag[3]));
+				$creationname=mysql_fetch_array(mysql_query("SELECT comment FROM comments WHERE id=".$flag[3]));
 				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag[3]).'#'.$flag[3].'">'.strip_bbcode($creationname[0]).'</a>';
 			}
 			echo '<tr id="'.$flag[0].'">

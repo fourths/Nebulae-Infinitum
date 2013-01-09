@@ -10,8 +10,8 @@ function get_id_from_username($username){
 	if (!$result) {
 		return "";
 	}
-	$userdata = mysql_fetch_row($result);
-	return $userdata[0];
+	$user = mysql_fetch_array($result);
+	return $user[0];
 }
 
 function get_username_from_id($id){
@@ -20,12 +20,12 @@ function get_username_from_id($id){
 	if (!$result) {
 		return "mysqlError";
 	}
-	$userdata = mysql_fetch_row($result);
+	$user = mysql_fetch_array($result);
 	//If user ID is not a valid user, die
-	if (!$userdata){
+	if (!$user){
 		return "invalidUser";
 	}
-	return $userdata[1];
+	return $user[1];
 }
 
 function get_creation_from_comment($cid){
@@ -33,8 +33,8 @@ function get_creation_from_comment($cid){
 	if (!$result) {
 		return "";
 	}
-	$creationdata=mysql_fetch_row($result);
-	return $creationdata[0];
+	$creation=mysql_fetch_array($result);
+	return $creation[0];
 }
 
 function bbcode_parse($text,$writing=false){

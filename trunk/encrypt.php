@@ -18,9 +18,9 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		die(mysql_error());
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
-if ($luserdata[3] != "admin"){
+if ($cur_user['rank'] != "admin"){
 	require_once("errors/403.php");
 }
 ?>

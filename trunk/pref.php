@@ -17,7 +17,7 @@ $result = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_I
 if (!$result) {
 	die(require_once("errors/403.php"));
 }
-$luserdata = mysql_fetch_row($result);
+$cur_user = mysql_fetch_array($result);
 
 //Check if user is admin or has same ID as specified in URL
 //If not, die
@@ -30,22 +30,22 @@ if (isset($_GET["id"])) {
 		require_once("errors/404.php");
 		exit();
 	}
-	$userdata = mysql_fetch_row($result);
+	$user = mysql_fetch_array($result);
 	
-	if ( mysql_num_rows($result) != 1 || !$userdata || strcspn($userid,"0123456789")>0){
+	if ( mysql_num_rows($result) != 1 || !$user || strcspn($userid,"0123456789")>0){
 		require_once("errors/404.php");
 		exit();
 	}
 	
-	if ($_SESSION['SESS_MEMBER_ID'] != $userid && $luserdata['3'] != "admin" && $luserdata['3'] != "mod" ){
+	if ($_SESSION['SESS_MEMBER_ID'] != $userid && $cur_user['3'] != "admin" && $cur_user['3'] != "mod" ){
 		require_once("errors/403.php");
 		exit();
 	}
-	if ($luserdata[6] == "banned") {
+	if ($cur_user['banstatus'] == "banned") {
 		include_once("errors/ban.php");
 		exit();
 	}
-	else if ($luserdata[6] == "deleted") {
+	else if ($cur_user['banstatus'] == "deleted") {
 		include_once("errors/delete.php");
 		exit();
 	}
@@ -93,10 +93,10 @@ if (isset($_POST['userchange'])) {
 	exit();
 }
 if (isset($_POST['adminchange'])) {
-	if ( $luserdata[3] == "admin" && ($_POST['rank']=='admin'||$_POST['rank']=='mod'||$_POST['rank']=='user')) mysql_query("UPDATE users SET rank='".$_POST['rank']."' WHERE id='$userid'") or die(mysql_error());
-	if ( $luserdata[3] == "admin" || $luserdata['3'] == "mod" ){
+	if ( $cur_user['rank'] == "admin" && ($_POST['rank']=='admin'||$_POST['rank']=='mod'||$_POST['rank']=='user')) mysql_query("UPDATE users SET rank='".$_POST['rank']."' WHERE id='$userid'") or die(mysql_error());
+	if ( $cur_user['rank'] == "admin" || $cur_user['3'] == "mod" ){
 		mysql_query("UPDATE users SET banstatus='".$_POST['ban']."' WHERE id='$userid'") or die(mysql_error());
-		$bandate=mysql_fetch_row(mysql_query("SELECT DATE_ADD(CURDATE(),INTERVAL ".addslashes(abs((int) $_POST['banneduntil']))." DAY)"));
+		$bandate=mysql_fetch_array(mysql_query("SELECT DATE_ADD(CURDATE(),INTERVAL ".addslashes(abs((int) $_POST['banneduntil']))." DAY)"));
 		//catch for year 2038 problem
 		//due to a limitation in strtotime function... is 64-bit machine needed?
 		if (strtotime($bandate[0])<strtotime("2038/01/19")){

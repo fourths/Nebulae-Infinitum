@@ -2,7 +2,7 @@
 <? require_once("config/config.php");?>
 <html>
 <head>
-<title>License for <?php echo stripslashes($creationdata[1]); ?> | <? echo SITE_NAME; ?></title>
+<title>License for <?php echo stripslashes($creation['name']); ?> | <? echo SITE_NAME; ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 </head>
 
@@ -10,10 +10,10 @@
 <? require_once("header.php"); ?>
 <div class="container">
 	<?php
-	switch($creationdata[14]){
+	switch($creation['license']){
 		case 'bsd':
 			echo '<h2>New BSD License</h2>';
-			echo '<pre>Copyright (c) '.date("Y",strtotime($creationdata[5])).', '.get_username_from_id($creationdata[3]).'
+			echo '<pre>Copyright (c) '.date("Y",strtotime($creation[5])).', '.get_username_from_id($creation['ownerid']).'
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,7 @@ modification, are permitted provided that the following conditions are met:
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL '.strtoupper(get_username_from_id($creationdata[3])).' BE LIABLE FOR ANY
+DISCLAIMED. IN NO EVENT SHALL '.strtoupper(get_username_from_id($creation['ownerid'])).' BE LIABLE FOR ANY
 DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre>';
 		break;
 		case 'gpl':
 			echo '<h2>GNU GPL v3</h2>';
-			echo '<pre>Copyright (C) '.date("Y",strtotime($creationdata[5])).' '.get_username_from_id($creationdata[3]).'
+			echo '<pre>Copyright (C) '.date("Y",strtotime($creation['created'])).' '.get_username_from_id($creation['ownerid']).'
 			
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ along with this program.  If not, see &lt;<a href="http://www.gnu.org/licenses/g
 		break;
 		case 'mit':
 			echo '<h2>MIT License</h2>';
-			echo '<pre style="white-space:pre-wrap;width:400px;">Copyright (c) '.date("Y",strtotime($creationdata[5])).' '.get_username_from_id($creationdata[3]).'
+			echo '<pre style="white-space:pre-wrap;width:400px;">Copyright (c) '.date("Y",strtotime($creation['created'])).' '.get_username_from_id($creation['ownerid']).'
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -68,6 +68,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		//et cetera...
 	}
 	?>
-	<a href="creation.php?id=<?php echo $creationdata[0]; ?>">back</a>
+	<a href="creation.php?id=<?php echo $creation['id']; ?>">back</a>
 </body>
 </html>

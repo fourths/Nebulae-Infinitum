@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 08, 2013 at 12:11 PM
+-- Generation Time: Jan 09, 2013 at 01:40 PM
 -- Server version: 5.5.25a
 -- PHP Version: 5.4.4
 
@@ -34,7 +34,15 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(50) NOT NULL AUTO_INCREMENT,
   `status` enum('shown','censored','approved') NOT NULL DEFAULT 'shown',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`userid`, `creationid`, `comment`, `timestamp`, `id`, `status`) VALUES
+(1, 1, 'dddddddddd ', '2013-01-08 21:03:29', 1, 'shown'),
+(1, 1, 'this \r\nis\r\na\r\nmultiline\r\ncomment ', '2013-01-08 21:03:44', 2, 'shown');
 
 -- --------------------------------------------------------
 
@@ -112,7 +120,15 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `type` enum('notification','pm','admin') NOT NULL,
   `admintype` enum('specific','generic') DEFAULT NULL,
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Dumping data for table `messages`
+--
+
+INSERT INTO `messages` (`id`, `recipientid`, `senderid`, `viewed`, `timestamp`, `message`, `type`, `admintype`) VALUES
+(1, 1, 1, 1, '2013-01-08 21:03:29', 'You have received a new comment by [url=user.php?id=1]veggieman[/url] on your creation [url=creation.php?id=1#1]Supercollider[/url]!', 'notification', NULL),
+(2, 1, 1, 1, '2013-01-08 21:03:44', 'You have received a new comment by [url=user.php?id=1]veggieman[/url] on your creation [url=creation.php?id=1#2]Supercollider[/url]!', 'notification', NULL);
 
 -- --------------------------------------------------------
 
@@ -172,6 +188,13 @@ CREATE TABLE IF NOT EXISTS `views` (
   `viewip` varchar(14) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `views`
+--
+
+INSERT INTO `views` (`creationid`, `viewip`, `timestamp`) VALUES
+(1, '::1', '2013-01-08 20:24:09');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

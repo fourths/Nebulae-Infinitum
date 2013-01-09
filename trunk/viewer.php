@@ -18,14 +18,14 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (!$lresult) {
 		echo "Could not run query: " . mysql_error() and die;
 	}
-	$luserdata = mysql_fetch_row($lresult);
+	$cur_user = mysql_fetch_array($lresult);
 }
 //testing for current user/creation being banned/censored or deleted, etc.
-if ($luserdata[6] == "banned") {
+if ($cur_user['banstatus'] == "banned") {
 	include_once("errors/ban.php");
 	exit();
 }
-else if ($luserdata[6] == "deleted") {
+else if ($cur_user['banstatus'] == "deleted") {
 	include_once("errors/delete.php");
 	exit();
 }
@@ -43,30 +43,30 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die(mysql_error());
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	include_once("errors/404.php");
 	exit();
 }
 //Get creation owner info from database
-$result = mysql_query("SELECT * FROM users WHERE id = $creationdata[3]");
+$result = mysql_query("SELECT * FROM users WHERE id = $creation['ownerid']");
 if (!$result) {
     die(mysql_error());
 }
-$userdata = mysql_fetch_row($result);
+$user = mysql_fetch_array($result);
 
-if ($creationdata[6] == "byowner" && $luserdata[0] != $userdata[0] && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "byowner" && $cur_user['id'] != $user[0] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_hidden.php");
 	exit();
 }
-if (($creationdata[6] == "censored" || $creationdata[6] == "flagged")&& $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if (($creation['hidden'] == "censored" || $creation['hidden'] == "flagged")&& $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_censored.php");
 	exit();
 }
 //If creation is deleted and user isn't admin or mod, die
-if ($creationdata[6] == "deleted" && $luserdata[3] != "admin" && $luserdata[3] != "mod") {
+if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/404.php");
 	exit();
 }

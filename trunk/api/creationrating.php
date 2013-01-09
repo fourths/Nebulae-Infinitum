@@ -21,15 +21,15 @@ $result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
     die("");
 }
-$creationdata = mysql_fetch_row($result);
+$creation = mysql_fetch_array($result);
 
 //If creation ID is not a valid creation, die
-if (!$creationdata){
+if (!$creation){
 	die("");
 }
 
 //Get ratings
-$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creationdata[0]");
+$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creation[0]");
 $i=0;
 while($row = mysql_fetch_array($result)){
 	$ratings[$i] = $row[0];

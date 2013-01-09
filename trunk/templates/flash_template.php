@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <? require_once("config/config.php"); 
-$swfsize=getimagesize('data/projects/'.$creationdata[8]);
+$swfsize=getimagesize('data/projects/'.$creation[8]);
 ?>
 <html>
 <head>
-<title><? echo stripslashes($creationdata['1']) ?> | <? echo SITE_NAME ?></title>
+<title><? echo stripslashes($creation['1']) ?> | <? echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
 <script type="text/javascript"><!--
 function expand(){
 	//to add: change size to size of flash or max in screen resolution keeping ratio
-	<?echo "window.open('viewer.php?id=".$creationdata[0]."&flash=play', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600', false);"; ?>
+	<?echo "window.open('viewer.php?id=".$creation[0]."&flash=play', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600', false);"; ?>
 }
 function download(){
-	<?echo "window.open('viewer.php?id=".$creationdata[0]."', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600', false);"; ?>
+	<?echo "window.open('viewer.php?id=".$creation[0]."', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600', false);"; ?>
 }
 //lighting up the planets
 $(document).ready(function(){
@@ -142,10 +142,10 @@ if ("onhashchange" in window)
 echo '<div class="flashblock"><div class="flashwrapper" style="padding-bottom:'.($swfsize[1]/$swfsize[0])*100 .'%"><object style="border:1px solid;" class="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
         id="editorObj"
         codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
-        <param name="movie" value="data/projects/'.$creationdata[8].'" />
+        <param name="movie" value="data/projects/'.$creation[8].'" />
         <param name="quality" value="high" />
         <param name="bgcolor" value="#ffffff" />
-        <embed id="editor" src="data/projects/'.$creationdata[8].'" quality="high" bgcolor="#ffffff"
+        <embed id="editor" src="data/projects/'.$creation[8].'" quality="high" bgcolor="#ffffff"
 			scale="exactfit"
             play="true"
             loop="false"
@@ -163,7 +163,7 @@ else echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
 if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)) echo " (you voted ".number_format($lrating[0],1).")";
 echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites"; 
 if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
-if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creationdata[0].'&action=favourite">'.$favtext.'</a>)';
+if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation[0].'&action=favourite">'.$favtext.'</a>)';
 ?>
 <div></div>
 <?
@@ -172,7 +172,7 @@ for ($fl=0;$fl<5;$fl++){
 	else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
 }
 if (!empty($_SESSION['SESS_MEMBER_ID'])) echo '
-<a href="creation.php?id='.$creationdata[0].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a><a href="creation.php?id='.$creationdata[0].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a><a href="creation.php?id='.$creationdata[0].'&action=rate&rating=3"id="rating3" '.$style[2].' class="imgrating"></a><a href="creation.php?id='.$creationdata[0].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a><a href="creation.php?id='.$creationdata[0].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
+<a href="creation.php?id='.$creation[0].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a><a href="creation.php?id='.$creation[0].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a><a href="creation.php?id='.$creation[0].'&action=rate&rating=3"id="rating3" '.$style[2].' class="imgrating"></a><a href="creation.php?id='.$creation[0].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a><a href="creation.php?id='.$creation[0].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
 '; 
 if(!($swfsize[0]>473)) echo '<div style="clear:both"></div>';
 ?>
@@ -197,7 +197,7 @@ while($commentrow = mysql_fetch_array($comments)){
 		$i++;
 	}
 	if (!empty($cflags)){
-		$farray=mysql_fetch_row(mysql_query("SELECT status FROM comments WHERE id = $commentrow[4]"));
+		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = $commentrow[4]"));
 		if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
 			mysql_query("UPDATE comments SET status='censored' WHERE id=$commentrow[4]") or die(mysql_error());
 			mysql_query("DELETE FROM flags WHERE creationid=".$commentrow[0]." AND type='comment'");
@@ -205,8 +205,8 @@ while($commentrow = mysql_fetch_array($comments)){
 		}
 	}
 	$cflags=array();
-	if (!$hidden&&$commentrow[5]!='censored'||($commentrow[5]=='censored'&&$luserdata[3] == "admin"||$luserdata[3]== "mod")){
-		$cuserdata = mysql_fetch_row(mysql_query("SELECT * FROM users WHERE id=$commentrow[0]"));
+	if (!$hidden&&$commentrow[5]!='censored'||($commentrow[5]=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
+		$cuserdata = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=$commentrow[0]"));
 		if (!empty($cuserdata[9])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$commentrow[4].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/'.$cuserdata[9].'"/>';
 		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$commentrow[0].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/default.png"/>';
 		echo '
@@ -215,7 +215,7 @@ while($commentrow = mysql_fetch_array($comments)){
 		echo ' ('.date("m/d/Y", strtotime($commentrow[3]))." at ".date("g:ia", strtotime($commentrow[3]));
 		echo ')<span style="font-size:12px;"> (<a id="replylink" href="javascript:reply('.$commentrow[4].')">reply</a> - <a href="flag.php?id='.$commentrow[4].'&type=comment">flag</a>) ';
 		//show the censored/approved/shown comment status for admins and mods
-		if ($luserdata[3] == "admin"||$luserdata[3]== "mod"){
+		if ($cur_user['rank'] == "admin"||$cur_user['rank']== "mod"){
 			if ($commentrow[5]=='censored') echo '<a href="flag.php?id='.$commentrow[4].'&type=comment&action=approve" style="color:red;">censored</a>';
 			else if ($commentrow[5]=='approved') echo '<a href="flag.php?id='.$commentrow[4].'&type=comment&action=censor" style="color:green;">approved</a>';
 			else if ($commentrow[5]=='shown') echo '<a href="flag.php?id='.$commentrow[4].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$commentrow[4].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
@@ -242,20 +242,20 @@ while($commentrow = mysql_fetch_array($comments)){
 </div>
 
 <div class="cright">
-	<div class="ctitle"><? echo stripslashes($creationdata['1']); 
-	if ($creationdata[3] ==  $luserdata[0] || $luserdata[3] == "admin" || $luserdata[3] == "mod") echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creationdata[0].'">edit</a>)</span>'; ?></div>
+	<div class="ctitle"><? echo stripslashes($creation['1']); 
+	if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creation[0].'">edit</a>)</span>'; ?></div>
 	<div class="cinfo">
 	<?
-	if (!empty($userdata[9])) echo '<img class="cicon" src="data/usericons/'.$userdata['9'].'"/>';
+	if (!empty($user[9])) echo '<img class="cicon" src="data/usericons/'.$user['9'].'"/>';
 	else echo '<img class="cicon" src="data/usericons/default.png"/>';
 	
-	echo '<div class="cusertext"><a href="user.php?id='.$userdata[0].'">'.$userdata[1].'</a>';if ($userdata[3] == "admin" || $userdata[3] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-	if ($creationdata[6] == "byowner") echo '<div style="color:red;">Hidden</div>';
-	if ($creationdata[6] == "censored") echo '<div style="color:red;">Censored</div>';
-	if ($creationdata[6] == "deleted") echo '<div style="color:red;">Deleted</div>';
-	if ($creationdata[6] == "flagged") echo '<div style="color:red;">Flagged by community</div>';
-	echo '<div>'.date("F jS, Y", strtotime($creationdata[4])).'</div>';
-	switch($creationdata[14]){
+	echo '<div class="cusertext"><a href="user.php?id='.$user[0].'">'.$user[1].'</a>';if ($user[3] == "admin" || $user[3] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+	if ($creation['hidden'] == "byowner") echo '<div style="color:red;">Hidden</div>';
+	if ($creation['hidden'] == "censored") echo '<div style="color:red;">Censored</div>';
+	if ($creation['hidden'] == "deleted") echo '<div style="color:red;">Deleted</div>';
+	if ($creation['hidden'] == "flagged") echo '<div style="color:red;">Flagged by community</div>';
+	echo '<div>'.date("F jS, Y", strtotime($creation[4])).'</div>';
+	switch($creation['license']){
 		case 'copyright':
 			echo '<img src="data/icons/licenses/copyright.png"/>';
 			break;
@@ -281,19 +281,19 @@ while($commentrow = mysql_fetch_array($comments)){
 			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-nc.png"/><img src="data/icons/licenses/cc-sa.png"/>';
 			break;
 		case 'mit':
-			echo '<a href="license.php?id='.$creationdata[0].'"><img src="data/icons/licenses/mit.png"/></a>';
+			echo '<a href="license.php?id='.$creation[0].'"><img src="data/icons/licenses/mit.png"/></a>';
 			break;
 		case 'gpl':
-			echo '<a href="license.php?id='.$creationdata[0].'"><img src="data/icons/licenses/gpl.png"/></a>';
+			echo '<a href="license.php?id='.$creation[0].'"><img src="data/icons/licenses/gpl.png"/></a>';
 			break;
 		case 'bsd':
-			echo '<a href="license.php?id='.$creationdata[0].'"><img src="data/icons/licenses/bsd.png"/></a>';
+			echo '<a href="license.php?id='.$creation[0].'"><img src="data/icons/licenses/bsd.png"/></a>';
 			break;
 	}
 	?>
 	</div><div style="clear:both"></div></div>
-	<? if (!empty($creationdata[9])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creationdata[9])).'</div>';
-	if (!empty($creationdata[10])) echo '<br/><div class="ccontent"><strong>Content advisory</strong><br/>This project includes '.stripslashes($creationdata[10]).'. (<a href="flag.php?id='.$creationdata[0].'">flag creation</a>)</div>'; ?>
+	<? if (!empty($creation['descr'])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creation['descr'])).'</div>';
+	if (!empty($creation['advisory'])) echo '<br/><div class="ccontent"><strong>Content advisory</strong><br/>This project includes '.stripslashes($creation['advisory']).'. (<a href="flag.php?id='.$creation[0].'">flag creation</a>)</div>'; ?>
 	
 </div>
 
