@@ -28,7 +28,7 @@ if (!$creation){
 	die("");
 }
 
-$views = mysql_num_rows(mysql_query("SELECT * FROM views WHERE creationid=$creation[0]"));
+$views = mysql_num_rows(mysql_query("SELECT * FROM views WHERE creationid=$creation['id']"));
 
 echo $views;
 

@@ -18,19 +18,19 @@
 	if (isset($flags)&&(int) mysql_fetch_array($flags)!=0){
 	mysql_data_seek($flags,0);
 		while($flag=mysql_fetch_array($flags)){
-			if($flag[5]=="creation"){
-				$creationname=mysql_fetch_array(mysql_query("SELECT name FROM creations WHERE id=".$flag[3]));
-				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted creation</span>":'<a class="td" href="creation.php?id='.$flag[3].'">'.$creationname[0].'</a>';
+			if($flag['type']=="creation"){
+				$creationname=mysql_fetch_array(mysql_query("SELECT name FROM creations WHERE id=".$flag['parentid']));
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted creation</span>":'<a class="td" href="creation.php?id='.$flag['parentid'].'">'.$creationname[0].'</a>';
 			}
-			else if ($flag[5]=="comment"){
-				$creationname=mysql_fetch_array(mysql_query("SELECT comment FROM comments WHERE id=".$flag[3]));
-				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag[3]).'#'.$flag[3].'">'.strip_bbcode($creationname[0]).'</a>';
+			else if ($flag['type']=="comment"){
+				$creationname=mysql_fetch_array(mysql_query("SELECT comment FROM comments WHERE id=".$flag['parentid']));
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag['parentid']).'#'.$flag['parentid'].'">'.strip_bbcode($creationname[0]).'</a>';
 			}
-			echo '<tr id="'.$flag[0].'">
-			<td class="'.$flag[5].'" style="width:200px;">'.$creationname[0].'</td>
-			<td class="'.$flag[5].'" style="width:80px;"><a class="td" href="user.php?id='.$flag[2].'">'.get_username_from_id($flag[2]).'</a></td>
-			<td class="'.$flag[5].'" style="width:80px;">'.date("m/d/Y",strtotime($flag[1])).'</td>
-			<td class="'.$flag[5].'" style="width:400px;">'.$flag[4].'<a class="deletebutton" href="?mode=flags&action=delete&id='.$flag[0].'"></a></td>
+			echo '<tr id="'.$flag['id'].'">
+			<td class="'.$flag['type'].'" style="width:200px;">'.$creationname[0].'</td>
+			<td class="'.$flag['type'].'" style="width:80px;"><a class="td" href="user.php?id='.$flag['userid'].'">'.get_username_from_id($flag['userid']).'</a></td>
+			<td class="'.$flag['type'].'" style="width:80px;">'.date("m/d/Y",strtotime($flag['timestamp'])).'</td>
+			<td class="'.$flag['type'].'" style="width:400px;">'.$flag['content'].'<a class="deletebutton" href="?mode=flags&action=delete&id='.$flag['id'].'"></a></td>
 			</tr>';
 		}
 	}

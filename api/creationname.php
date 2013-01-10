@@ -28,6 +28,6 @@ if (!$creation){
 	die("");
 }
 
-echo stripslashes($creation[1]);
+echo stripslashes($creation['name']);
 
 ?>

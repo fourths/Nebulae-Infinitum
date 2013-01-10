@@ -43,7 +43,7 @@ if (!$result) {
     die(mysql_error());
 }
 $user = mysql_fetch_array($result);
-if ($user[6] == "deleted") {
+if ($user['banstatus'] == "deleted") {
 	include_once("templates/user_deleted.php");
 	exit();
 }
@@ -74,7 +74,7 @@ $cur_user (array) - Array of info from database about logged-in user. Always cal
 $user (array) - Like $cur_user, this is an array of user info. It, however, is data of the user whose userpage is being viewed.
 $favourites (boolean) - Specifies whether this should display favourites thumbnails, which include a remove from favourites icon instead of the standard edit and delete ones.
 */
-function show_creations($creationlist,$cur_user,$user,$favourites){
+function show_creations($creationlist,$cur_user,$user,$favourites=false){
 	if (isset($creationlist)){
 		if((int) mysql_fetch_array($creationlist) == 0) echo "This user has no creations of this type.";
 		//reset pointer so it displays all creations
@@ -82,7 +82,7 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 			mysql_data_seek($creationlist,0);
 			while ($creation = mysql_fetch_array($creationlist)){
 				$creationcondition="";
-				$creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation[0]));
+				$creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
 				//set the background colour of the thumbnails
 				switch ($creation['type']){
 					case "artwork":
@@ -105,28 +105,28 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 				}
 				if ($favourites==true){
 					if ($creation && (($creation['hidden']=="approved"||$creation['hidden']=="no")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
-						if(!file_exists('data/thumbs/'.$creation[0].'.png')){
+						if(!file_exists('data/thumbs/'.$creation['id'].'.png')){
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation[0].'"><img class="creationthumbimg" src="data/thumbs/default.png"/></a>';
-							if ((($cur_user['id']==$user[0]&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation[0].'&action=favourite"></a>';
-							echo '</a><a href="creation.php?id='.$creation[0].'" class="creationthumbcaption">'.stripslashes($creation[1]).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/default.png"/></a>';
+							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation['id'].'&action=favourite"></a>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
 						}
 						else{
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation[0].'"><img class="creationthumbimg" src="data/thumbs/'.$creation[0].'.png"/></a>';
-							if ((($cur_user['id']==$user[0]&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation[0].'&action=favourite"></a>';
-							echo '</a><a href="creation.php?id='.$creation[0].'" class="creationthumbcaption">'.stripslashes($creation[1]).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/'.$creation['id'].'.png"/></a>';
+							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation['id'].'&action=favourite"></a>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
 						}
 						$num_creations++;
 					}
 				if ($num_creations==0) echo "This user has no favourites.";
 				}
 				else {
-					if ($creation && (($creation['hidden']=="approved"||$creation['hidden']=="no")||(($cur_user['id']==$user[0]&&$creation['hidden']!="deleted"&&$creation['hidden']!="censored")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod"))){
-						if ($creation[7]=="svg"&&$creation[7]=="tif"||$creation[7]=="tiff") {
+					if ($creation && (($creation['hidden']=="approved"||$creation['hidden']=="no")||(($cur_user['id']==$user['id']&&$creation['hidden']!="deleted"&&$creation['hidden']!="censored")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod"))){
+						if ($creation['filetype']=="svg"&&$creation['filetype']=="tif"||$creation['filetype']=="tiff") {
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation[0].'"><img class="creationthumbimg" src="data/projects/'.$creation[8].'"/></a>';
-							if ((($cur_user['id']==$user[0]&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation[0].'"></a><a class="editbutton" href="edit.php?id='.$creation[0].'">';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/projects/'.$creation['filename'].'"/></a>';
+							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation['id'].'"></a><a class="editbutton" href="edit.php?id='.$creation['id'].'">';
 							if (($creation['hidden']!="no")&&($cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
 								switch($creation['hidden']){
 									case "byowner":
@@ -137,16 +137,16 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 										break;
 								}
 							}
-							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user[0])){
+							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user['id'])){
 								$creationcondition = "<strong>(hidden)</strong>";
 							}
-							echo '</a><a href="creation.php?id='.$creation[0].'" class="creationthumbcaption">'.stripslashes($creation[1]).'</a> '.$creationcondition.'</div>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a> '.$creationcondition.'</div>';
 							$num_creations++;
 						}
-						else if (!file_exists('data/thumbs/'.$creation[0].'.png')){
+						else if (!file_exists('data/thumbs/'.$creation['id'].'.png')){
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation[0].'"><img class="creationthumbimg" src="data/thumbs/default.png"/></a>';
-							if ((($cur_user['id']==$user[0]&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation[0].'"></a><a class="editbutton" href="edit.php?id='.$creation[0].'">';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/default.png"/></a>';
+							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation['id'].'"></a><a class="editbutton" href="edit.php?id='.$creation['id'].'">';
 							if (($creation['hidden']!="no")&&($cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
 								switch($creation['hidden']){
 									case "byowner":
@@ -156,16 +156,16 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 										$creationcondition = "<strong>(".$creation['hidden'].")</strong>";
 								}
 							}
-							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user[0])){
+							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user['id'])){
 								$creationcondition = "<strong>(hidden)</strong>";
 							}
-							echo '</a><a href="creation.php?id='.$creation[0].'" class="creationthumbcaption">'.stripslashes($creation[1]).'</a> '.$creationcondition.'</div>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a> '.$creationcondition.'</div>';
 							$num_creations++;
 						}
 						else{
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation[0].'"><img class="creationthumbimg" src="data/thumbs/'.$creation[0].'.png"/></a>';
-							if ((($cur_user['id']==$user[0]&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation[0].'"></a><a class="editbutton" href="edit.php?id='.$creation[0].'">';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/'.$creation['id'].'.png"/></a>';
+							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation['id'].'"></a><a class="editbutton" href="edit.php?id='.$creation['id'].'">';
 							if (($creation['hidden']!="no")&&($cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
 								switch($creation['hidden']){
 									case "byowner":
@@ -175,10 +175,10 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 										$creationcondition = "<strong>(".$creation['hidden'].")</strong>";
 								}
 							}
-							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user[0])){
+							else if (($creation['hidden']=="byowner")&&($cur_user['id']==$user['id'])){
 								$creationcondition = "<strong>(hidden)</strong>";
 							}
-							echo '</a><a href="creation.php?id='.$creation[0].'" class="creationthumbcaption">'.stripslashes($creation[1]).'</a> '.$creationcondition.'</div>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a> '.$creationcondition.'</div>';
 							$num_creations++;
 						}
 					}
@@ -193,7 +193,7 @@ function show_creations($creationlist,$cur_user,$user,$favourites){
 
 
 if (isset($_POST['pmsubmit'])){
-	mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$user[0].",".$cur_user['id'].",'".addslashes($_POST['pmbody'])."','pm')");
+	mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$user['id'].",".$cur_user['id'].",'".addslashes($_POST['pmbody'])."','pm')");
 	die("Your message has been sent.");
 }
 ?>

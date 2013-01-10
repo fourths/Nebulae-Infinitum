@@ -2,18 +2,20 @@
 <?
 //Include config
 $split_path=explode("\\",dirname(__FILE__));
-if(count($split_path)>4){
-	for($i=0;$i<count($split_path)-3;$i++){
-		$split_path[count($split_path)-$i]="";
+for($k=0;$k<count($split_path);$k++){
+	if($split_path[$k]=="errors"){
+		for($m=count($split_path);$m>$k-1;$m--){
+			$split_path[$m]="";
+		}
 	}
 }
 $full_path="";
 foreach($split_path as $path_bit){
 	if(strlen($path_bit)>0){
-		$full_path .= $path_bit."/";
+		$full_path .= $path_bit."\\";
 	}
 }
-require_once($full_path."/config/config.php");
+require_once($full_path."\config\config.php");
 error_reporting(E_ALL ^ E_NOTICE); 
 session_start();
 ?>

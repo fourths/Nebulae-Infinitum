@@ -29,5 +29,5 @@ if (!$user){
 	die("");
 }
 
-echo $user[1];
+echo $user['username'];
 ?>

@@ -11,7 +11,7 @@
 <div class="container">
 	<h2>Edit creation</h2>
 	<form method="post" enctype="multipart/form-data">
-	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creation[1])?>">
+	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creation['name'])?>">
 	<div>
 	<?php
 	$selected='selected="selected"';

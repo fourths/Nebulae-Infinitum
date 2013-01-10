@@ -28,7 +28,7 @@ if (!$creation){
 	die("");
 }
 
-$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creation[0]"));
+$favourites = mysql_num_rows(mysql_query("SELECT * FROM favourites WHERE creationid=$creation['id']"));
 
 echo $favourites;
 

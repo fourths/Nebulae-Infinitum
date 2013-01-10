@@ -29,7 +29,7 @@ if (!$creation){
 }
 
 //Get ratings
-$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creation[0]");
+$result = mysql_query("SELECT rating FROM ratings WHERE creationid=$creation['id']");
 $i=0;
 while($row = mysql_fetch_array($result)){
 	$ratings[$i] = $row[0];

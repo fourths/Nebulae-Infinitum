@@ -93,7 +93,7 @@ if (isset($_POST['update'])) {
 	if ($hidden=="flagged") $hidden = "byowner";
 	if ($hidden=="no"&&($curhid[0]=="flagged"||$curhid[0]=="approved")) $hidden="approved";
 	mysql_query("UPDATE creations SET hidden='".$hidden."' WHERE id='$creationid'") or die(mysql_error());
-	if ($hidden=="censored") mysql_query("DELETE FROM flags WHERE creationid=".$creation[0]." AND type='creation'");
+	if ($hidden=="censored") mysql_query("DELETE FROM flags WHERE creationid=".$creation['id']." AND type='creation'");
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 //Creation deletion/undeletion
