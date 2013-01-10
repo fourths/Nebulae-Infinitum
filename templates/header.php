@@ -19,8 +19,8 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 }
 ?>
 <div class="header">
-<a class="headtext" href="/"><?=strtolower(SITE_NAME)?></a><br/>
-<div class="headlinks"><a class="head" href="/">home</a> &bull; <a class="head" href="/creations.php">creations</a> &bull; <a class="head" href="/info/">about</a> &bull; <a class="head" href="/mediasite/forums/">forums</a> <? if ($cur_user['rank']=="admin" || $cur_user['rank']=="mod") echo ' &bull; <a class="head" href="/admin.php">admin</a>' ?> <? if (isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')) echo '<div style="padding-top:5px;">logged in as <a class="head" href="/user.php?id='.$_SESSION['SESS_MEMBER_ID'].'">'.$cur_user['username'].'</a> (<a href="messages.php" class="head">&#9993;</a>) &bull; <a class="head" href="/upload.php">upload</a> &bull; <a class="head" href="/login.php?action=logout">logout</a></div>'; else echo '&bull; <a class="head" href="/login.php">login</a></div>' ?></div>
+<a class="headtext" href="<? echo BASE_URL ?>/"><?=strtolower(SITE_NAME)?></a><br/>
+<div class="headlinks"><a class="head" href="<? echo BASE_URL ?>/">home</a> &bull; <a class="head" href="<? echo BASE_URL ?>/creations.php">creations</a> &bull; <a class="head" href="<? echo BASE_URL ?>/info/">about</a> &bull; <a class="head" href="<? echo BASE_URL ?>/forums/">forums</a> <? if ($cur_user['rank']=="admin" || $cur_user['rank']=="mod") echo ' &bull; <a class="head" href="'.BASE_URL.'/admin.php">admin</a>' ?> <? if (isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')) echo '<div style="padding-top:5px;">logged in as <a class="head" href="'.BASE_URL.'/user.php?id='.$_SESSION['SESS_MEMBER_ID'].'">'.$cur_user['username'].'</a> (<a href="'.BASE_URL.'/messages.php" class="head">&#9993;</a>) &bull; <a class="head" href="'.BASE_URL.'/upload.php">upload</a> &bull; <a class="head" href="'.BASE_URL.'/login.php?action=logout">logout</a></div>'; else echo '&bull; <a class="head" href="'.BASE_URL.'/login.php">login</a></div>' ?></div>
 </div>
 <?
 if ($msg>0){
