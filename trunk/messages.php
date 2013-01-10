@@ -52,23 +52,23 @@ $private=mysql_query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']
 
 if(!empty($private) && mysql_num_rows($private)>0){
 	for ($i=0;$i<mysql_num_rows($private);$i++){
-		$pmdata=mysql_fetch_array($private);
+		$message=mysql_fetch_array($private);
 		//if a message is unread, mark as read
-		if ($pmdata[3]==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$pmdata[0]);
+		if ($message['viewed']==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$message['id']);
 	}
 }
 if(!empty($notifications) && mysql_num_rows($notifications)>0){
 	for ($i=0;$i<mysql_num_rows($notifications);$i++){
-		$pmdata=mysql_fetch_array($notifications);
+		$message=mysql_fetch_array($notifications);
 		//if a message is unread, mark as read
-		if ($pmdata[3]==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$pmdata[0]);
+		if ($message['viewed']==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$message['id']);
 	}
 }
 if(!empty($admin) && mysql_num_rows($admin)>0){
 	for ($i=0;$i<mysql_num_rows($admin);$i++){
-		$pmdata=mysql_fetch_array($admin);
+		$message=mysql_fetch_array($admin);
 		//if a message is unread, mark as read
-		if ($pmdata[3]==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$pmdata[0]);
+		if ($message['viewed']==0&&$_SESSION['SESS_MEMBER_ID']==$cur_user['id']) mysql_query("UPDATE messages SET viewed=1 WHERE id=".$message['id']);
 	}
 }
 

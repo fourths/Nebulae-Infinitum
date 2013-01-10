@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <?
 //Include config
-$split_url=explode("\\",dirname(__FILE__));
-if(count($split_url)>4){
-	for($i=0;$i<count($split_url)-3;$i++){
-		$split_url[count($split_url)-$i]="";
+$split_path=explode("\\",dirname(__FILE__));
+for($k=0;$k<count($split_path);$k++){
+	if($split_path[$k]=="errors"){
+		for($m=count($split_path);$m>$k-1;$m--){
+			$split_path[$m]="";
+		}
 	}
 }
-$full_url="";
-foreach($split_url as $url_bit){
-	if(strlen($url_bit)>0){
-		$full_url .= $url_bit."/";
+$full_path="";
+foreach($split_path as $path_bit){
+	if(strlen($path_bit)>0){
+		$full_path .= $path_bit."\\";
 	}
 }
-require_once($full_url."/config/config.php");
+require_once($full_path."/config/config.php");
 error_reporting(E_ALL ^ E_NOTICE); 
 session_start();
 ?>

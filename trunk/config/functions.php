@@ -11,7 +11,7 @@ function get_id_from_username($username){
 		return "";
 	}
 	$user = mysql_fetch_array($result);
-	return $user[0];
+	return $user['id'];
 }
 
 function get_username_from_id($id){
@@ -25,7 +25,7 @@ function get_username_from_id($id){
 	if (!$user){
 		return "invalidUser";
 	}
-	return $user[1];
+	return $user['username'];
 }
 
 function get_creation_from_comment($cid){
@@ -34,7 +34,7 @@ function get_creation_from_comment($cid){
 		return "";
 	}
 	$creation=mysql_fetch_array($result);
-	return $creation[0];
+	return $creation['id'];
 }
 
 function bbcode_parse($text,$writing=false){

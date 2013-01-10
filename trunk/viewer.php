@@ -57,7 +57,7 @@ if (!$result) {
 }
 $user = mysql_fetch_array($result);
 
-if ($creation['hidden'] == "byowner" && $cur_user['id'] != $user[0] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
+if ($creation['hidden'] == "byowner" && $cur_user['id'] != $user['id'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/creation_hidden.php");
 	exit();
 }

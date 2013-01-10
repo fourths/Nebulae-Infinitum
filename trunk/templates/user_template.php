@@ -2,7 +2,7 @@
 <? require_once("config/config.php"); ?>
 <html>
 <head>
-<title><? echo $user[1] ?>'s Creations | <? echo SITE_NAME ?></title>
+<title><? echo $user['username'] ?>'s Creations | <? echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -39,19 +39,19 @@ $(document).ready(function(){
 <div class="container">
 	<div class="left">
 		<?
-		if (!empty($user[9])) echo '<img class="usericon" src="data/usericons/'.$user[9].'"/>';
+		if (!empty($user['icon'])) echo '<img class="usericon" src="data/usericons/'.$user['icon'].'"/>';
 		else echo '<img class="usericon" src="data/usericons/default.png"/>'
 		?>
-		<div style="font-size:18px;"><? echo $user[1]; if ($user[3]=="admin" || $user[3]=="mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';?></div>
+		<div style="font-size:18px;"><? echo $user['username']; if ($user['rank']=="admin" || $user['rank']=="mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';?></div>
 		<? 
-		if ($user[6] == "banned") echo '<div style="color:red;">Banned</div>';
-		if ($_SESSION['SESS_MEMBER_ID'] == $user[0] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") echo '<div><a href="pref.php?id='.$user[0].'">User preferences</a></div>';
+		if ($user['banstatus'] == "banned") echo '<div style="color:red;">Banned</div>';
+		if ($_SESSION['SESS_MEMBER_ID'] == $user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") echo '<div><a href="pref.php?id='.$user['id'].'">User preferences</a></div>';
 		?>
-		<div><? if (!empty($user[11])){ echo stripslashes($user[11]).' years old'; if ($user[12]=="m" || $user[12]=="f") echo ", "; } if ($user[12]=="m") echo "male"; if ($user[12]=="f") echo "female"; ?></div>
-		<div>Registered <? echo date("F j, Y", strtotime($user[2]));?></div>
-		<div><?if (!empty($user[5])) echo "Lives in ".stripslashes($user[5]); ?></div>
+		<div><? if (!empty($user['age'])){ echo stripslashes($user['age']).' years old'; if ($user['gender']=="m" || $user['gender']=="f") echo ", "; } if ($user['gender']=="m") echo "male"; if ($user['gender']=="f") echo "female"; ?></div>
+		<div>Registered <? echo date("F j, Y", strtotime($user['registered']));?></div>
+		<div><?if (!empty($user['location'])) echo "Lives in ".stripslashes($user['location']); ?></div>
 		<?
-		if (!empty($cur_user)&&$cur_user['id']!=$user[0]){
+		if (!empty($cur_user)&&$cur_user['id']!=$user['id']){
 			echo '
 			<form method="post" style="position:relative;top:10px;left:-5px;">
 			<textarea name="pmbody" placeholder="Message" style="height:100px;width:180px;max-height:200px;margin-left:2px;"></textarea>
@@ -74,23 +74,23 @@ $(document).ready(function(){
 		</div>
 		<div id="tabs_content_container">
 			<div id="overview" class="tab_content" style="display: block;">
-				<? $aboutme = strval($user[10]); if (!empty($aboutme)) echo "<h2>About Me</h2><div>".stripslashes($aboutme)."</div>" ?>
+				<? $aboutme = strval($user['about']); if (!empty($aboutme)) echo "<h2>About Me</h2><div>".stripslashes($aboutme)."</div>" ?>
 				<h2>Favourites</h2>
 				<div>
 				<?show_creations($favourites,$cur_user,$user,true);?>
 				</div>
 			</div>
 			<div id="writing" class="tab_content">
-				<?show_creations($writing,$cur_user,$user,false);?>
+				<?show_creations($writing,$cur_user,$user);?>
 			</div>
 			<div id="artwork" class="tab_content">
-				<?show_creations($artwork,$cur_user,$user,false);?>
+				<?show_creations($artwork,$cur_user,$user);?>
 			</div>
 			<div id="audio" class="tab_content">
-				<?show_creations($audio,$cur_user,$user,false);?>
+				<?show_creations($audio,$cur_user,$user);?>
 			</div>
 			<div id="other" class="tab_content">
-				<?show_creations($other,$cur_user,$user,false);?>
+				<?show_creations($other,$cur_user,$user);?>
 			</div>
 		</div>
 </div>

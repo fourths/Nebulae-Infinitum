@@ -37,7 +37,7 @@ if (isset($_GET["id"])) {
 		exit();
 	}
 	
-	if ($_SESSION['SESS_MEMBER_ID'] != $userid && $cur_user['3'] != "admin" && $cur_user['3'] != "mod" ){
+	if ($_SESSION['SESS_MEMBER_ID'] != $userid && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" ){
 		require_once("errors/403.php");
 		exit();
 	}
@@ -94,7 +94,7 @@ if (isset($_POST['userchange'])) {
 }
 if (isset($_POST['adminchange'])) {
 	if ( $cur_user['rank'] == "admin" && ($_POST['rank']=='admin'||$_POST['rank']=='mod'||$_POST['rank']=='user')) mysql_query("UPDATE users SET rank='".$_POST['rank']."' WHERE id='$userid'") or die(mysql_error());
-	if ( $cur_user['rank'] == "admin" || $cur_user['3'] == "mod" ){
+	if ( $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod" ){
 		mysql_query("UPDATE users SET banstatus='".$_POST['ban']."' WHERE id='$userid'") or die(mysql_error());
 		$bandate=mysql_fetch_array(mysql_query("SELECT DATE_ADD(CURDATE(),INTERVAL ".addslashes(abs((int) $_POST['banneduntil']))." DAY)"));
 		//catch for year 2038 problem

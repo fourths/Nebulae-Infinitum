@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 09, 2013 at 01:40 PM
+-- Generation Time: Jan 10, 2013 at 01:14 PM
 -- Server version: 5.5.25a
 -- PHP Version: 5.4.4
 
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `flags` (
   `id` int(50) NOT NULL AUTO_INCREMENT,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `userid` int(50) NOT NULL,
-  `creationid` int(50) NOT NULL,
+  `parentid` int(50) NOT NULL,
   `content` text NOT NULL,
   `type` enum('creation','comment') NOT NULL,
   PRIMARY KEY (`id`)

@@ -111,15 +111,15 @@ function displayCreations($mysql,$cur_user,$admin){
 	if(isset($mysql)){
 		$rows=mysql_num_rows($mysql);
 		while($creation=mysql_fetch_array($mysql)){
-			$user=mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$creation[3]));
+			$user=mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$creation['ownerid']));
 			echo '<div class="creationblock">';
-			if(file_exists('data/thumbs/'.$creation[0].'.png')) echo '<a href="creation.php?id='.$creation[0].'"><img class="creationblockthumb" src="data/thumbs/'.$creation[0].'.png"/></a>';
-			else echo '<a href="creation.php?id='.$creation[0].'"><img class="creationblockthumb" src="data/thumbs/default.png"/></a>';
-			$creationtitle=strlen(stripslashes($creation[1]))>20?substr(stripslashes($creation[1]),0,20)."&hellip;":stripslashes($creation[1]);
-			echo '<div class="creationblockhead"><a href="creation.php?id='.$creation[0].'" class="creationblocktitle">'.$creationtitle.'</a>';
-			echo '<div><a href="user.php?id='.$user[0].'">'.$user[1].'</a>';if ($user[3] == "admin" || $user[3] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';echo "</div>";
-			echo '<div>'.date("F jS, Y", strtotime($creation[4])).'</div>';
-			switch($creation[11]){
+			if(file_exists('data/thumbs/'.$creation['id'].'.png')) echo '<a href="creation.php?id='.$creation['id'].'"><img class="creationblockthumb" src="data/thumbs/'.$creation['id'].'.png"/></a>';
+			else echo '<a href="creation.php?id='.$creation['id'].'"><img class="creationblockthumb" src="data/thumbs/default.png"/></a>';
+			$creationtitle=strlen(stripslashes($creation['name']))>20?substr(stripslashes($creation['name']),0,20)."&hellip;":stripslashes($creation['name']);
+			echo '<div class="creationblockhead"><a href="creation.php?id='.$creation['id'].'" class="creationblocktitle">'.$creationtitle.'</a>';
+			echo '<div><a href="user.php?id='.$user['id'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';echo "</div>";
+			echo '<div>'.date("F jS, Y", strtotime($creation['created'])).'</div>';
+			switch($creation['views']){
 				case 1:
 					$views="1 view";
 					break;
@@ -127,12 +127,12 @@ function displayCreations($mysql,$cur_user,$admin){
 					$views="No views";
 					break;
 				default:
-					$views=$creation[11]." views";
+					$views=$creation['views']." views";
 			}
 			echo '<div>'.$views.'</div>';
-			$rating=($creation[13]==0)?"No rating":"Rated ".$creation[13];
+			$rating=($creation['rating']==0)?"No rating":"Rated ".$creation['rating'];
 			echo '<div>'.$rating.'</div>';
-			switch($creation[12]){
+			switch($creation['favourites']){
 				case 1:
 					$favourites="1 favourite";
 					break;
@@ -140,7 +140,7 @@ function displayCreations($mysql,$cur_user,$admin){
 					$favourites="No favourites";
 					break;
 				default:
-					$favourites=$creation[12]." favourites";
+					$favourites=$creation['favourites']." favourites";
 			}
 			echo '<div>'.$favourites.'</div></div>';
 			if(isset($creation['descr'])&&trim($creation['descr'])!=""){
@@ -152,7 +152,7 @@ function displayCreations($mysql,$cur_user,$admin){
 				echo '<div class="creationblockadv"><strong style="display:block">Content advisory</strong>This creation contains '.$creationadv.'</div>';
 			}
 			if($admin){
-				echo '<div style="position:absolute;top:0;right:0;"><a href="creations.php?mode=action&action=hide&id='.$creation[0].'">H</a> <a href="creations.php?mode=action&action=censor&id='.$creation[0].'">C</a> <a href="creations.php?mode=action&action=delete&id='.$creation[0].'">D</a></div>';
+				echo '<div style="position:absolute;top:0;right:0;"><a href="creations.php?mode=action&action=hide&id='.$creation['id'].'">H</a> <a href="creations.php?mode=action&action=censor&id='.$creation['id'].'">C</a> <a href="creations.php?mode=action&action=delete&id='.$creation['id'].'">D</a></div>';
 			}
 			echo '<div style="clear:both;"></div></div>';
 		}
