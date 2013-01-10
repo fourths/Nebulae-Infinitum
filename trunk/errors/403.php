@@ -1,29 +1,26 @@
 <!DOCTYPE html>
-<? 
+<?
 //Include config
-//NEEDS WORK
-/*if (substr_count($_SERVER['REQUEST_URI'],"/")>0){
-	$split_url=explode($_SERVER['REQUEST_URI'],"/");
-	for($i=0;$i<count($split_url);$i++){
-		if(count(explode($split_url[$i],"."))>0){
-			$folder_levels=$i-1;
-			break;
-		}
+$split_url=explode("\\",dirname(__FILE__));
+if(count($split_url)>4){
+	for($i=0;$i<count($split_url)-3;$i++){
+		$split_url[count($split_url)-$i]="";
 	}
-	$full_url="";
-	for($j=0;$j<$folder_levels;$j++){
-		$full_url.='/'.$split_url[$j];
-		echo $split_url[$j];
+}
+$full_url="";
+foreach($split_url as $url_bit){
+	if(strlen($url_bit)>0){
+		$full_url .= $url_bit."/";
 	}
-	echo $full_url."22";
-}*/
+}
+require_once($full_url."/config/config.php");
 error_reporting(E_ALL ^ E_NOTICE); 
 session_start();
 ?>
 <html>
 <head>
 <title>403 | <? echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="/templates/style.php" media="screen" />
+<link rel="stylesheet" type="text/css" href="<? echo BASE_URL?>/templates/style.php" media="screen" />
 
 </head>
 
@@ -31,7 +28,7 @@ session_start();
 <? require_once(BASE_DIRECTORY."templates/header.php") ?>
 <div class="container">
 <h1>403 error</h1>
-<img src="/errors/403.png"/><br/>
+<img src="<? echo BASE_URL?>/errors/403.png"/><br/>
 You're not allowed in these parts, private. Stop looking around where you shouldn't if you know what's good for you.<br/><br/>
 <a href=".">Back to home</a>
 </div>
