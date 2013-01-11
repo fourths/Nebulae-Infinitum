@@ -80,6 +80,15 @@ if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_use
 	include_once("errors/404.php");
 	exit();
 }
+if(empty($_SESSION['SESS_MEMBER_ID'])&&($creation['hidden']=="flagged"||$creation['hidden']=="censored")){
+	include_once("errors/creation_censored.php");
+	exit();
+}
+if(empty($_SESSION['SESS_MEMBER_ID'])&&$creation['hidden']=="byowner"){
+	include_once("errors/creation_hidden.php");
+	exit();
+}
+
 
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	if (mysql_num_rows(mysql_query("SELECT * FROM views WHERE viewip='".$_SERVER['REMOTE_ADDR']."' AND creationid=".$creation['id']))==0){
