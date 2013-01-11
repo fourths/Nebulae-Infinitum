@@ -125,7 +125,7 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 					if ($creation && (($creation['hidden']=="approved"||$creation['hidden']=="no")||(($cur_user['id']==$user['id']&&$creation['hidden']!="deleted"&&$creation['hidden']!="censored")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod"))){
 						if ($creation['filetype']=="svg"&&$creation['filetype']=="tif"||$creation['filetype']=="tiff") {
 							echo '
-							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/projects/'.$creation['filename'].'"/></a>';
+							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/creations/'.$creation['filename'].'"/></a>';
 							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="delete.php?id='.$creation['id'].'"></a><a class="editbutton" href="edit.php?id='.$creation['id'].'">';
 							if (($creation['hidden']!="no")&&($cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
 								switch($creation['hidden']){

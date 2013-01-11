@@ -20,9 +20,10 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	}
 	$cur_user = mysql_fetch_array($lresult);
 }
-if ($cur_user['rank'] != "admin"){
+//disabled for now so people can set password
+/*if ($cur_user['rank'] != "admin"){
 	require_once("errors/403.php");
-}
+}*/
 ?>
 <html>
 <head>

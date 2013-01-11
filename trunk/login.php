@@ -14,7 +14,7 @@ session_start();
 $lr = "login";
 
 if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')) {
-	if (isset($_GET["action"]) && $_GET["action"] == "logout") {
+	if (isset($_GET['action']) && $_GET['action'] == "logout") {
 		session_destroy();
 		header("location: .");
 		exit();
@@ -23,11 +23,9 @@ if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '
 	exit();
 }
 
-
 if (isset($_GET["action"]) && $_GET["action"] == "register") {
 	$lr = "register";
 }
-
 
 //Display login/register page
 if ($lr == "login") require_once("templates/login_template.php");
@@ -71,10 +69,10 @@ if (isset($_POST['rsubmit'])) {
 	if (nebulae_hash($_POST['pass']) != nebulae_hash($_POST['cpass'])){
 		die("The passwords do not match.");
 	}
-	if (mysql_num_rows(mysql_query("SELECT * FROM users WHERE username='$_POST[user]'"))>0) die("That username is already in use.");
+	if (mysql_num_rows(mysql_query("SELECT * FROM users WHERE username='".$_POST['user']."'"))>0) die("That username is already in use.");
 	$max = mysql_fetch_array(mysql_query("SELECT MAX(id) FROM users")) or die(mysql_error());
 	$userip = $_SERVER['REMOTE_ADDR'];
-	mysql_query("INSERT INTO users (id,username,password,email,registerip) VALUES ($max[0]+1,'".addslashes($_POST[user])."','".nebulae_hash($_POST[pass])."','$_POST[email]','$userip')");
+	mysql_query("INSERT INTO users (id,username,password,email,registerip) VALUES ($max[0]+1,'".addslashes($_POST['user'])."','".nebulae_hash($_POST['pass'])."','".$_POST['email']."','".$userip."')");
 	//Inserting optional values
 	if(!empty($_POST['age'])) mysql_query("UPDATE users SET age='".addslashes($_POST['age'])."' WHERE id=$max[0]+1") or die(mysql_error());
 	if(!empty($_POST['gender'])) mysql_query("UPDATE users SET gender='".addslashes($_POST['gender'])."' WHERE id=$max[0]+1") or die(mysql_error());

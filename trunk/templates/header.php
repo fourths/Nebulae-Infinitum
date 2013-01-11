@@ -24,7 +24,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 </div>
 <?
 if ($msg>0){
-	echo'<div class="msgalert"><a href="/messages.php" class="msgalertlink">You have '.$msg.' new message';
+	echo '<div class="msgalert"><a href="'.BASE_URL.'/messages.php" class="msgalertlink">You have '.$msg.' new message';
 	if ($msg>1)echo 's';
 	echo '.</a></div>';
 }

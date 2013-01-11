@@ -82,7 +82,7 @@ $(document).ready(function(){
 	});
 });
 //sb2js init
-autoLoad = "data/projects/<?=$creation['filename']?>";
+autoLoad = "data/creations/<?=$creation['filename']?>";
 basedir = "data/sb2js/"
 //create an array to hold the booleans which determine whether a reply box is being shown
 replies=new Array();
@@ -153,7 +153,7 @@ if ("onhashchange" in window)
 
 else echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="data/PlayerOnly.swf">
 <param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
-<param name="flashvars" value="project=data/projects/'.$creation['filename'].'"></object>';
+<param name="flashvars" value="project=data/creations/'.$creation['filename'].'"></object>';
 ?>
 
 <div style="clear:both;">&nbsp;</div>
@@ -194,22 +194,22 @@ while($comment = mysql_fetch_array($comments)){
 	//If comment is marked as alright even after three flags, the comment still shows
 	$i=0;
 	$hidden=false;
-	$fresult = mysql_query("SELECT * FROM flags WHERE creationid=$comment['id'] AND type='comment'") or die(mysql_error());
+	$fresult = mysql_query("SELECT * FROM flags WHERE creationid=".$comment['id']." AND type='comment'") or die(mysql_error());
 	while($row = mysql_fetch_array($fresult)){
 		$cflags[$i] = $row[2];
 		$i++;
 	}
 	if (!empty($cflags)){
-		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = $comment['id']"));
+		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = ".$comment['id']));
 		if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
-			mysql_query("UPDATE comments SET status='censored' WHERE id=$comment['id']") or die(mysql_error());
+			mysql_query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die(mysql_error());
 			mysql_query("DELETE FROM flags WHERE creationid=".$comment['userid']." AND type='comment'");
 			$hidden=true;
 		}
 	}
 	$cflags=array();
 	if (!$hidden&&$comment['status']!='censored'||($comment['status']=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
-		$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=$comment['userid']"));
+		$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$comment['userid']));
 		if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/'.$com_user['icon'].'"/>';
 		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['userid'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/default.png"/>';
 		echo '
@@ -225,14 +225,14 @@ while($comment = mysql_fetch_array($comments)){
 		}
 		echo '</span></div>';
 		//Turn the @ into a link to the userpage
-		preg_match_all('/\@(.*?)\ /',$comment['creationid'],$usernames);
-		$comment_with_links=$comment['creationid'];
-		if (substr_count($comment['creationid'],"@")>0){
+		preg_match_all('/\@(.*?)\ /',$comment['comment'],$usernames);
+		$comment_with_links=$comment['comment'];
+		if (substr_count($comment['comment'],"@")>0){
 			for ($j=0;$j<count($usernames[0]);$j++){
 				$username_id = file_get_contents(BASE_URL."api/idfromusername.php?name=".substr($usernames[0][$j],1,strlen($usernames[0][$j])-2));
 				if (!empty($username_id)){
-					$comment_with_links = preg_replace('/\@'.stripslashes(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).'/','[url=user.php?id='.get_id_from_username(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).']@'.substr($usernames[0][$j],1,strlen($usernames[0][$j])-2).'[/url] ',$comment['creationid']);
-					$comment['creationid']=$comment_with_links;
+					$comment_with_links = preg_replace('/\@'.stripslashes(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).'/','[url=user.php?id='.get_id_from_username(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).']@'.substr($usernames[0][$j],1,strlen($usernames[0][$j])-2).'[/url] ',$comment['comment']);
+					$comment['comment']=$comment_with_links;
 				}
 			}
 		}

@@ -1,3 +1,4 @@
+<?php header("HTTP/1.0 403 Forbidden"); ?>
 <!DOCTYPE html>
 <?
 //Include config
@@ -27,7 +28,7 @@ session_start();
 </head>
 
 <body>
-<? require_once(BASE_DIRECTORY."templates/header.php") ?>
+<? require_once(BASE_DIRECTORY."/templates/header.php") ?>
 <div class="container">
 <h1>403 error</h1>
 <img src="<? echo BASE_URL?>/errors/403.png"/><br/>

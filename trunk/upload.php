@@ -118,7 +118,7 @@ if (isset($_POST['submit'])) {
 	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") mysql_query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$cid[0]'") or die(mysql_error());
 	else mysql_query("UPDATE creations SET license='copyright' WHERE id='$cid[0]'") or die(mysql_error());
 	
-	move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/projects/" .$cid[0].".".$ext);
+	move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$cid[0].".".$ext);
 	//thumbnail generation
 	if ($ext == "gif"||$ext == "jpg"||$ext == "jpeg"||$ext == "jpe"||$ext=="png"||$ext=="dib"||$ext=="bmp"){
 		$thumbimg = imagecreatefromstring(file_get_contents($_FILES['creationfile']['tmp_name']));
@@ -129,7 +129,7 @@ if (isset($_POST['submit'])) {
 	else if ($ext == "txt" && $gentxt==true){
 		$txtimg = imagecreatetruecolor(133,100);
 		imagecolortransparent($txtimg, imagecolorexact($txtimg,0, 0, 0)); 
-		$writdata=file_get_contents("data/projects/".$cid[0].".txt");
+		$writdata=file_get_contents("data/creations/".$cid[0].".txt");
 		$writarr=explode("\n",wordwrap($writdata,22));
 		$y=0;
 		for($y=0;$y<=10;$y++){
