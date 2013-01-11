@@ -6,7 +6,7 @@ session_start();
 
 //Connect to database
 $connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: " . mysql_error());}
+if (!$connection){die("Could not connect to database: ".mysql_error());}
 mysql_select_db(MYSQL_DATABASE, $connection);
 
 //Initialise variable
@@ -14,7 +14,7 @@ $creationid = null;
 
 //Get current user info from database
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
+	$lresult = mysql_query("SELECT * FROM users WHERE id=".$_SESSION['SESS_MEMBER_ID']);
 	if (!$lresult) {
 		echo "Could not run query: " . mysql_error() and die;
 	}
@@ -32,14 +32,14 @@ else if ($cur_user['banstatus'] == "deleted") {
 
 //Get creation ID from URL
 //If creation ID not found or is NaN, die
-if (isset($_GET["id"])) $creationid = htmlspecialchars($_GET["id"]);
+if (isset($_GET['id'])) $creationid = htmlspecialchars($_GET['id']);
 if (!$creationid || strcspn($creationid,"0123456789")>0){
 	include_once("errors/404.php");
 	exit();
 }
 
 //Get creation info from database
-$result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
+$result = mysql_query("SELECT * FROM creations WHERE id=".$creationid);
 if (!$result) {
     die(mysql_error());
 }
@@ -51,7 +51,7 @@ if (!$creation){
 	exit();
 }
 //Get creation owner info from database
-$result = mysql_query("SELECT * FROM users WHERE id = $creation['ownerid']");
+$result = mysql_query("SELECT * FROM users WHERE id=".$creation['ownerid']);
 if (!$result) {
     die(mysql_error());
 }
@@ -72,8 +72,8 @@ if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_use
 }
 
 //find out whether the Flash action is viewing at 100% or downloading
-if (isset($_GET["flash"])){
-	switch ($_GET["flash"]){
+if (isset($_GET['flash'])){
+	switch ($_GET['flash']){
 		case "play":
 			$flashtype="play";
 			break;
