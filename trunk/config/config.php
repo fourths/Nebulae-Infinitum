@@ -10,11 +10,11 @@ define("HEADER_IMG","../data/header.png",true);
 //Email of site administrator
 define("ADMIN_EMAIL","sirnebbins@gmail.com",true);
 //Symbol used to represent staff
-define("STAFF_SYMBOL","^",true);
+define("STAFF_SYMBOL","<sup style='font-size:10px;'>#swag</sup>",true);
 //Flags to be displayed on the admin page before clicking through to the full list
 define("ADMIN_FLAGS",10,true);
 //Base URL of the site without trailing slash
-define("BASE_URL","http://localhost/mediasite",true);
+define("BASE_URL","http://localhost",true);
 //Base directory of the site's folder on the server including trailing slash
 //Note: many hosts don't allow the realpath function, so leave it and get the true path from the error it'll give
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
@@ -27,7 +27,7 @@ define("MYSQL_DATABASE","mediasite",true);
 //Database username
 define("MYSQL_USER","root",true);
 //Database password
-define("MYSQL_PASS","ok",true);
+define("MYSQL_PASS","",true);
 
 //Writing creation file encoding (from which you're encoding); you may need to test a few here to see which is right for your system
 //Required to translate special characters to their HTML entities for proper display

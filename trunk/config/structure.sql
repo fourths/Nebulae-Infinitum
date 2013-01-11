@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.5
+-- version 3.5.2
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 10, 2013 at 07:03 PM
--- Server version: 5.5.16
--- PHP Version: 5.3.8
+-- Generation Time: Jan 11, 2013 at 01:13 PM
+-- Server version: 5.5.25a
+-- PHP Version: 5.4.4
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -27,14 +27,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `comments` (
-  `id` int(50) NOT NULL DEFAULT '0',
   `userid` int(25) NOT NULL,
   `creationid` int(25) NOT NULL,
   `comment` text NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `id` int(50) NOT NULL AUTO_INCREMENT,
   `status` enum('shown','censored','approved') NOT NULL DEFAULT 'shown',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `creations` (
 --
 
 INSERT INTO `creations` (`id`, `name`, `type`, `ownerid`, `created`, `modified`, `hidden`, `filetype`, `filename`, `descr`, `advisory`, `views`, `favourites`, `rating`, `license`) VALUES
-(1, 'Supercollider', 'artwork', 1, '2012-06-23 07:00:00', '2013-01-11 02:56:28', 'no', 'png', '1.png', 'Bork [url=http://scratch.mit.edu/]bork[/url] bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork.', 'minor gore, scary trees, and other things', 2, 0, 0.0, 'cc-0');
+(1, 'Supercollider', 'artwork', 1, '2012-06-23 07:00:00', '2013-01-11 21:08:40', 'approved', 'png', '1.png', 'Bork [url=http://scratch.mit.edu/]bork[/url] bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork bork.', 'minor gore, scary trees, and other things', 1, 0, 0.0, 'cc-0');
 
 -- --------------------------------------------------------
 
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `registered`, `rank`, `password`, `location`, `banstatus`, `banneduntil`, `bandate`, `icon`, `about`, `age`, `gender`, `email`, `registerip`, `banreason`, `sb2player`) VALUES
-(1, 'veggieman', '2012-06-21 07:00:00', 'admin', '6f5ff21c4c62c3a345a00460beca8797c8ab1c8e5e1c0bc9dce91ec2a4f64583', 'Here', 'unbanned', '2038-01-19', '2013-01-10', '1.png', 'This is where I put words about myself, which is what these are. What\\\\\\''s the problem \\\\\\&quot;? fsdf', 15, 'm', 'aquariusbyz@gmail.com', '', '', 'flash');
+(1, 'veggieman', '2012-06-21 07:00:00', 'admin', '6f5ff21c4c62c3a345a00460beca8797c8ab1c8e5e1c0bc9dce91ec2a4f64583', 'Here', 'unbanned', '2012-09-21', '2012-09-21', '1.png', 'This is where I put words about myself, which is what these are. What''s the problem &quot;? &gt;', 15, 'm', 'aquariusbyz@gmail.com', '', '', 'js');
 
 -- --------------------------------------------------------
 
@@ -172,6 +172,13 @@ CREATE TABLE IF NOT EXISTS `views` (
   `viewip` varchar(14) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `views`
+--
+
+INSERT INTO `views` (`creationid`, `viewip`, `timestamp`) VALUES
+(1, '::1', '2013-01-11 21:13:14');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

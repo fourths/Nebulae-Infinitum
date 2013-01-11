@@ -1,2 +1,2 @@
-ErrorDocument 404 /mediasite/errors/404.php
-ErrorDocument 403 /mediasite/errors/403.php
+ErrorDocument 404 /errors/404.php
+ErrorDocument 403 /errors/403.php

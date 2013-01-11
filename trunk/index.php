@@ -13,7 +13,7 @@ mysql_select_db(MYSQL_DATABASE, $connection);
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
 	if (!$lresult) {
-		echo "Could not run query: " . mysql_error() and die;
+		echo "Could not run query: ".mysql_error() and die;
 	}
 	$cur_user = mysql_fetch_array($lresult);
 }

@@ -72,5 +72,9 @@ else if ($cur_user['banstatus'] == "deleted") {
 	exit();
 }
 
+if($creation['license']!="mit"&&$creation['license']!="gpl"&&$creation['license']!="bsd"){
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>");
+}
+
 include_once("templates/license_template.php");
 ?>
