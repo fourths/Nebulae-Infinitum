@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 11, 2013 at 01:13 PM
+-- Generation Time: Jan 14, 2013 at 01:16 PM
 -- Server version: 5.5.25a
 -- PHP Version: 5.4.4
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `id` int(50) NOT NULL AUTO_INCREMENT,
   `status` enum('shown','censored','approved') NOT NULL DEFAULT 'shown',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `registered`, `rank`, `password`, `location`, `banstatus`, `banneduntil`, `bandate`, `icon`, `about`, `age`, `gender`, `email`, `registerip`, `banreason`, `sb2player`) VALUES
-(1, 'veggieman', '2012-06-21 07:00:00', 'admin', '6f5ff21c4c62c3a345a00460beca8797c8ab1c8e5e1c0bc9dce91ec2a4f64583', 'Here', 'unbanned', '2012-09-21', '2012-09-21', '1.png', 'This is where I put words about myself, which is what these are. What''s the problem &quot;? &gt;', 15, 'm', 'aquariusbyz@gmail.com', '', '', 'js');
+(1, 'veggieman', '2012-06-21 07:00:00', 'admin', '6f5ff21c4c62c3a345a00460beca8797c8ab1c8e5e1c0bc9dce91ec2a4f64583', 'Here', 'unbanned', '2038-01-19', '2013-01-14', '1.png', 'This is where many rows about oneself may go, if one were to choose to do that. \r\n\r\n[b]BBCode now works here[/b]. [i]Its overuse is discouraged, [url=http://en.wiktionary.org/wiki/for_real]however[/url].', 15, 'm', 'aquariusbyz@gmail.com', '', '', 'js');
 
 -- --------------------------------------------------------
 
@@ -172,13 +172,6 @@ CREATE TABLE IF NOT EXISTS `views` (
   `viewip` varchar(14) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `views`
---
-
-INSERT INTO `views` (`creationid`, `viewip`, `timestamp`) VALUES
-(1, '::1', '2013-01-11 21:13:14');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

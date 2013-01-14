@@ -139,7 +139,7 @@ if (isset($_POST['submit'])) {
 		imagepng($txtimg,"data/thumbs/".$cid[0].".png",9);
 	}
 	else{
-		$thumbimg = imagecreatefrompng($_FILES['thumbnail']['tmp_name']);
+		$thumbimg = imagecreatefromstring(file_get_contents($_FILES['thumbnail']['tmp_name']));
 		$rzthumbimg = imagecreatetruecolor(133,100);
 		imagecopyresampled($rzthumbimg, $thumbimg, 0, 0, 0, 0, 133, 100, imagesx($thumbimg), imagesy($thumbimg));
 		imagepng($rzthumbimg,"data/thumbs/".$cid[0].".png",9);

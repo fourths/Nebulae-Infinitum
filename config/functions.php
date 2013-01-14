@@ -78,7 +78,6 @@ function bbcode_parse_description($text){
 	$bbcode->RemoveRule('code');
 	$bbcode->RemoveRule('list');
 	$bbcode->RemoveRule('*');
-	if($writing)$bbcode->SetAllowAmpersand(true);
 	return $bbcode->Parse($text);
 }
 function strip_bbcode($text){
