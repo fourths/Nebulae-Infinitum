@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<? require_once("config/config.php"); ?>
+<? require_once("config/config.php"); error_reporting(E_ALL ^ E_NOTICE); ?>
 <html>
 <head>
 <title><? echo $user['username'] ?>'s Creations | <? echo SITE_NAME ?></title>
@@ -74,7 +74,7 @@ $(document).ready(function(){
 		</div>
 		<div id="tabs_content_container">
 			<div id="overview" class="tab_content" style="display: block;">
-				<? $aboutme = strval($user['about']); if (!empty($aboutme)) echo "<h2>About Me</h2><div>".stripslashes($aboutme)."</div>" ?>
+				<? $aboutme = strval($user['about']); if (!empty($aboutme)) echo "<h2>About Me</h2><div>".bbcode_parse(stripslashes($aboutme))."</div>" ?>
 				<h2>Favourites</h2>
 				<div>
 				<?show_creations($favourites,$cur_user,$user,true);?>
