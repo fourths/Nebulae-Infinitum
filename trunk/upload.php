@@ -87,7 +87,7 @@ if (isset($_POST['submit'])) {
 		$art=true;
 	}
 	else if ($ext == "mp3"){
-		if ($_FILES['creationfile']['type'] != "audio/mp3") die("Your MP3 file appears to be corrupted.");
+		if ($_FILES['creationfile']['type'] != "audio/mp3" && $_FILES['creationfile']['type'] != "audio/mpeg") die("Your MP3 file appears to be corrupted. Its MIME type is ".$_FILES['creationfile']['type']);
 		mysql_query("INSERT INTO creations (name,type,ownerid,created,filetype) VALUES ('".addslashes($_POST['title'])."','audio',".$_SESSION['SESS_MEMBER_ID'].",'$timestamp[0]','$ext')") or die(mysql_error());
 	}
 	else if ($ext == "sb" || $ext == "scratch" || $ext == "sb2"){

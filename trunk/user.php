@@ -76,13 +76,15 @@ $favourites (boolean) - Specifies whether this should display favourites thumbna
 */
 function show_creations($creationlist,$cur_user,$user,$favourites=false){
 	if (isset($creationlist)){
-		if((int) mysql_fetch_array($creationlist) == 0) echo "This user has no creations of this type.";
+		if((int) mysql_fetch_row($creationlist) == 0) echo "This user has no creations of this type.";
 		//reset pointer so it displays all creations
 		else{
 			mysql_data_seek($creationlist,0);
 			while ($creation = mysql_fetch_array($creationlist)){
 				$creationcondition="";
-				$creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
+				//FIX THIS
+				if($favourites==true) $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['creationid']));
+				else $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
 				//set the background colour of the thumbnails
 				switch ($creation['type']){
 					case "artwork":

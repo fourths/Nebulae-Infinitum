@@ -179,7 +179,7 @@ while($comment = mysql_fetch_array($comments)){
 	//If comment is marked as alright even after three flags, the comment still shows
 	$i=0;
 	$hidden=false;
-	$fresult = mysql_query("SELECT * FROM flags WHERE creationid=".$comment['id']." AND type='comment'") or die(mysql_error());
+	$fresult = mysql_query("SELECT * FROM flags WHERE parentid=".$comment['id']." AND type='comment'") or die(mysql_error());
 	while($row = mysql_fetch_array($fresult)){
 		$cflags[$i] = $row[2];
 		$i++;
@@ -188,7 +188,7 @@ while($comment = mysql_fetch_array($comments)){
 		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = ".$comment['id']));
 		if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
 			mysql_query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die(mysql_error());
-			mysql_query("DELETE FROM flags WHERE creationid=".$comment['userid']." AND type='comment'");
+			mysql_query("DELETE FROM flags WHERE parentid=".$comment['userid']." AND type='comment'");
 			$hidden=true;
 		}
 	}
