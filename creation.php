@@ -182,7 +182,7 @@ while($row = mysql_fetch_array($result)){
 	$i++;
 }
 if (empty($ratings[0])) $ratings[0] = 0;
-$lrating = mysql_fetch_array(mysql_query("SELECT rating FROM ratings WHERE creationid=".$creation['id']));
+$lrating = mysql_fetch_array(mysql_query("SELECT rating FROM ratings WHERE creationid=".$creation['id']." AND userid=".$cur_user['id']));
 $comments = mysql_query("SELECT * FROM comments WHERE creationid=".$creation['id']." ORDER BY timestamp DESC,userid DESC");
 
 //If creation ID is a number and corresponds to valid data in the database, display creation
