@@ -8,7 +8,7 @@ function get_id_from_username($username){
 	//Get user info from database
 	$result = mysql_query("SELECT * FROM users WHERE username = '$username'") or die(mysql_error());
 	if (!$result) {
-		return "";
+		return "invalidUser";
 	}
 	$user = mysql_fetch_array($result);
 	return $user['id'];
@@ -28,10 +28,24 @@ function get_username_from_id($id){
 	return $user['username'];
 }
 
+function get_rank_from_id($id){
+	//Get user info from database
+	$result = mysql_query("SELECT * FROM users WHERE id = '$id'") or die(mysql_error());
+	if (!$result) {
+		return "mysqlError";
+	}
+	$user = mysql_fetch_array($result);
+	//If user ID is not a valid user, die
+	if (!$user){
+		return "invalidUser";
+	}
+	return $user['rank'];
+}
+
 function get_creation_from_comment($cid){
 	$result = mysql_query("SELECT creationid FROM comments WHERE id = '$cid'") or die(mysql_error());
 	if (!$result) {
-		return "";
+		return "invalidUser";
 	}
 	$creation=mysql_fetch_array($result);
 	return $creation['id'];
