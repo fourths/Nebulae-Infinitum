@@ -26,8 +26,8 @@ function reply(id){
 		//set the class of the reply box div to 'replybox' (will contain css at some point? idk)
 		replybox[id].setAttribute('class','replybox');
 		quotetext=document.createElement("div");
-		quotetext.innerHTML=document.getElementById('pmtext'+id);
-		if(quotetext.querySelector(".bbcode_quote")!=null)quotetext.removeChild(quotetext.querySelector(".bbcode_quote"))
+		quotetext.innerHTML=document.getElementById('pmtext'+id).innerHTML;
+		if(quotetext.querySelector(".bbcode_quote")!=null)quotetext.removeChild(quotetext.querySelector(".bbcode_quote"));
 		//set the html contained by the div to a form which uses the specified id for determining which form is submitted
 		replybox[id].innerHTML='<form method="post" style="position:relative;top:10px;left:-5px;"><input type="hidden" name="reply" /><textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:50px;width:95%;max-height:150px;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="'+quotedid+'"]'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'[/quote]\r\n</textarea><br/><input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/></form>';
 		//add the new div as a child of the message
@@ -108,16 +108,18 @@ if(!empty($private) && mysql_num_rows($private)>0){
 	mysql_data_seek($private,0);
 	for ($i=0;$i<mysql_num_rows($private);$i++){
 		$message=mysql_fetch_array($private);
+		$user_rank = get_rank_from_id($message['senderid']);
 		if ($message['viewed']==2&&($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			$micon=file_exists("data/usericons/".$message['senderid'].".png")?"data/usericons/".$message['senderid'].".png":"data/usericons/default.png";
-			if(get_rank_from_id($message['senderid'])=="mod"||get_rank_from_id($message['senderid'])=="admin") $rank = '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-			echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).$rank.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a>) <span style="color:red;font-weight:bold">(deleted)</span></span></div><div class="pmtext">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
+			if($user_rank=="mod"||$user_rank=="admin") $rank_text = '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+			echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a>) <span style="color:red;font-weight:bold">(deleted)</span></span></div><div id="pmtext'.$message['id'].'>'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$pm++;
 		}
 		else if ($message['viewed']<2||($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 			if($message['viewed']==2) $deleted='<span style="color:red;font-weight:bold">(deleted)</span>';
 			$micon=file_exists("data/usericons/".$message['senderid'].".png")?"data/usericons/".$message['senderid'].".png":"data/usericons/default.png";
-			echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a>) '.$deleted.'</span></div><div class="pmtext'.$message['id'].'">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
+			if($user_rank=="mod"||$user_rank=="admin") $rank_text = '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+			echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a>) '.$deleted.'</span></div><div id="pmtext'.$message['id'].'">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 			$pm++;
 		}
 	}
