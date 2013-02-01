@@ -1,14 +1,39 @@
 <!DOCTYPE html>
+<?
+if ($creation['type']=="artwork"){
+	$imgsize=getimagesize('data/creations/'.$creation['filename']);
+	if ($creation['filetype']=="svg"){
+		$xmlget = simplexml_load_file('data/creations/'.$creation['filename']);
+		$xmlattributes = $xmlget->attributes();
+		$imgwidth = (string) $xmlattributes->width; 
+		$imgheight = (string) $xmlattributes->height;
+	}
+}
+if ($creation['type']=="flash")
+	$swfsize=getimagesize('data/creations/'.$creation['filename']);
+?>
 <html>
 <head>
 <title><? echo stripslashes($creation['name']) ?> | <? echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
-<script type="text/javascript" src="data/audio-player.js"></script>
 <script type="text/javascript"><!--
-function expand(){
-	<?echo "window.open('viewer.php?id=".$creation['id']."', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600', false);"; ?>
+<?php
+if ($creation['type']=="flash")
+	//to add: change size to size of flash or max in screen resolution keeping ratio
+	echo 'function expand(){
+	window.open(\'viewer.php?id='.$creation['id'].'&flash=play', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }
+function download(){
+	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+}';
+
+else echo '
+function expand(){
+	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+}';
+?>
+
 //lighting up the planets
 $(document).ready(function(){
 	$("#rating1").hover(function(){
@@ -66,13 +91,6 @@ $(document).ready(function(){
 	});
 });
 
-//audio player
-AudioPlayer.setup("data/player.swf", {  
-	width: 100,  
-	initialvolume: 100,  
-	transparentpagebg: "yes"
-});
-
 //create an array to hold the booleans which determine whether a reply box is being shown
 replies=new Array();
 comment=new Array();
@@ -83,7 +101,10 @@ function reply(id){
 	//if there's no reply box showing
 	if(!replies[id]){
 		quotedusername=comment[id].childNodes[2].childNodes[0].innerHTML;
-		quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(2,10);
+		if(comment[id].childNodes[2].childNodes.length==4)
+			quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(2,10);
+		else
+			quoteddate=comment[id].childNodes[2].childNodes[1].textContent.substr(2,10);
 		//create the reply box div
 		replybox[id]=document.createElement('div');
 		//set the class of the reply box div to 'replybox' (will contain css at some point? idk)
@@ -129,6 +150,17 @@ if ("onhashchange" in window)
     window.onhashchange = function () {
 		illuminate();
 	}
+	
+<?
+if ($creation['type']=="audio"){
+	echo "//audio player
+AudioPlayer.setup(\"data/player.swf\", {  
+	width: 100,  
+	initialvolume: 100,  
+	transparentpagebg: \"yes\"
+});";
+}
+?>
 --></script>
 </head>
 
@@ -138,17 +170,34 @@ if ("onhashchange" in window)
 
 <div class="cleft">
 <div class="ccontainer">
-<div id="audioplayer">You need the Flash player to view this content.</div>
-<script type="text/javascript">AudioPlayer.embed("audioplayer", {soundFile: "data/creations/<?=$creation['filename'];?>",titles: "<?=$creation['name'];?>",  
-    artists: "<?=$user['username'];?>"});</script>
-<div style="clear:both;">&nbsp;</div>
+<? 
+if ($creation['type']=="artwork"){
+	if($creation['filetype']=="svg"){
+		if ($imgwidth>473){
+			$svgheight = "500px";
+		}
+	}
+	echo '<img src="data/creations/'.$creation['filename'].'" class="cimg" style="width:'.$svgheight.'"/>';?>
+	<div style="text-align:right;padding-right:5px;"><? if($creation['filetype']=="svg") echo 'Nominally '.round($imgwidth).'x'.round($imgheight); else echo $imgsize[0].'x'.$imgsize[1];?></div>
+	<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';?>
+	<div style="font-size:14px;<? if (($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
+<? 
+}
+else if ($creation['type']=="audio"){
+	echo '<div id="audioplayer">You need the Flash player to view this content.</div>
+<script type="text/javascript">AudioPlayer.embed("audioplayer", {
+	soundFile: "data/creations/'.$creation['filename'].'",
+	titles: "'.$creation['name'].'",
+	artists: "'.$user['username'].'"});</script>
+<div style="clear:both;">&nbsp;</div>';
+}
 
-<div style="font-size:14px;<? if (($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
-<? echo $views; if ($views == 1) echo " view"; else echo " views"; 
+echo $views; if ($views == 1) echo " view"; else echo " views"; 
 if (number_format(array_sum($ratings)/count($ratings),1)==0.0) echo ", no rating";
 else echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
+mysql_query("UPDATE creations SET rating=".number_format(array_sum($ratings)/count($ratings),1)." WHERE id=".$creation['id']);
 if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)) echo " (you voted ".number_format($lrating[0],1).")";
-echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites"; 
+echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites";
 if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
 if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
 ?>
@@ -161,19 +210,17 @@ for ($fl=0;$fl<5;$fl++){
 if (!empty($_SESSION['SESS_MEMBER_ID'])) echo '
 <a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=3"id="rating3" '.$style[2].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
 '; 
-echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Download</a></div>';
-echo '<div style="clear:both"></div>';
+if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
 ?>
 </div>
 </div>
-<h2 style="position:relative;<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo "left:-130px;"; else echo "left:10px;"?>">Comments</h2>
+<h2 style="position:relative;<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)&&!empty($_SESSION['SESS_MEMBER_ID'])) echo "left:-130px;"; else echo "left:10px;"?>">Comments</h2>
 <?
 if (!empty($_SESSION['SESS_MEMBER_ID']))
 echo '<form method="post">
 <textarea name="commenttext" style="margin-left:10px;margin-top:-10px;min-height:60px;max-height:200px;width:450px;resize:vertical;" placeholder="Enter comment here..."></textarea>
 <input type="submit" style="margin-left:10px;" name="newcomment" value="Submit" /><br/>
 </form>';
-
 while($comment = mysql_fetch_array($comments)){
 	//Test if the comment has enough flags to be auto-censored and censor it if it does
 	//If comment is marked as alright even after three flags, the comment still shows

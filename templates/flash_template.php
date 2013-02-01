@@ -83,7 +83,10 @@ function reply(id){
 	//if there's no reply box showing
 	if(!replies[id]){
 		quotedusername=comment[id].childNodes[2].childNodes[0].innerHTML;
-		quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(2,10);
+		if(comment[id].childNodes[2].childNodes.length==4)
+			quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(2,10);
+		else
+			quoteddate=comment[id].childNodes[2].childNodes[1].textContent.substr(2,10);
 		//create the reply box div
 		replybox[id]=document.createElement('div');
 		//set the class of the reply box div to 'replybox' (will contain css at some point? idk)

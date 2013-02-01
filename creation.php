@@ -186,11 +186,9 @@ $lrating = mysql_fetch_array(mysql_query("SELECT rating FROM ratings WHERE creat
 $comments = mysql_query("SELECT * FROM comments WHERE creationid=".$creation['id']." ORDER BY timestamp DESC,userid DESC");
 
 //If creation ID is a number and corresponds to valid data in the database, display creation
-if ($creation['type'] == "artwork") require_once("templates/artwork_template.php");
-if ($creation['type'] == "scratch") require_once("templates/scratch_template.php");
-if ($creation['type'] == "flash") require_once("templates/flash_template.php");
-if ($creation['type'] == "writing") require_once("templates/writing_template.php");
-if ($creation['type'] == "audio") require_once("templates/audio_template.php");
+require_once("templates/creation_template.php");
+
+
 
 if (isset($_POST['newcomment'])) {
 	if (!empty($_POST['commenttext']) && strlen(trim($_POST['commenttext']))>0) {
