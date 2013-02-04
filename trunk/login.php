@@ -10,20 +10,25 @@ mysql_select_db(MYSQL_DATABASE, $connection);
 
 session_start();
 
+if (isset($_GET['returnto'])){
+	$return_to = $_GET['returnto'];
+}
+
 //Initialise login/register page variable
 $lr = "login";
 
 if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')) {
 	if (isset($_GET['action']) && $_GET['action'] == "logout") {
 		session_destroy();
-		header("location: .");
+		if(isset($return_to)) header("location: ".$return_to);
+		else header("location: .");
 		exit();
 	}
 	header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
 	exit();
 }
 
-if (isset($_GET["action"]) && $_GET["action"] == "register") {
+if (isset($_GET['action']) && $_GET['action'] == "register") {
 	$lr = "register";
 }
 
@@ -41,7 +46,8 @@ if (isset($_POST['submit'])) {
     $user_info=mysql_fetch_assoc($result);
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
-    header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
+	if(isset($return_to)) header("location: ".$return_to);
+    else header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
     exit();
 }
 
@@ -86,7 +92,8 @@ if (isset($_POST['rsubmit'])) {
     $user_info=mysql_fetch_assoc($result);
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
-    header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
+    if(isset($return_to)) header("location: ".$return_to);
+    else header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
     exit();
 }
 ?>

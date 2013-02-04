@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <?
-if ($creation['type']=="artwork"){
+if ($creation['type']=="artwork"||$creation['type']=="flash"){
 	$imgsize=getimagesize('data/creations/'.$creation['filename']);
 	if ($creation['filetype']=="svg"){
 		$xmlget = simplexml_load_file('data/creations/'.$creation['filename']);
@@ -9,8 +9,6 @@ if ($creation['type']=="artwork"){
 		$imgheight = (string) $xmlattributes->height;
 	}
 }
-if ($creation['type']=="flash")
-	$swfsize=getimagesize('data/creations/'.$creation['filename']);
 ?>
 <html>
 <head>
@@ -191,6 +189,27 @@ else if ($creation['type']=="audio"){
 	artists: "'.$user['username'].'"});</script>
 <div style="clear:both;">&nbsp;</div>';
 }
+else if ($creation['type']=="flash"){
+	echo '<div class="flashblock"><div class="flashwrapper" style="padding-bottom:'.($imgsize[1]/$imgsize[0])*100 .'%"><object style="border:1px solid;" class="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+        id="editorObj"
+        codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+        <param name="movie" value="data/creations/'.$creation['filename'].'" />
+        <param name="quality" value="high" />
+        <param name="bgcolor" value="#ffffff" />
+        <embed id="editor" src="data/creations/'.$creation['filename'].'" quality="high" bgcolor="#ffffff"
+			scale="exactfit"
+            play="true"
+            loop="false"
+            quality="high"
+            type="application/x-shockwave-flash"
+            pluginspage="http://www.adobe.com/go/getflashplayer">
+        </embed>
+</object></div></div><br/>';
+?>
+	<div style="text-align:right;padding-right:5px;"><?echo $imgsize[0].'x'.$imgsize[1];?></div>
+	<? if($imgsize[0]>473) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';echo '<div style="text-align:right;padding-right:5px;float:right;"><a href="javascript:download();">Download</a></div>';?>
+<?php
+}
 
 echo $views; if ($views == 1) echo " view"; else echo " views"; 
 if (number_format(array_sum($ratings)/count($ratings),1)==0.0) echo ", no rating";
@@ -210,8 +229,15 @@ for ($fl=0;$fl<5;$fl++){
 if (!empty($_SESSION['SESS_MEMBER_ID'])) echo '
 <a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=3"id="rating3" '.$style[2].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
 '; 
-if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
+
+if ($creation['type']=="audio"){
+	echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Download</a></div>';
+	echo '<div style="clear:both"></div>';
+	}
+
+//if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
 ?>
+<div style="clear:both;"></div>
 </div>
 </div>
 <h2 style="position:relative;<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)&&!empty($_SESSION['SESS_MEMBER_ID'])) echo "left:-130px;"; else echo "left:10px;"?>">Comments</h2>
