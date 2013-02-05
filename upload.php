@@ -41,10 +41,9 @@ if (isset($_POST['submit'])) {
 	if (empty($_FILES['creationfile']) || !file_exists($_FILES['creationfile']['tmp_name'])) {
 		die("Please select a file for your creation.");
 	}
-	//echo (substr(strrchr($_FILES['thumbnail']['name'], '.'), 1));
 	if (empty($_FILES['thumbnail']) || !file_exists($_FILES['thumbnail']['tmp_name'])) {
 		if ($ext != "png" && $ext != "jpg" && $ext != "tif"  && $ext != "bmp"  && $ext != "dib" && $ext != "tiff" && $ext != "jpeg" && $ext != "jpe" && $ext !="gif" && $ext != "txt"){
-			if (substr(strrchr($_FILES['thumbnail']['name'], '.'), 1)!="png") die("Please select a PNG thumbnail for your creation.");
+			if (substr(strrchr($_FILES['thumbnail']['name'], '.'), 1)!="png") die("Please select a thumbnail for your creation.");
 		}
 		else if ($ext=="txt") $gentxt=true;
 	}
