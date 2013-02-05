@@ -204,12 +204,15 @@ else if ($creation['type']=="flash"){
             type="application/x-shockwave-flash"
             pluginspage="http://www.adobe.com/go/getflashplayer">
         </embed>
-</object></div></div><br/>';
+</object></div></div>';
 ?>
 	<div style="text-align:right;padding-right:5px;"><?echo $imgsize[0].'x'.$imgsize[1];?></div>
-	<? if($imgsize[0]>473) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';echo '<div style="text-align:right;padding-right:5px;float:right;"><a href="javascript:download();">Download</a></div>';?>
-<?php
+	<? if($imgsize[0]>473) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';echo '<div style="text-align:right;padding-right:5px;float:right;"><a href="javascript:download();">Download</a></div>';
+	?>
+	<div style="font-size:14px;<? if (($swfsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
+	<?php
 }
+
 
 echo $views; if ($views == 1) echo " view"; else echo " views"; 
 if (number_format(array_sum($ratings)/count($ratings),1)==0.0) echo ", no rating";
@@ -219,9 +222,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)) ec
 echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites";
 if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
 if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
-?>
-<div></div>
-<?
+echo '<br/>';
 for ($fl=0;$fl<5;$fl++){
 	if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'data/icons/antistar.png\');"';
 	else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
@@ -235,11 +236,11 @@ if ($creation['type']=="audio"){
 	echo '<div style="clear:both"></div>';
 	}
 
-//if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
+if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
 ?>
-<div style="clear:both;"></div>
 </div>
 </div>
+
 <h2 style="position:relative;<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)&&!empty($_SESSION['SESS_MEMBER_ID'])) echo "left:-130px;"; else echo "left:10px;"?>">Comments</h2>
 <?
 if (!empty($_SESSION['SESS_MEMBER_ID']))

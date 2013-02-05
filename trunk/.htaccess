@@ -1,2 +1,5 @@
 ErrorDocument 404 /errors/404.php
 ErrorDocument 403 /errors/403.php
+
+php_value upload_max_filesize 25M
+php_value post_max_size 25M

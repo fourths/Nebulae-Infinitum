@@ -119,9 +119,9 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation['id'].'&action=favourite"></a>';
 							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
 						}
-						$num_creations++;
+						$favs++;
 					}
-				if ($num_creations==0) echo "This user has no favourites.";
+				if ($favs==0) echo "This user has no favourites.";
 				}
 				else {
 					if ($creation && (($creation['hidden']=="approved"||$creation['hidden']=="no")||(($cur_user['id']==$user['id']&&$creation['hidden']!="deleted"&&$creation['hidden']!="censored")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod"))){
@@ -190,7 +190,9 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 		}
 		echo '<div style="clear:both;width:100%;height:5px;"></div>';
 	}
-	else echo "This user has no creations of the selected type.";
+	else{
+		if (!$favourites) echo "This user has no creations of the selected type."
+		else echo "This user has no favourites."
 }
 
 

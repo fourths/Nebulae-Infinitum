@@ -101,7 +101,7 @@ switch($mode){
 }
 if($page>1)$previous=true;
 if(mysql_num_rows($creations)==10){
-	if(mysql_num_rows(mysql_query("SELECT id FROM creations WHERE hidden='no' OR hidden='approved'"))>($page-1*10)+mysql_num_rows($creations)) $next=true;
+	if(mysql_num_rows(mysql_query("SELECT id FROM creations WHERE hidden='no' OR hidden='approved'"))>($page*10)) $next=true;
 }
 
 //display the page

@@ -160,7 +160,9 @@ echo '<div class="flashblock"><div class="flashwrapper" style="padding-bottom:'.
 <div style="text-align:right;padding-right:5px;"><?echo $swfsize[0].'x'.$swfsize[1];?></div>
 <? if($swfsize[0]>473) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';echo '<div style="text-align:right;padding-right:5px;float:right;"><a href="javascript:download();">Download</a></div>';?>
 <div style="font-size:14px;<? if (($swfsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
-<? echo $views; if ($views == 1) echo " view"; else echo " views"; 
+
+<? 
+echo $views; if ($views == 1) echo " view"; else echo " views"; 
 if (number_format(array_sum($ratings)/count($ratings),1)==0.0) echo ", no rating";
 else echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
 if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)) echo " (you voted ".number_format($lrating[0],1).")";
