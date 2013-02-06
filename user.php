@@ -76,7 +76,10 @@ $favourites (boolean) - Specifies whether this should display favourites thumbna
 */
 function show_creations($creationlist,$cur_user,$user,$favourites=false){
 	if (isset($creationlist)){
-		if((int) mysql_fetch_row($creationlist) == 0) echo "This user has no creations of this type.";
+		if((int) mysql_fetch_row($creationlist) == 0){
+			if ($favourites==true) echo "This user has no favourites.";
+			else echo "This user has no creations of this type.";
+		}
 		//reset pointer so it displays all creations
 		else{
 			mysql_data_seek($creationlist,0);
@@ -184,15 +187,16 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 							$num_creations++;
 						}
 					}
-					if ($num_creations==0) echo "This user has no creations of the selected type.";
+					if ($num_creations==0) echo "This user has no creations of this type.";
 				}
 			}
 		}
 		echo '<div style="clear:both;width:100%;height:5px;"></div>';
 	}
 	else{
-		if (!$favourites) echo "This user has no creations of the selected type."
-		else echo "This user has no favourites."
+		if (!$favourites) echo "This user has no creations of this type.";
+		else echo "This user has no favourites.";
+	}
 }
 
 

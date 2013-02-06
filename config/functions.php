@@ -51,6 +51,15 @@ function get_creation_from_comment($cid){
 	return $creation['id'];
 }
 
+function get_id_from_creation($cid){
+	$result = mysql_query("SELECT userid FROM creations WHERE id = '$cid'") or die(mysql_error());
+	if (!$result) {
+		return "invalidUser";
+	}
+	$user=mysql_fetch_array($result);
+	return $user['id'];
+}
+
 function bbcode_parse($text,$writing=false){
 	$bbcode = new BBCode;
 	$bbcode->RemoveRule('acronym');

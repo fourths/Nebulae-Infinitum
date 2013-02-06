@@ -10,7 +10,7 @@ define("HEADER_IMG","../data/header.png",true);
 //Email of site administrator
 define("ADMIN_EMAIL","sirnebbins@gmail.com",true);
 //Symbol used to represent staff
-define("STAFF_SYMBOL","<sup style='font-size:10px;'>#swag</sup>",true);
+define("STAFF_SYMBOL","*",true);
 //Flags to be displayed on the admin page before clicking through to the full list
 define("ADMIN_FLAGS",10,true);
 //Base URL of the site without trailing slash
