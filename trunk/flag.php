@@ -42,34 +42,40 @@ $result = mysql_query("SELECT * FROM ".$type."s WHERE id = $creationid");
 if (!$result) {
     die(mysql_error());
 }
-$creation = mysql_fetch_array($result);
+$item = mysql_fetch_array($result);
 
 //If the action specified in the URL is approve, then mark the comment as approved
 if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="approve"&&($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
-	mysql_query("UPDATE comments SET status='approved' WHERE id=".$creation['created']) or die(mysql_error());
-	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>");
+	mysql_query("UPDATE comments SET status='approved' WHERE id=".$item['id']) or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['creationid']."'>");
 }
 //And same for censor
 //Note: the user performing either of these actions must be logged into a moderator or administrator account
 if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="censor"&&($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
-	mysql_query("UPDATE comments SET status='censored' WHERE id=".$creation['created']) or die(mysql_error());
-	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>");
+	mysql_query("UPDATE comments SET status='censored' WHERE id=".$item['id']) or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['creationid']."'>");
+}
+
+
+if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="delete"&&(($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")||$item['userid']==$cur_user['id']||get_id_from_creation($comment['creationid']==$cur_user['id']))){
+	mysql_query("DELETE FROM comments WHERE id=".$item['id']) or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['creationid']."'>");
 }
 
 //If creation ID is not a valid creation, die
-if (!$creation){
+if (!$item){
 	include_once("errors/404.php");
 	exit();
 }
 
 if ($type=="creation"){
 	//If creation is censored already, die
-	if ($creation['hidden'] == "censored") {
+	if ($item['hidden'] == "censored") {
 		include_once("errors/creation_censored.php");
 		exit();
 	}
 	//If creation is deleted, die
-	if ($creation['hidden'] == "deleted") {
+	if ($item['hidden'] == "deleted") {
 		include_once("errors/404.php");
 		exit();
 	}
@@ -92,12 +98,12 @@ if (isset($_POST['flag'])){
 		die("Please enter a reason why you are flagging this $type.");
 	}
 	if ($type=="creation"){
-		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$creation['id'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'creation')") or die(mysql_error());
-		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
+		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$item['id'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'creation')") or die(mysql_error());
+		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['id']."'>";
 	}
 	else if ($type=="comment"){
-		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$creation['created'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'comment')") or die(mysql_error());
-		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
+		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$item['created'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'comment')") or die(mysql_error());
+		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['id']."'>";
 	}
 }
 

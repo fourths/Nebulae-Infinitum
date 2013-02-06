@@ -100,9 +100,9 @@ function reply(id){
 	if(!replies[id]){
 		quotedusername=comment[id].childNodes[2].childNodes[0].innerHTML;
 		if(comment[id].childNodes[2].childNodes.length==4)
-			quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(2,10);
+			quoteddate=comment[id].childNodes[2].childNodes[3].textContent.substr(1,10);
 		else
-			quoteddate=comment[id].childNodes[2].childNodes[1].textContent.substr(2,10);
+			quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(1,10);
 		//create the reply box div
 		replybox[id]=document.createElement('div');
 		//set the class of the reply box div to 'replybox' (will contain css at some point? idk)
@@ -262,7 +262,7 @@ while($comment = mysql_fetch_array($comments)){
 		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = ".$comment['id']));
 		if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
 			mysql_query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die(mysql_error());
-			mysql_query("DELETE FROM flags WHERE parentid=".$comment['userid']." AND type='comment'");
+			mysql_query("DELETE FROM flags WHERE parentid=".$comment['id']." AND type='comment'");
 			$hidden=true;
 		}
 	}
@@ -270,17 +270,25 @@ while($comment = mysql_fetch_array($comments)){
 	if (!$hidden&&$comment['status']!='censored'||($comment['status']=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
 		$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$comment['userid']));
 		if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/'.$com_user['icon'].'"/>';
-		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['userid'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/default.png"/>';
+		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/default.png"/>';
 		echo '
 		<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id='.$com_user['id'].'">'.$com_user['username'].'</a>';
 		if ($com_user['rank'] == "admin" || $com_user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-		echo ' ('.date("m/d/Y", strtotime($comment['timestamp']))." at ".date("g:ia", strtotime($comment['timestamp']));
-		echo ')<span style="font-size:12px;"> (<a id="replylink" href="javascript:reply('.$comment['id'].')">reply</a> - <a href="flag.php?id='.$comment['id'].'&type=comment">flag</a>) ';
+		echo ' <span style="font-size:12px;">('.date("m/d/Y", strtotime($comment['timestamp']))." at ".date("g:ia", strtotime($comment['timestamp']));
+		echo ') (<a id="replylink" href="javascript:reply('.$comment['id'].')">reply</a> - <a href="flag.php?id='.$comment['id'].'&type=comment">flag</a>) ';
 		//show the censored/approved/shown comment status for admins and mods
 		if ($cur_user['rank'] == "admin"||$cur_user['rank']== "mod"){
+			$parenthesis="";
 			if ($comment['status']=='censored') echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:red;">censored</a>';
 			else if ($comment['status']=='approved') echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:green;">approved</a>';
-			else if ($comment['status']=='shown') echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
+			else if ($comment['status']=='shown') {
+				echo '(<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
+				$parenthesis=")";
+			}
+			echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>'.$parenthesis;
+		}
+		if ($cur_user['id']==$user['id']&&($cur_user['rank'] != "admin"&&$cur_user['rank']!= "mod")&&$cur_user['id']==$com_user['id']){
+			echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>';
 		}
 		echo '</span></div>';
 		//Turn the @ into a link to the userpage
