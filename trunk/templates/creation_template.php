@@ -287,7 +287,7 @@ while($comment = mysql_fetch_array($comments)){
 			}
 			echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>'.$parenthesis;
 		}
-		if ($cur_user['id']==$user['id']&&($cur_user['rank'] != "admin"&&$cur_user['rank']!= "mod")&&$cur_user['id']==$com_user['id']){
+		if (($cur_user['rank'] != "admin"&&$cur_user['rank']!= "mod")&&($cur_user['id']==$user['id']||$cur_user['id']==$com_user['id'])){
 			echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>';
 		}
 		echo '</span></div>';
