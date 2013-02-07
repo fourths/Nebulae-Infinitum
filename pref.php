@@ -97,7 +97,7 @@ if (isset($_POST['adminchange'])) {
 	if ( $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod" ){
 		mysql_query("UPDATE users SET banstatus='".$_POST['ban']."' WHERE id='$userid'") or die(mysql_error());
 		$bandate=mysql_fetch_array(mysql_query("SELECT DATE_ADD(CURDATE(),INTERVAL ".addslashes(abs((int) $_POST['banneduntil']))." DAY)"));
-		//catch for year 2038 problem
+		//catch for year 2038 problem---DOES NOT WORK
 		//due to a limitation in strtotime function... is 64-bit machine needed?
 		if (strtotime($bandate[0])<strtotime("2038/01/19")){
 			mysql_query("UPDATE users SET bandate=CURDATE(), banneduntil=date_add(CURDATE(),INTERVAL ".addslashes(abs((int) $_POST['banneduntil']))." DAY) WHERE id='$userid'") or die(mysql_error());
@@ -109,4 +109,20 @@ if (isset($_POST['adminchange'])) {
 	}
 	echo "<meta http-equiv='Refresh' content='0; URL=pref.php?id=$userid'>";
 	exit();
-}?>
+}
+if (isset($_POST['notificationchange'])) {
+	$boxes = $_POST['notifications'];
+	for ($a=1;$a<count($boxes);$a++){
+		echo $a."<br/><br/>";
+		echo count($boxes);
+		if($boxes[$a]!="comments"&&$boxes[$a]!="replies"&&$boxes[$a]!=" "){
+			die("An error occurred. Please try again, but don't mess stuff up this time.");
+		}
+		else{
+			echo $boxes[$a].'<br/>';
+		}
+	}
+	//die("<meta http-equiv='Refresh' content='0; URL=pref.php?id=$userid'>");
+}
+
+?>

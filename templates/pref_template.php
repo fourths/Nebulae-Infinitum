@@ -48,7 +48,7 @@ $(document).ready(function(){
 		</div>
 		<div id="tabs_content_container" style="width:778px;min-height:355px;">
 			<div id="general" class="tab_content" style="display: block;">
-				<div>Change password:</div>
+				<div style="text-decoration:underline;">Change password</div>
 				<form method="post">
 				<label for="curpass">Current:</label> <input type="password" name="curpass" style="margin-left:5px"/><br/>
 				<label for="newpass">New:</label> <input type="password" name="newpass" style="margin-left:21px" /><br/>
@@ -57,14 +57,20 @@ $(document).ready(function(){
 				<input type="submit" class="submitbutton" name="passchange" value="Submit" /><br/>
 				</form>
 				<br/>
-				<div>Change email:</div>
+				<div style="text-decoration:underline;">Change email</div>
 				<form method="post">
 				<label for="newemail">New:</label> <input type="email" name="newemail" style="margin-left:21px" /><br/>
 				<input type="submit" name="emailchange" value="Submit" /><br/>
+				</form><br/>
+				<div style="text-decoration:underline;">Notifications settings</div>
+				<form method="post">
+				Send a notifications when...<br/>
+				<input type="checkbox" name="notifications[0]" id="comments" value="comments"/><label for="comments">...someone comments on one of my creations</label><br/>
+				<input type="checkbox" name="notifications[1]" id="replies" value="replies"/><label for="replies">...someone replies to a comment I've made</label><br/>
+				<input type="submit" name="notificationchange" value="Submit" />
 				</form>
 				<br/>
-				<div>Change icon:</div>
-				<br/>
+				<div style="text-decoration:underline;">Change icon</div>
 				<div class="prefsicon">Current icon:<br/>
 				<?
 				if (!empty($user['icon'])) echo '<img class="prefsicon" src="data/usericons/'.$user['icon'].'"/>';
@@ -76,6 +82,8 @@ $(document).ready(function(){
 				Upload a new icon:<br/>
 				<input type="file" name="newicon" accept="image/*"><br/>
 				<input type="submit" name="iconchange" value="Submit" />
+				<div style="clear:both;"></div>
+				</form>
 				</div>
 			</div>
 			<div id="userpage" class="tab_content">
