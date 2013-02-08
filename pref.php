@@ -112,17 +112,22 @@ if (isset($_POST['adminchange'])) {
 }
 if (isset($_POST['notificationchange'])) {
 	$boxes = $_POST['notifications'];
-	for ($a=1;$a<count($boxes);$a++){
-		echo $a."<br/><br/>";
-		echo count($boxes);
-		if($boxes[$a]!="comments"&&$boxes[$a]!="replies"&&$boxes[$a]!=" "){
-			die("An error occurred. Please try again, but don't mess stuff up this time.");
-		}
+	print_r($boxes);
+	if(count($boxes)>0){
+		if(count($boxes)>1)
+			$setting="all";
 		else{
-			echo $boxes[$a].'<br/>';
+			if($boxes[0]=="comments") 
+				$setting="noreplies";
+			else if($boxes[0]=="replies") 
+				$setting="nocomments";
+			else 
+				$setting="none";
 		}
 	}
-	//die("<meta http-equiv='Refresh' content='0; URL=pref.php?id=$userid'>");
+	else $setting="none";
+	mysql_query("UPDATE users SET notifications='".$setting."' WHERE id='$userid'") or die(mysql_error());
+	die("<meta http-equiv='Refresh' content='0; URL=pref.php?id=$userid'>");
 }
 
 ?>
