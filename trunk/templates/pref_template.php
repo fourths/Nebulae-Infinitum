@@ -62,11 +62,15 @@ $(document).ready(function(){
 				<label for="newemail">New:</label> <input type="email" name="newemail" style="margin-left:21px" /><br/>
 				<input type="submit" name="emailchange" value="Submit" /><br/>
 				</form><br/>
+				<?php
+				if($user['notifications']=="all"||$user['notifications']=="noreplies") $com_selected='selected="selected"';
+				if($user['notifications']=="all"||$user['notifications']=="nocomments") $rep_selected='selected="selected"';
+				?>
 				<div style="text-decoration:underline;">Notifications settings</div>
 				<form method="post">
-				Send a notifications when...<br/>
-				<input type="checkbox" name="notifications[0]" id="comments" value="comments"/><label for="comments">...someone comments on one of my creations</label><br/>
-				<input type="checkbox" name="notifications[1]" id="replies" value="replies"/><label for="replies">...someone replies to a comment I've made</label><br/>
+				Send a notification when...<br/>
+				<input type="checkbox" name="notifications[0]" id="comments" value="comments" <?php echo $com_selected; ?> /><label for="comments">...someone comments on one of my creations</label><br/>
+				<input type="checkbox" name="notifications[1]" id="replies" value="replies" <?php echo $rep_selected; ?>/><label for="replies">...someone replies to a comment I've made</label><br/>
 				<input type="submit" name="notificationchange" value="Submit" />
 				</form>
 				<br/>
