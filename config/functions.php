@@ -60,6 +60,20 @@ function get_id_from_creation($cid){
 	return $user['id'];
 }
 
+function get_notification_setting_from_id($id){
+	//Get user info from database
+	$result = mysql_query("SELECT * FROM users WHERE id = '$id'") or die(mysql_error());
+	if (!$result) {
+		return "mysqlError";
+	}
+	$user = mysql_fetch_array($result);
+	//If user ID is not a valid user, die
+	if (!$user){
+		return "invalidUser";
+	}
+	return $user['notifications'];
+}
+
 function bbcode_parse($text,$writing=false){
 	$bbcode = new BBCode;
 	$bbcode->RemoveRule('acronym');

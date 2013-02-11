@@ -308,7 +308,6 @@ while($comment = mysql_fetch_array($comments)){
 	}
 }
 ?>
-<br/>
 </div>
 
 <div class="cright">

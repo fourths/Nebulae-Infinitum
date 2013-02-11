@@ -197,8 +197,11 @@ if (isset($_POST['newcomment'])) {
 			$commentid=mysql_insert_id();
 			//send notification about the comment
 			if($cur_user['id']!=$user['id']){
-				$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.$creation['name'].'[/url]!';
-				mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
+				$setting=get_notification_setting_from_id($creation['ownerid']);
+				if($setting!="none"&&$setting!="nocomments"){
+					$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.$creation['name'].'[/url]!';
+					mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
+				}
 			}
 			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 			exit();
@@ -214,13 +217,18 @@ if (isset($_POST['reply'])){
 				$commentid=mysql_insert_id();
 				//send notification about the comment
 				if($cur_user['id']!=$user['id']){
-					$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.addslashes($creation['name']).'[/url]!';
-					mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
+					$setting=get_notification_setting_from_id($creation['ownerid']);
+					if($setting!="none"&&$setting!="nocomments"){
+						$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.$creation['name'].'[/url]!';
+						mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
+					}
 				}
 				$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$comment['id']));
 				if($com_user['id']!=$user['id']){
-					$notificationmessage='Your comment on the creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.addslashes($creation['name']).'[/url] has been replied to by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url]!';
-					mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$com_user['id'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
+					if($com_user['notifications']!="none"&&$com_user['notifications']!="noreplies"){
+						$notificationmessage='Your comment on the creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.addslashes($creation['name']).'[/url] has been replied to by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url]!';
+						mysql_query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$com_user['id'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
+					}
 				}
 				echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 				exit();
