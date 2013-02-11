@@ -63,8 +63,8 @@ $(document).ready(function(){
 				<input type="submit" name="emailchange" value="Submit" /><br/>
 				</form><br/>
 				<?php
-				if($user['notifications']=="all"||$user['notifications']=="noreplies") $com_selected='selected="selected"';
-				if($user['notifications']=="all"||$user['notifications']=="nocomments") $rep_selected='selected="selected"';
+				if($user['notifications']=="all"||$user['notifications']=="noreplies") $com_selected='checked="checked"';
+				if($user['notifications']=="all"||$user['notifications']=="nocomments") $rep_selected='checked="checked"';
 				?>
 				<div style="text-decoration:underline;">Notifications settings</div>
 				<form method="post">

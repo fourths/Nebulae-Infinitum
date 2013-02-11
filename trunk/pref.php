@@ -112,7 +112,6 @@ if (isset($_POST['adminchange'])) {
 }
 if (isset($_POST['notificationchange'])) {
 	$boxes = $_POST['notifications'];
-	print_r($boxes);
 	if(count($boxes)>0){
 		if(count($boxes)>1)
 			$setting="all";
