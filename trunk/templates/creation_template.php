@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<?
+<?php
 if ($creation['type']=="artwork"||$creation['type']=="flash"){
 	$imgsize=getimagesize('data/creations/'.$creation['filename']);
 	if ($creation['filetype']=="svg"){
@@ -12,7 +12,7 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 ?>
 <html>
 <head>
-<title><? echo stripslashes($creation['name']) ?> | <? echo SITE_NAME ?></title>
+<title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
 <script type="text/javascript"><!--
@@ -41,7 +41,7 @@ $(document).ready(function(){
 	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
 	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
 	  },function(){
-	  <? globesToCurrentRating($lrating[0]); ?>
+	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
@@ -52,7 +52,7 @@ $(document).ready(function(){
 	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
 	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
 	  },function(){
-	<? globesToCurrentRating($lrating[0]); ?>
+	<?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
@@ -63,7 +63,7 @@ $(document).ready(function(){
 	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
 	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
 	  },function(){
-	  <? globesToCurrentRating($lrating[0]); ?>
+	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
@@ -74,7 +74,7 @@ $(document).ready(function(){
 	  $("#rating4").css("background-image","url('data/icons/prostar.png')");
 	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
 	  },function(){
-	  <? globesToCurrentRating($lrating[0]); ?>
+	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
@@ -85,7 +85,7 @@ $(document).ready(function(){
 	  $("#rating4").css("background-image","url('data/icons/prostar.png')");
 	  $("#rating5").css("background-image","url('data/icons/prostar.png')");
 	  },function(){
-	  <? globesToCurrentRating($lrating[0]); ?>
+	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 
@@ -149,7 +149,7 @@ if ("onhashchange" in window)
 		illuminate();
 	}
 	
-<?
+<?php
 if ($creation['type']=="audio"){
 	echo "//audio player
 AudioPlayer.setup(\"data/player.swf\", {  
@@ -163,91 +163,91 @@ AudioPlayer.setup(\"data/player.swf\", {
 </head>
 
 <body onload="javascript:illuminate();">
-<? require_once("header.php"); ?>
+<?php require_once("header.php"); ?>
 <div class="container" style="min-height:700px;">
 
 <div class="cleft">
-<div class="ccontainer">
-<? 
-if ($creation['type']=="artwork"){
-	if($creation['filetype']=="svg"){
-		if ($imgwidth>473){
-			$svgheight = "500px";
-		}
-	}
-	echo '<img src="data/creations/'.$creation['filename'].'" class="cimg" style="width:'.$svgheight.'"/>';?>
-	<div style="text-align:right;padding-right:5px;"><? if($creation['filetype']=="svg") echo 'Nominally '.round($imgwidth).'x'.round($imgheight); else echo $imgsize[0].'x'.$imgsize[1];?></div>
-	<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';?>
-	<div style="font-size:14px;<? if (($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
-<? 
-}
-else if ($creation['type']=="audio"){
-	echo '<div id="audioplayer">You need the Flash player to view this content.</div>
-<script type="text/javascript">AudioPlayer.embed("audioplayer", {
-	soundFile: "data/creations/'.$creation['filename'].'",
-	titles: "'.$creation['name'].'",
-	artists: "'.$user['username'].'"});</script>
-<div style="clear:both;">&nbsp;</div>';
-}
-else if ($creation['type']=="flash"){
-	echo '<div class="flashblock"><div class="flashwrapper" style="padding-bottom:'.($imgsize[1]/$imgsize[0])*100 .'%"><object style="border:1px solid;" class="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-        id="editorObj"
-        codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
-        <param name="movie" value="data/creations/'.$creation['filename'].'" />
-        <param name="quality" value="high" />
-        <param name="bgcolor" value="#ffffff" />
-        <embed id="editor" src="data/creations/'.$creation['filename'].'" quality="high" bgcolor="#ffffff"
-			scale="exactfit"
-            play="true"
-            loop="false"
-            quality="high"
-            type="application/x-shockwave-flash"
-            pluginspage="http://www.adobe.com/go/getflashplayer">
-        </embed>
-</object></div></div>';
-?>
-	<div style="text-align:right;padding-right:5px;"><?echo $imgsize[0].'x'.$imgsize[1];?></div>
-	<? if($imgsize[0]>473) echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Expand</a></div>';echo '<div style="text-align:right;padding-right:5px;float:right;"><a href="javascript:download();">Download</a></div>';
-	?>
-	<div style="font-size:14px;<? if (($swfsize[0]>473)) echo "position:relative;top:-35px;"; else echo "position:relative;top:-15px;" ?>padding-left:5px;">
-	<?php
-}
+	<div class="ccontainer">
+		<div class="creation">
+			<?php
+			switch($creation['type']){
+				case "artwork":
+					if($creation['filetype']=="svg"){
+						// What does this do?
+						if ($imgwidth>473){
+							$svgwidth = 'style="width:500px;"';
+						}
+					}
+					echo '<img src="data/creations/1.png" class="cimg" '.$svgwidth.'/>';
+			}
+			?>
+		</div>
+		<div class="creationstatsleft" style="float:left;padding:5px;">
+			<div class="infotext" style="font-size:14px;">
+				<?php
+				// Display view number
+				echo $views;
+				// If there's only one view, just say "view". Otherwise, say views.
+				if ($view ==1){
+					echo " view";
+				}
+				else{
+					echo " views"; 
+				}
+				// Display rating
+				// If the mean of all the ratings is 0, say there's no rating
+				// Since users can't rate something 0, this is only possible if there aren't any ratings as the length of the ratings array will be 0.
+				if (number_format(array_sum($ratings)/count($ratings),1)==0.0){
+					echo ", no rating";
+				}
+				// Otherwise, spit out the mean rating
+				else{
+					echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
+				}
+				// Update the rating field on creation in DB (value used in creations.php)
+				// TODO: change to an if that senses if the rating is different
+				mysql_query("UPDATE creations SET rating=".number_format(array_sum($ratings)/count($ratings),1)." WHERE id=".$creation['id']);
+				// Display current user's rating if there's a logged in user and they've rated the creation
+				if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)){
+					echo " (you voted ".number_format($lrating[0],1).")";
+				}
+				// Display favourites
+				echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites";
+				//Display whether the current user favourited this and give a link to change their choice
+				if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
+				if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
+				?>
+			</div>
+			<div class="ratingglobes">
+				<?php
+				if (!empty($_SESSION['SESS_MEMBER_ID'])){
+					// Set initial style for each globe
+					for ($fl=0;$fl<5;$fl++){
+						if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'data/icons/antistar.png\');"';
+						else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
+					}
+					echo '
+					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a>
+					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a>
+					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=3" id="rating3" '.$style[2].' class="imgrating"></a>
+					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a>
+					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
+					';
+				}
+				?>
+			</div>
+		</div>
+		<div style="clear:both"></div>
+	</div>
 
-
-echo $views; if ($views == 1) echo " view"; else echo " views"; 
-if (number_format(array_sum($ratings)/count($ratings),1)==0.0) echo ", no rating";
-else echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
-mysql_query("UPDATE creations SET rating=".number_format(array_sum($ratings)/count($ratings),1)." WHERE id=".$creation['id']);
-if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)) echo " (you voted ".number_format($lrating[0],1).")";
-echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites";
-if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
-if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
-echo '<br/>';
-for ($fl=0;$fl<5;$fl++){
-	if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'data/icons/antistar.png\');"';
-	else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
-}
-if (!empty($_SESSION['SESS_MEMBER_ID'])) echo '
-<a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=3"id="rating3" '.$style[2].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a><a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
-'; 
-
-if ($creation['type']=="audio"){
-	echo '<div style="text-align:right;padding-right:5px;"><a href="javascript:expand();">Download</a></div>';
-	echo '<div style="clear:both"></div>';
-	}
-
-if(!(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473))) echo '<div style="clear:both"></div>';
-?>
-</div>
-</div>
-
-<h2 style="position:relative;<? if(($creation['filetype']=="svg" && round($imgwidth)>473)||($imgsize[0]>473)&&!empty($_SESSION['SESS_MEMBER_ID'])) echo "left:-130px;"; else echo "left:10px;"?>">Comments</h2>
-<?
+<h2 style="padding-left:10px;">Comments</h2>
+<?php
 if (!empty($_SESSION['SESS_MEMBER_ID']))
 echo '<form method="post">
 <textarea name="commenttext" style="margin-left:10px;margin-top:-10px;min-height:60px;max-height:200px;width:450px;resize:vertical;" placeholder="Enter comment here..."></textarea>
 <input type="submit" style="margin-left:10px;" name="newcomment" value="Submit" /><br/>
 </form>';
+echo '<div class="comments">';
 while($comment = mysql_fetch_array($comments)){
 	//Test if the comment has enough flags to be auto-censored and censor it if it does
 	//If comment is marked as alright even after three flags, the comment still shows
@@ -309,12 +309,13 @@ while($comment = mysql_fetch_array($comments)){
 }
 ?>
 </div>
+</div>
 
 <div class="cright">
-	<div class="ctitle"><? echo stripslashes($creation['1']); 
+	<div class="ctitle"><?php echo stripslashes($creation['1']); 
 	if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creation['id'].'">edit</a>)</span>'; ?></div>
 	<div class="cinfo">
-	<?
+	<?php
 	if (!empty($user['icon'])) echo '<img class="cicon" src="data/usericons/'.$user['icon'].'"/>';
 	else echo '<img class="cicon" src="data/usericons/default.png"/>';
 	
@@ -361,7 +362,7 @@ while($comment = mysql_fetch_array($comments)){
 	}
 	?>
 	</div><div style="clear:both"></div></div>
-	<? if (!empty($creation['descr'])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creation['descr'])).'</div>';
+	<?php if (!empty($creation['descr'])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creation['descr'])).'</div>';
 	if (!empty($creation['advisory'])) echo '<br/><div class="ccontent"><strong>Content advisory</strong><br/>This project includes '.stripslashes($creation['advisory']).'. (<a href="flag.php?id='.$creation['id'].'">flag creation</a>)</div>'; ?>
 	
 </div>
