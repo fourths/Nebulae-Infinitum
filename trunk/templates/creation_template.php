@@ -15,7 +15,12 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 <title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
-<script type="text/javascript"><!--
+<?php 
+if ($creation['type']=="audio"){
+	echo '<script type="text/javascript" src="data/audio-player.js"></script>';
+}
+?>
+<script type="text/javascript">
 <?php
 if ($creation['type']=="flash")
 	//to add: change size to size of flash or max in screen resolution keeping ratio
@@ -111,7 +116,13 @@ function reply(id){
 		quotetext.innerHTML=comment[id].childNodes[3].innerHTML;
 		if(quotetext.querySelector(".bbcode_quote")!=null)quotetext.removeChild(quotetext.querySelector(".bbcode_quote"));
 		//set the html contained by the div to a form which uses the specified id for determining which form is submitted
-		replybox[id].innerHTML='<form method="post" style="position:relative;top:10px;left:-5px;"><input type="hidden" name="reply" /><textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:50px;width:95%;max-height:150px;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'[/quote]\r\n</textarea><br/><input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/></form>';
+		replybox[id].innerHTML='\
+<form method="post" style="position:relative;top:10px;left:-5px;">\
+	<input type="hidden" name="reply" />\
+	<textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:100px;width:95%;max-height:200px;max-width:95%;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]\r\n'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'\r\n[/quote]\r\n</textarea>\
+	<br/>\
+	<input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/>\
+</form>';
 		//add the new div as a child of the comment
 		comment[id].appendChild(replybox[id]);
 	}
@@ -159,7 +170,7 @@ AudioPlayer.setup(\"data/player.swf\", {
 });";
 }
 ?>
---></script>
+</script>
 </head>
 
 <body onload="javascript:illuminate();">
@@ -173,14 +184,25 @@ AudioPlayer.setup(\"data/player.swf\", {
 			switch($creation['type']){
 				case "artwork":
 					if($creation['filetype']=="svg"){
-						// What does this do?
+						// QUESTION: What does this do?
 						if ($imgwidth>473){
 							$svgwidth = 'style="width:500px;"';
 						}
 					}
 					echo '<img src="data/creations/1.png" class="cimg" '.$svgwidth.'/>';
+					break;
+				case "audio":
+					echo '<div id="audioplayer">You need the Flash player to view this content.</div>
+				<script type="text/javascript">
+					AudioPlayer.embed("audioplayer", {
+						soundFile: "data/creations/'.$creation['filename'].'",
+						titles: "'.$creation['name'].'",
+						artists: "'.$user['username'].'"}
+					);
+				</script>';
 			}
 			?>
+			
 		</div>
 		<div class="creationstatsleft" style="float:left;padding:5px;">
 			<div class="infotext" style="font-size:14px;">
@@ -211,36 +233,68 @@ AudioPlayer.setup(\"data/player.swf\", {
 				if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)){
 					echo " (you voted ".number_format($lrating[0],1).")";
 				}
-				// Display favourites
-				echo ", ".$favourites; if ($favourites == 1) echo " favourite"; else echo " favourites";
+				// Display favourites -- if favourite is equal to one, say the appropriate thing.
+				echo ", ".$favourites;
+				if ($favourites == 1){
+					echo " favourite"; 
+				}
+				else{
+					echo " favourites";
+				}
 				//Display whether the current user favourited this and give a link to change their choice
-				if ($favourited == true) $favtext = "unfavourite"; else $favtext = "favourite";
-				if (!empty($_SESSION['SESS_MEMBER_ID'])) echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
+				if ($favourited == true){
+					$favtext = "unfavourite";
+				}
+				else{
+					$favtext = "favourite";
+				}
+				if (!empty($_SESSION['SESS_MEMBER_ID'])){
+					echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
+				}
 				?>
+				
 			</div>
 			<div class="ratingglobes">
 				<?php
 				if (!empty($_SESSION['SESS_MEMBER_ID'])){
 					// Set initial style for each globe
+					// QUESTION: What does fl stand for?
 					for ($fl=0;$fl<5;$fl++){
 						if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'data/icons/antistar.png\');"';
 						else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
 					}
-					echo '
-					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a>
-					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a>
-					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=3" id="rating3" '.$style[2].' class="imgrating"></a>
-					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a>
-					<a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>
-					';
+					echo '<a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a>
+				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a>
+				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=3" id="rating3" '.$style[2].' class="imgrating"></a>
+				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a>
+				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>';
 				}
 				?>
+				
+			</div>
+		</div>
+		<div class="creationstatsright" style="float:right;padding:5px;">
+			<div class="downloadboxes" style="text-align:right;">
+				<?php
+				// Display different buttons based on creation tpe
+				switch($creation['type']){
+					case "artwork":
+						echo '<div><a href="javascript:expand();">Expand</a></div>';
+						break;
+					case "flash":
+						echo '<div><a href="javascript:expand();">Expand</a></div>
+				<div><a href="javascript:download();">Download</a></div>';
+						break;
+					default:
+						echo '<div><a href="javascript:expand();">Download</a></div>';
+					}
+				?>
+				
 			</div>
 		</div>
 		<div style="clear:both"></div>
 	</div>
-
-<h2 style="padding-left:10px;">Comments</h2>
+	<h2 style="padding-left:10px;">Comments</h2>
 <?php
 if (!empty($_SESSION['SESS_MEMBER_ID']))
 echo '<form method="post">
