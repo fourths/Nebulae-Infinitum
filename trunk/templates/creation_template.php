@@ -15,9 +15,18 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 <title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 <script src="data/jquery.js" type="text/javascript"></script>
+<script src="templates/creation.js" type="text/javascript"></script>
 <?php 
 if ($creation['type']=="audio"){
 	echo '<script type="text/javascript" src="data/audio-player.js"></script>';
+}
+else if ($creation['type']=="scratch"&&$creation['filetype']=="sb2"&&$cur_user['sb2player']=="js"){
+	echo '<script type="text/javascript" src="data/sb2js/script/ZipFile.complete.js"></script>
+<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
+<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="data/sb2js/script/sb2.js"></script>';
 }
 ?>
 <script type="text/javascript">
@@ -25,14 +34,13 @@ if ($creation['type']=="audio"){
 if ($creation['type']=="flash")
 	//to add: change size to size of flash or max in screen resolution keeping ratio
 	echo 'function expand(){
-	window.open(\'viewer.php?id='.$creation['id'].'&flash=play', 'Image', 'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+	window.open(\'viewer.php?id='.$creation['id'].'&flash=play\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }
 function download(){
 	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 
-else echo '
-function expand(){
+else echo 'function expand(){
 	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 ?>
@@ -94,72 +102,6 @@ $(document).ready(function(){
 	});
 });
 
-//create an array to hold the booleans which determine whether a reply box is being shown
-replies=new Array();
-comment=new Array();
-replybox=new Array();
-function reply(id){
-	//get the div element with the comment id specified
-	comment[id]=document.getElementById(id);
-	//if there's no reply box showing
-	if(!replies[id]){
-		quotedusername=comment[id].childNodes[2].childNodes[0].innerHTML;
-		if(comment[id].childNodes[2].childNodes.length==4)
-			quoteddate=comment[id].childNodes[2].childNodes[3].textContent.substr(1,10);
-		else
-			quoteddate=comment[id].childNodes[2].childNodes[2].textContent.substr(1,10);
-		//create the reply box div
-		replybox[id]=document.createElement('div');
-		//set the class of the reply box div to 'replybox' (will contain css at some point? idk)
-		replybox[id].setAttribute('class','replybox');
-		quotetext=document.createElement("div");
-		quotetext.innerHTML=comment[id].childNodes[3].innerHTML;
-		if(quotetext.querySelector(".bbcode_quote")!=null)quotetext.removeChild(quotetext.querySelector(".bbcode_quote"));
-		//set the html contained by the div to a form which uses the specified id for determining which form is submitted
-		replybox[id].innerHTML='\
-<form method="post" style="position:relative;top:10px;left:-5px;">\
-	<input type="hidden" name="reply" />\
-	<textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:100px;width:95%;max-height:200px;max-width:95%;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]\r\n'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'\r\n[/quote]\r\n</textarea>\
-	<br/>\
-	<input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/>\
-</form>';
-		//add the new div as a child of the comment
-		comment[id].appendChild(replybox[id]);
-	}
-	//if the reply box is showing
-	else{
-		//remove the reply box from the document
-		comment[id].removeChild(replybox[id]);
-	}
-	//set whether the reply box is showing to its inverse
-	replies[id]=!replies[id];
-}
-
-//from http://css-tricks.com/snippets/javascript/get-url-variables/
-function getQueryVariable(variable){
-	var query = window.location.search.substring(1);
-	var vars = query.split("&");
-	for (var i=0;i<vars.length;i++) {
-		var pair = vars[i].split("=");
-		if(pair[0] == variable){return pair[1];}
-		}
-	return(false);
-}
-var illuminated=0;
-function illuminate(){
-	if (window.location.hash.length>0){
-		if(document.getElementById(window.location.hash.substring(1))!==null){
-			if(illuminated!==0)illuminated.setAttribute('style',illuminated.getAttribute('style')+'background-color:gainsboro;');
-			illuminated=document.getElementById(window.location.hash.substring(1));
-			illuminated.setAttribute('style',illuminated.getAttribute('style')+'background-color:#DCDC77;');
-		}
-	}
-}
-if ("onhashchange" in window)
-    window.onhashchange = function () {
-		illuminate();
-	}
-	
 <?php
 if ($creation['type']=="audio"){
 	echo "//audio player
@@ -168,6 +110,24 @@ AudioPlayer.setup(\"data/player.swf\", {
 	initialvolume: 100,  
 	transparentpagebg: \"yes\"
 });";
+}
+else if ($creation['type']=="scratch"&&$creation['filetype']=="sb2"&&$cur_user['sb2player']=="js"){
+	echo '//sb2js init
+autoLoad = "data/creations/'.$creation['filename'].'";
+basedir = "data/sb2js/"';
+}
+else if ($creation['type']=="writing"){
+	echo 'function resize(amount){
+	writing=document.getElementById("resizeable");
+	if(parseInt(writing.style.fontSize)>8 && Math.abs(amount)!=amount){
+		writing=document.getElementById("resizeable");
+		writing.style.fontSize=(parseInt(writing.style.fontSize)+amount)+"px";
+	}
+	else if (parseInt(writing.style.fontSize)<28 && Math.abs(amount)==amount){
+		writing=document.getElementById("resizeable");
+		writing.style.fontSize=(parseInt(writing.style.fontSize)+amount)+"px";
+	}
+}';
 }
 ?>
 </script>
@@ -178,7 +138,7 @@ AudioPlayer.setup(\"data/player.swf\", {
 <div class="container" style="min-height:700px;">
 
 <div class="cleft">
-	<div class="ccontainer">
+	<div class="ccontainer" <?php if($creation['type']=="scratch") echo 'style="width:486px;margin:auto;margin-top:5px;"'; ?>>
 		<div class="creation">
 			<?php
 			switch($creation['type']){
@@ -190,16 +150,72 @@ AudioPlayer.setup(\"data/player.swf\", {
 						}
 					}
 					echo '<img src="data/creations/1.png" class="cimg" '.$svgwidth.'/>';
-					break;
+				break;
 				case "audio":
 					echo '<div id="audioplayer">You need the Flash player to view this content.</div>
 				<script type="text/javascript">
 					AudioPlayer.embed("audioplayer", {
 						soundFile: "data/creations/'.$creation['filename'].'",
 						titles: "'.$creation['name'].'",
-						artists: "'.$user['username'].'"}
-					);
+						artists: "'.$user['username'].'"
+					});
 				</script>';
+				break;
+				case "flash":
+					echo '<div class="flashblock" style="margin-bottom:10px;">
+				<div class="flashwrapper" style="padding-bottom:'.($imgsize[1]/$imgsize[0])*100 .'%">
+					<object style="border:1px solid;" class="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="editorObj" 
+					codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+						<param name="movie" value="data/creations/'.$creation['filename'].'" />
+						<param name="quality" value="high" />
+						<param name="bgcolor" value="#ffffff" />
+						<embed id="editor" src="data/creations/'.$creation['filename'].'"
+							quality="high" 
+							bgcolor="#ffffff"
+							scale="exactfit"
+							play="true"
+							loop="false"
+							quality="high"
+							type="application/x-shockwave-flash"
+							pluginspage="http://www.adobe.com/go/getflashplayer">
+						</embed>
+					</object>
+				</div>
+			</div>';
+				break;
+				case "scratch":
+					if($creation['filetype']=="sb2"){
+						if(!empty($_SESSION['SESS_MEMBER_ID'])&&$cur_user['sb2player']=="js"){
+							echo '
+			<canvas id="scratch" width="486" height="391" tabindex="1">
+				<div style="padding:10px;">Your browser doesn\'t support sb2.js.</div>
+			</canvas>';
+						}
+						else{
+							echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="data/PlayerOnly.swf">
+				<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
+				<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
+			</object>';
+						}
+					}
+					else{
+						echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="data/PlayerOnly.swf">
+				<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
+				<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
+			</object>';
+					}
+				break;
+				case "writing":
+					echo '<div class="wcontent" style="font-size:13px;" id="resizeable">
+					<div class="resizebuttons">
+						<a href="javascript:resize(2);" class="plus"></a>
+						<a href="javascript:resize(-2);" class="minus"></a>
+					</div>
+					<div class="wtext">
+						'.bbcode_parse(mb_convert_encoding(stripslashes(file_get_contents("data/creations/".$creation['filename'])),"HTML-ENTITIES",WRITING_ENCODING),true).'
+					</div>
+				</div>';
+				break;
 			}
 			?>
 			
