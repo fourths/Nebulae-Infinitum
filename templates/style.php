@@ -2,7 +2,10 @@
 require_once("../config/config.php");
 header("Content-type: text/css"); 
 ?>
-
+@font-face{
+	font-family:Kabel;
+	src: url('../data/fonts/kabel_bold.ttf');
+}
 body {
 	background-color:grey;
 }
@@ -16,9 +19,9 @@ body {
 }
 .headtext{
 	color:white;
-	font-weight:bold;
+	/*font-weight:bold;*/
 	font-size:45px;
-	font-family:"Courier New", "Courier",monospaced;
+	font-family:Kabel,"Courier New", "Courier",monospaced;
 	position:relative;
 	top:30px;
 	left:225px;

@@ -12,7 +12,6 @@ mysql_select_db(MYSQL_DATABASE, $connection);
 //Initialise variable
 $userid = null;
 
-
 //Get current user info from database
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);

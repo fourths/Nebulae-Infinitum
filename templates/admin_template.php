@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<? require_once("config/config.php");?>
+<?php require_once("config/config.php");?>
 <html>
 <head>
-<title>Administration | <? echo SITE_NAME ?></title>
+<title>Administration | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 </head>
 
 <body>
-<? require_once("header.php"); ?>
+<?php require_once("header.php"); ?>
 <div class="container">
 	<h1>Administration</h1>
 	<div class="adminblock">
 	<h2 style="margin:0px;">Recent flags</h2>
 	<div class="flagblock">
 	<table>
-	<?
+	<?php
 	if (isset($flags)&&(int) mysql_fetch_array($flags)!=0){
 	mysql_data_seek($flags,0);
 		while($flag=mysql_fetch_array($flags)){
@@ -25,6 +25,10 @@
 			else if ($flag['type']=="comment"){
 				$creationname=mysql_fetch_array(mysql_query("SELECT comment FROM comments WHERE id=".$flag['parentid']));
 				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag['parentid']).'#'.$flag['parentid'].'">'.strip_bbcode($creationname[0]).'</a>';
+			}
+			else if ($flag['type']=="message"){
+				$creationname=mysql_fetch_array(mysql_query("SELECT message FROM messages WHERE id=".$flag['parentid']));
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted message</span>":'<a class="td" href="messages.php?id='."GET SENDER FROM MESSAGE".'#'.$flag['parentid'].'">'.strip_bbcode($creationname[0]).'</a>';
 			}
 			echo '<tr id="'.$flag['id'].'">
 			<td class="'.$flag['type'].'" style="width:200px;">'.$creationname[0].'</td>
@@ -37,7 +41,7 @@
 	?>
 	</table>
 	</div>
-	<?if ($flagsamt>10) echo '<a href="?mode=flags" class="td">Show more &gt;</a>';?>
+	<?php if ($flagsamt>10) echo '<a href="?mode=flags" class="td">Show more &gt;</a>';?>
 	</div>
 	<div class="adminblock">
 	<h2 style="margin:0px;">User preferences</h2>

@@ -40,5 +40,6 @@ define("FLAGS_REQUIRED",3,true);
 $header="standard";
 
 require_once('functions.php');
+ini_set("display_errors", 0);
 require_once('include/nbbc.php');
 ?>
