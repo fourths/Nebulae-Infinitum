@@ -10,9 +10,15 @@ if (!$connection){die("Could not connect to database: " . mysql_error());}
 mysql_select_db(MYSQL_DATABASE, $connection);
 
 //Set flag type (creation/comment)
-if (isset($_GET['type']) && $_GET['type'] == "comment") {
-	$type = "comment";
+if (isset($_GET['type'])){
+	if ($_GET['type']=="comment"){
+		$type="comment";
+	}
+	else if ($_GET['type']=="message"){
+		$type="message";
+	}
 }
+
 else $type="creation";
 
 if (empty($_SESSION['SESS_MEMBER_ID'])){
@@ -43,6 +49,10 @@ if (!$result) {
     die(mysql_error());
 }
 $item = mysql_fetch_array($result);
+if($type=="message"&&$item['type']!="pm"){
+	include_once("errors/404.php");
+	die();
+}
 
 //If the action specified in the URL is approve, then mark the comment as approved
 if (isset($_GET["action"])&&$type=="comment"&&$_GET["action"]=="approve"&&($cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
@@ -97,14 +107,19 @@ if (isset($_POST['flag'])){
 	if (empty($_POST['flagtext'])||strlen(trim($_POST['flagtext']))==0){
 		die("Please enter a reason why you are flagging this $type.");
 	}
-	if ($type=="creation"){
-		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$item['id'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'creation')") or die(mysql_error());
-		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['id']."'>";
-	}
-	else if ($type=="comment"){
-		mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$item['created'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', 'comment')") or die(mysql_error());
-		echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$item['id']."'>";
+	mysql_query("INSERT INTO flags (parentid, userid, content, type) VALUES (".$item['id'].", ".$cur_user['id'].", '".addslashes(htmlspecialchars($_POST['flagtext']))."', '".$type."')") or die(mysql_error());
+	switch($type){
+		case "creation":
+			echo '<meta http-equiv="Refresh" content="0; URL=creation.php?id='.$item['id'].'">';
+		break;
+		case "comment":
+			echo '<meta http-equiv="Refresh" content="0; URL=creation.php?id='.$item['creationid'].'">';
+		break;
+		case "message":
+			echo '<meta http-equiv="Refresh" content="0; URL=messages.php">';
+		break;
+		default:
+			echo '<meta http-equiv="Refresh" content="0; URL=index.php">';
 	}
 }
-
 ?>
