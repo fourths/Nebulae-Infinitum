@@ -10,7 +10,7 @@ function get_id_from_username($username){
 	if (!$result) {
 		return "invalidUser";
 	}
-	$user = mysql_fetch_array($result);
+	$user = mysql_fetch_assoc($result);
 	return $user['id'];
 }
 
@@ -20,7 +20,7 @@ function get_username_from_id($id){
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_array($result);
+	$user = mysql_fetch_assoc($result);
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
@@ -34,7 +34,7 @@ function get_rank_from_id($id){
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_array($result);
+	$user = mysql_fetch_assoc($result);
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
@@ -45,18 +45,18 @@ function get_rank_from_id($id){
 function get_creation_from_comment($cid){
 	$result = mysql_query("SELECT creationid FROM comments WHERE id = '$cid'") or die(mysql_error());
 	if (!$result) {
-		return "invalidUser";
+		return "invalidComment";
 	}
-	$creation=mysql_fetch_array($result);
+	$creation=mysql_fetch_assoc($result);
 	return $creation['id'];
 }
 
 function get_id_from_creation($cid){
 	$result = mysql_query("SELECT userid FROM creations WHERE id = '$cid'") or die(mysql_error());
 	if (!$result) {
-		return "invalidUser";
+		return "invalidCreation";
 	}
-	$user=mysql_fetch_array($result);
+	$user=mysql_fetch_assoc($result);
 	return $user['id'];
 }
 
@@ -66,12 +66,21 @@ function get_notification_setting_from_id($id){
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_array($result);
+	$user = mysql_fetch_assoc($result);
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
 	}
 	return $user['notifications'];
+}
+
+function get_sender_from_message($mid){
+	$result = mysql_query("SELECT senderid FROM messages WHERE id='$mid'") or die(mysql_error());
+	if (!$result) {
+		return "invalidMessage";
+	}
+	$message=mysql_fetch_assoc($result);
+	return $message['senderid'];
 }
 
 function bbcode_parse($text,$writing=false){

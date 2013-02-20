@@ -15,20 +15,25 @@
 	<div class="flagblock">
 	<table>
 	<?php
+	$display_chars=100;
 	if (isset($flags)&&(int) mysql_fetch_array($flags)!=0){
 	mysql_data_seek($flags,0);
 		while($flag=mysql_fetch_array($flags)){
+			unset($appendix);
 			if($flag['type']=="creation"){
 				$creationname=mysql_fetch_array(mysql_query("SELECT name FROM creations WHERE id=".$flag['parentid']));
-				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted creation</span>":'<a class="td" href="creation.php?id='.$flag['parentid'].'">'.$creationname[0].'</a>';
+				if (strlen($creationname[0])>$display_chars) $appendix = "&hellip;";
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted creation</span>":'<a class="td" href="creation.php?id='.$flag['parentid'].'">'.trim(substr(strip_bbcode($creationname[0]),0,$display_chars)).$appendix.'</a>';
 			}
 			else if ($flag['type']=="comment"){
 				$creationname=mysql_fetch_array(mysql_query("SELECT comment FROM comments WHERE id=".$flag['parentid']));
-				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag['parentid']).'#'.$flag['parentid'].'">'.strip_bbcode($creationname[0]).'</a>';
+				if (strlen($creationname[0])>$display_chars) $appendix = "&hellip;";
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted comment</span>":'<a class="td" href="creation.php?id='.get_creation_from_comment($flag['parentid']).'#'.$flag['parentid'].'">'.trim(substr(strip_bbcode($creationname[0]),0,$display_chars)).$appendix.'</a>';
 			}
 			else if ($flag['type']=="message"){
 				$creationname=mysql_fetch_array(mysql_query("SELECT message FROM messages WHERE id=".$flag['parentid']));
-				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted message</span>":'<a class="td" href="messages.php?id='."GET SENDER FROM MESSAGE".'#'.$flag['parentid'].'">'.strip_bbcode($creationname[0]).'</a>';
+				if (strlen($creationname[0])>$display_chars) $appendix = "&hellip;";
+				$creationname[0]=$creationname[0]==""?"<span style='color:#E00'>Deleted message</span>":'<a class="td" href="messages.php?uid='.get_sender_from_message($flag['parentid']).'#'.$flag['parentid'].'">'.trim(substr(strip_bbcode($creationname[0]),0,$display_chars)).$appendix.'</a>';
 			}
 			echo '<tr id="'.$flag['id'].'">
 			<td class="'.$flag['type'].'" style="width:200px;">'.$creationname[0].'</td>

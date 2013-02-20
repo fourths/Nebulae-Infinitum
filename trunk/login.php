@@ -53,6 +53,7 @@ if (isset($_POST['submit'])) {
 
 //Get information from register form when submitted
 if (isset($_POST['rsubmit'])) {
+	$_POST['user']=str_replace(" ","",$_POST['user']);
 	if (empty($_POST['pass']) || empty($_POST['cpass'])){
 		die("Please enter a password.");
 	}
