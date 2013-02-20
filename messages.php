@@ -34,6 +34,10 @@ if (isset($_GET['uid'])&&(!strcspn($_GET['uid'],"0123456789"))&&$cur_user['rank'
 		die("Could not run query: ".mysql_error());
 	}
 	$cur_user = mysql_fetch_array($lresult);
+	if(!$cur_user){
+		require("errors/404.php");
+		die();
+	}
 	$visitinguser=$cur_user['username'];
 }
 
