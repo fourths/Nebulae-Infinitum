@@ -343,7 +343,7 @@ td.comment{
 	margin-top:10px;
 	margin-right:10px;
 	width:380px;
-	height:200px;
+	min-height:175px;
 	float:left;
 	background-color:darkgrey;
 	position:relative;
@@ -365,6 +365,10 @@ td.comment{
 .creationblockdesc{
 	clear:both;
 	margin:5px;
+	height:45px;
+	overflow-x:hidden;
+	overflow-y:auto;
+	resize:vertical;
 }
 .creationblockadv{
 	clear:both;
