@@ -67,16 +67,16 @@ if (isset($_POST['rsubmit'])) {
 		die("Please enter a username at least four characters long.");
 	}
 	##abcdefghijklmnopqrstuvwxyz0123456789-_
-	if (strcspn($_POST['user'],"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")>0){
+	if (strcspn($_POST['user'],"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÄËÏÖÜäëïöüÃÑÕãñõÂÊÎÔÛâêîôûÇç")>0){
 		die("Only alphanumeric characters, dashes, and underscores are allowed in usernames.");
 	}	
 	if (empty($_POST['email'])){
-		die("Please enter an email.");
+		die("Please enter an email address.");
 	}
 	if (nebulae_hash($_POST['pass']) != nebulae_hash($_POST['cpass'])){
 		die("The passwords do not match.");
 	}
-	if (mysql_num_rows(mysql_query("SELECT * FROM users WHERE username='".$_POST['user']."'"))>0) die("That username is already in use.");
+	if (mysql_num_rows(mysql_query("SELECT * FROM users WHERE username='".strtolower($_POST['user']."'")))>0) die("That username is already in use.");
 	$max = mysql_fetch_array(mysql_query("SELECT MAX(id) FROM users")) or die(mysql_error());
 	$userip = $_SERVER['REMOTE_ADDR'];
 	mysql_query("INSERT INTO users (id,username,password,email,registerip) VALUES ($max[0]+1,'".addslashes($_POST['user'])."','".nebulae_hash($_POST['pass'])."','".$_POST['email']."','".$userip."')");

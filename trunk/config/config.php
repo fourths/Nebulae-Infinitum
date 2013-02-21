@@ -19,7 +19,6 @@ define("BASE_URL","http://localhost",true);
 //Note: many hosts don't allow the realpath function, so leave it and get the true path from the error it'll give
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
 
-
 //Database server
 define("MYSQL_SERVER","localhost",true);
 //Database name
@@ -36,10 +35,14 @@ define("WRITING_ENCODING","ISO-8859-15",true);
 //Define amount of flags to hide a project
 define("FLAGS_REQUIRED",3,true);
 
-//Defines default custom header (not yet implemented)
+//UNIMPLEMENTED RESERVED VARIABLES
+//Defines default custom header
 $header="standard";
+//Define whether regular users may have a blog/news page
+$blog=false;
 
 require_once('functions.php');
+//For hiding the runtime Strict Standards errors caused with no closing tag
 ini_set("display_errors", 0);
 require_once('include/nbbc.php');
 ?>

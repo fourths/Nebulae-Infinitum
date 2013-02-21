@@ -113,13 +113,23 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 							echo '
 							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/default.png"/></a>';
 							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation['id'].'&action=favourite"></a>';
-							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
+							if (($creation['hidden']!="no")&&($cur_user['rank']=="admin"||$cur_user['rank']=="mod")){
+								switch($creation['hidden']){
+									case "byowner":
+										$creationcondition = "<strong>(hidden)</strong>";
+										break;
+									default:
+										$creationcondition = "<strong>(".$creation['hidden'].")</strong>";
+										break;
+								}
+							}
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a> '.$creationcondition.'<br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
 						}
 						else{
 							echo '
 							<div class="creationthumb" style="background-color:'.$thumbcolour.'"><a href="creation.php?id='.$creation['id'].'"><img class="creationthumbimg" src="data/thumbs/'.$creation['id'].'.png"/></a>';
 							if ((($cur_user['id']==$user['id']&&$creation['hidden']!="censored"&&$creation['hidden']!="deleted")||$cur_user['rank']=="admin"||$cur_user['rank']=="mod")) echo '<a class="deletebutton" href="creation.php?id='.$creation['id'].'&action=favourite"></a>';
-							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a><br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
+							echo '</a><a href="creation.php?id='.$creation['id'].'" class="creationthumbcaption">'.stripslashes($creation['name']).'</a> '.$creationcondition.'<br/><span class="creationthumbcaption" style="font-size:9px;display:inline;">by <a href="user.php?id='.$creation['ownerid'].'">'.get_username_from_id($creation['ownerid']).'</a></div>';
 						}
 						$favs++;
 					}

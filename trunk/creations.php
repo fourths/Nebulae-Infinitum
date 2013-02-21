@@ -144,17 +144,19 @@ function displayCreations($mysql,$cur_user,$admin){
 			}
 			echo '<div>'.$favourites.'</div></div>';
 			if(isset($creation['descr'])&&trim($creation['descr'])!=""){
-				$creationdesc=strlen(stripslashes($creation['descr']))>120?substr(str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($creation['descr']))),0,120)."&hellip;":str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($creation['descr'])));
+				//$creationdesc=strlen(stripslashes($creation['descr']))>120?substr(str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($creation['descr']))),0,120)."&hellip;":str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($creation['descr'])));
+				$creationdesc=str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($creation['descr'])));
 				echo '<div class="creationblockdesc"><strong style="display:block">Description</strong>'.$creationdesc.'</div>';
 			}
 			if(isset($creation['advisory'])&&trim($creation['advisory'])!=""){
 				$creationadv=strlen(stripslashes($creation['advisory']))>100?substr(stripslashes($creation['advisory']),0,100)."&hellip;":stripslashes($creation['advisory']);
-				echo '<div class="creationblockadv"><strong style="display:block">Content advisory</strong>This creation contains '.$creationadv.'</div>';
+				echo '<div class="creationblockadv"><strong>Content advisory:</strong> '.$creationadv.'</div>';
 			}
 			if($admin){
 				echo '<div style="position:absolute;top:0;right:0;"><a href="creations.php?mode=action&action=hide&id='.$creation['id'].'">H</a> <a href="creations.php?mode=action&action=censor&id='.$creation['id'].'">C</a> <a href="creations.php?mode=action&action=delete&id='.$creation['id'].'">D</a></div>';
 			}
-			echo '<div style="clear:both;"></div></div>';
+			//echo '<div style="clear:both;"></div>';
+			echo '</div>';
 		}
 		echo '<div style="clear:both;"></div>';
 	}

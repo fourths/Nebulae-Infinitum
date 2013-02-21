@@ -16,10 +16,12 @@
 	if($mode!="favourites")echo '<a href="?mode=favourites">most favourited</a> ';
 	if($mode!="random")echo '<a href="?mode=random">random</a>';
 	?></h3>
-	<? displayCreations($creations,$cur_user,$admin); 
-	if($previous) echo '<a style="display:block;float:left;font-size:16px;font-weight:bold;" href="creations.php?mode='.$mode.'&page='.($page-1).'">&laquo;previous</a>';
-	if($next) echo '<a style="display:block;float:right;font-size:16px;font-weight:bold;" href="creations.php?mode='.$mode.'&page='.($page+1).'">next&raquo;</a>';
-	?>
+	<div style="margin:auto;">
+		<? displayCreations($creations,$cur_user,$admin); 
+		if($previous) echo '<a style="display:block;float:left;font-size:16px;font-weight:bold;" href="creations.php?mode='.$mode.'&page='.($page-1).'">&laquo;previous</a>';
+		if($next) echo '<a style="display:block;float:right;font-size:16px;font-weight:bold;" href="creations.php?mode='.$mode.'&page='.($page+1).'">next&raquo;</a>';
+		?>
+	</div>
 	<div style="clear:both;"></div>
 </body>
 </html>
