@@ -67,7 +67,7 @@ if (isset($_POST['rsubmit'])) {
 		die("Please enter a username at least four characters long.");
 	}
 	##abcdefghijklmnopqrstuvwxyz0123456789-_
-	if (strcspn($_POST['user'],"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÄËÏÖÜäëïöüÃÑÕãñõÂÊÎÔÛâêîôûÇç")>0){
+	if (strcspn($_POST['user'],"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÄËÏÖÜäëïöüÃÑÕãñõÂÊÎÔÛâêîôûÇçÅåØø")>0){
 		die("Only alphanumeric characters, dashes, and underscores are allowed in usernames.");
 	}	
 	if (empty($_POST['email'])){
