@@ -382,62 +382,146 @@ while($comment = mysql_fetch_array($comments)){
 </div>
 
 <div class="cright">
-	<div class="ctitle"><?php echo stripslashes($creation['1']); 
-	if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creation['id'].'">edit</a>)</span>'; ?></div>
+	<div class="ctitle">
+		<?php 
+		echo stripslashes($creation['name']); 
+		if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
+			echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creation['id'].'">edit</a>)</span>'; 
+		}
+		?>
+		
+	</div>
 	<div class="cinfo">
-	<?php
-	if (!empty($user['icon'])) echo '<img class="cicon" src="data/usericons/'.$user['icon'].'"/>';
-	else echo '<img class="cicon" src="data/usericons/default.png"/>';
-	
-	echo '<div class="cusertext"><a href="user.php?id='.$user['id'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-	if ($creation['hidden'] == "byowner") echo '<div style="color:red;">Hidden</div>';
-	if ($creation['hidden'] == "censored") echo '<div style="color:red;">Censored</div>';
-	if ($creation['hidden'] == "deleted") echo '<div style="color:red;">Deleted</div>';
-	if ($creation['hidden'] == "flagged") echo '<div style="color:red;">Flagged by community</div>';
-	echo '<div>'.date("F jS, Y", strtotime($creation['created'])).'</div>';
-	switch($creation['license']){
-		case 'copyright':
-			echo '<img src="data/icons/licenses/copyright.png"/>';
-			break;
-		case 'cc-0':
-			echo '<img src="data/icons/licenses/publicdomain.png"/><img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-zero.png"/>';
-			break;
-		case 'cc-by':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/>';
-			break;
-		case 'cc-by-nd':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-nd.png"/>';
-			break;
-		case 'cc-by-sa':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-sa.png"/>';
-			break;
-		case 'cc-by-nc':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-nc.png"/>';
-			break;
-		case 'cc-by-nc-nd':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-nc.png"/><img src="data/icons/licenses/cc-nd.png"/>';
-			break;
-		case 'cc-by-nc-sa':
-			echo '<img src="data/icons/licenses/cc.png"/><img src="data/icons/licenses/cc-by.png"/><img src="data/icons/licenses/cc-nc.png"/><img src="data/icons/licenses/cc-sa.png"/>';
-			break;
-		case 'mit':
-			echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/mit.png"/></a>';
-			break;
-		case 'gpl':
-			echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/gpl.png"/></a>';
-			break;
-		case 'bsd':
-			echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/bsd.png"/></a>';
-			break;
+		<div class="creationownericon">
+			<?php
+			if (!empty($user['icon'])) echo '<img class="cicon" src="data/usericons/'.$user['icon'].'"/>';
+			else echo '<img class="cicon" src="data/usericons/default.png"/>';
+			?>
+			
+		</div>
+		<div class="cusertext">
+			<div class="cuserlink">
+				<?php
+				echo '<a href="user.php?id='.$user['id'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+				?>
+				
+			</div>
+			<?php
+			if ($creation['hidden'] != "no"){
+				echo '<div style="color:red;" class="creationstatus">';
+				switch($creation['hidden']){
+					case "byowner":
+						echo "Hidden";
+					break;
+					case "censored":
+						echo "Censored";
+					break;
+					case "deleted":
+						echo "Deleted";
+					break;
+					case "flagged":
+						echo "Flagged by community";
+					break;
+					default:
+						echo "An error occurred";
+				}
+				echo '</div>';
+			}
+			?>
+			
+			<div class="creationtime">
+				<?php
+				echo date("F jS, Y", strtotime($creation['created']));
+				?>
+				
+			</div>
+			<div class="creationlicense">
+				<?php
+				switch($creation['license']){
+					case 'copyright':
+						echo '<img src="data/icons/licenses/copyright.png"/>';
+						break;
+					case 'cc-0':
+						echo '<img src="data/icons/licenses/publicdomain.png"/>
+				<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-zero.png"/>';
+						break;
+					case 'cc-by':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>';
+						break;
+					case 'cc-by-nd':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>
+				<img src="data/icons/licenses/cc-nd.png"/>';
+						break;
+					case 'cc-by-sa':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>
+				<img src="data/icons/licenses/cc-sa.png"/>';
+						break;
+					case 'cc-by-nc':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>
+				<img src="data/icons/licenses/cc-nc.png"/>';
+						break;
+					case 'cc-by-nc-nd':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>
+				<img src="data/icons/licenses/cc-nc.png"/>
+				<img src="data/icons/licenses/cc-nd.png"/>';
+						break;
+					case 'cc-by-nc-sa':
+						echo '<img src="data/icons/licenses/cc.png"/>
+				<img src="data/icons/licenses/cc-by.png"/>
+				<img src="data/icons/licenses/cc-nc.png"/>
+				<img src="data/icons/licenses/cc-sa.png"/>';
+						break;
+					case 'mit':
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/mit.png"/></a>';
+						break;
+					case 'gpl':
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/gpl.png"/></a>';
+						break;
+					case 'bsd':
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/bsd.png"/></a>';
+						break;
+					default:
+						echo "An error occurred";
+				}
+				?>
+			
+			</div>
+		</div>
+		<div style="clear:both"></div>
+	</div>
+	<?php 
+	if (!empty($creation['descr'])){
+		echo '<div class="ccontent desc" style="margin:5px;">
+		<strong style="display:block;">Description</strong>
+		'.bbcode_parse_description(stripslashes($creation['descr'])).'
+	</div>';
+	}
+	if (!empty($creation['advisory'])){
+		echo '
+	<div class="ccontent" style="margin:5px;">
+		<strong style="display:block;">Content advisory</strong>
+		This project includes '.stripslashes($creation['advisory']).'. (<a href="flag.php?id='.$creation['id'].'">flag creation</a>)
+	</div>'; 
 	}
 	?>
-	</div><div style="clear:both"></div></div>
-	<?php if (!empty($creation['descr'])) echo '<br/><div class="ccontent desc"><strong>Description</strong><br/>'.bbcode_parse_description(stripslashes($creation['descr'])).'</div>';
-	if (!empty($creation['advisory'])) echo '<br/><div class="ccontent"><strong>Content advisory</strong><br/>This project includes '.stripslashes($creation['advisory']).'. (<a href="flag.php?id='.$creation['id'].'">flag creation</a>)</div>'; ?>
-	
+	<div class="relatedcreationsblock" style="margin:5px;">
+		<strong style="display:block;font-size:14px;">Related creations</strong>
+		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;margin-top:10px;width:280px;min-height:600px;">
+			<?php
+			getRelatedCreations($creation);
+			?>
+			
+		</div>
+	</div>
 </div>
 
-<div style="height:5px;width:800px;clear:both;"></div>
+<div style="clear:both;"></div>
 </div>
 </body>
 </html>

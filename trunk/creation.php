@@ -251,4 +251,14 @@ function globesToCurrentRating($crating_arr){
 	if ($crating>=5) echo '$("#rating5").css("background-image","url(\'data/icons/prostar.png\')");';
 	else echo '$("#rating5").css("background-image","url(\'data/icons/antistar.png\')");';
 }
+
+function getRelatedCreations($creation){
+	$user_creations_query=mysql_query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND NOT id=".$creation['id']);
+	$i=0;
+	while($user_creation=mysql_fetch_row($user_creations_query)){
+		$user_creations[$i]=$user_creation[0];
+		$i++;
+	}
+	print_r($user_creations);
+}
 ?>
