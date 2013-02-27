@@ -252,13 +252,67 @@ function globesToCurrentRating($crating_arr){
 	else echo '$("#rating5").css("background-image","url(\'data/icons/antistar.png\')");';
 }
 
-function getRelatedCreations($creation){
+// Get info for related creations
+function getRelatedCreations($creation,$amount){
+	//Initialise array
+	for($i=0;$i<$amount;$i++){
+		$related_creations[$i] = '';
+	}
+	
+	//Get IDs of all creations by this user that aren't this one
 	$user_creations_query=mysql_query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND NOT id=".$creation['id']);
+	//Put all those IDs in an array
 	$i=0;
 	while($user_creation=mysql_fetch_row($user_creations_query)){
 		$user_creations[$i]=$user_creation[0];
 		$i++;
 	}
-	print_r($user_creations);
+	
+	//Set the amount of creations to be displayed that are by the same user to 50%
+	//It's okay if we grab an extra one because it'll just get cut off in the loop
+	$user_amount = ceil(0.50*$amount);
+	//Randomly choose creations from the same user's to display, putting them in random slots
+	for ($i=0;$i<$user_amount;$i++){
+		$random_pos = rand(0,$amount);
+		if(empty($related_creations[$random_pos])){
+			$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
+		}
+		//If position is already taken, rewind and try that index again
+		else $i--;
+	}
+	
+	//Get IDs of all creations in this user's favourites
+	$user_favourites_query=mysql_query("SELECT creationid FROM favourites WHERE userid=".$creation['ownerid']." AND NOT creationid=".$creation['id']);
+	//Put all those IDs in an array
+	$i=0;
+	while($user_favourite=mysql_fetch_row($user_favourites_query)){
+		$user_favourites_temp[$i]=$user_favourite[0];
+		$i++;
+	}
+	//Construct a new array excluding creations by the creation owner and discard the old one
+	for($i=0;$i<count($user_favourites_temp);$i++){
+		$user_check_query = mysql_fetch_row(mysql_query("SELECT ownerid FROM creations WHERE id=".$i));
+		if($user_check_query=$creation['ownerid']){
+			array_push($user_favourites,$user_favourites_temp[$i]);
+		}
+		//something's broken here
+	}
+	unset($user_favourites_temp);
+	
+	//Set the amount of creations to be displayed that are from the creation owner's favourites to 25%
+	//It's okay if we grab an extra one because it'll just get cut off in the loop
+	$favourites_amount = ceil(0.25*$amount);
+	//Randomly choose creations from the same user's to display, putting them in random slots
+	for ($i=0;$i<$favourites_amount;$i++){
+		$random_pos = rand(0,$amount);
+		if(empty($related_creations[$random_pos])){
+			$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+		}
+		//If position is already taken, rewind and try that index again
+		else $i--;
+	}
+	
+	print_r($related_creations);
 }
+
 ?>
