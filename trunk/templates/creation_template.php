@@ -149,7 +149,7 @@ else if ($creation['type']=="writing"){
 							$svgwidth = 'style="width:500px;"';
 						}
 					}
-					echo '<img src="data/creations/1.png" class="cimg" '.$svgwidth.'/>';
+					echo '<img src="data/creations/'.$creation['filename'].'" class="cimg" '.$svgwidth.'/>';
 				break;
 				case "audio":
 					echo '<div id="audioplayer">You need the Flash player to view this content.</div>

@@ -254,6 +254,8 @@ function globesToCurrentRating($crating_arr){
 
 // Get info for related creations
 function getRelatedCreations($creation,$amount){
+	//Set the amount to the number below it so it can be used for arrays
+	$amount--;
 	//Initialise array
 	for($i=0;$i<$amount;$i++){
 		$related_creations[$i] = '';
@@ -275,7 +277,13 @@ function getRelatedCreations($creation,$amount){
 	for ($i=0;$i<$user_amount;$i++){
 		$random_pos = rand(0,$amount);
 		if(empty($related_creations[$random_pos])){
-			$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
+			$random_id = rand(min($user_creations),max($user_creations));
+			if (in_array($random_id, $related_creations)){
+				$i--;
+			}
+			else {
+				$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
+			}
 		}
 		//If position is already taken, rewind and try that index again
 		else $i--;
@@ -289,30 +297,66 @@ function getRelatedCreations($creation,$amount){
 		$user_favourites_temp[$i]=$user_favourite[0];
 		$i++;
 	}
+	$user_favourites = array();
 	//Construct a new array excluding creations by the creation owner and discard the old one
 	for($i=0;$i<count($user_favourites_temp);$i++){
 		$user_check_query = mysql_fetch_row(mysql_query("SELECT ownerid FROM creations WHERE id=".$i));
 		if($user_check_query=$creation['ownerid']){
 			array_push($user_favourites,$user_favourites_temp[$i]);
 		}
-		//something's broken here
 	}
 	unset($user_favourites_temp);
 	
 	//Set the amount of creations to be displayed that are from the creation owner's favourites to 25%
 	//It's okay if we grab an extra one because it'll just get cut off in the loop
 	$favourites_amount = ceil(0.25*$amount);
-	//Randomly choose creations from the same user's to display, putting them in random slots
+	
+	//Randomly choose creations from the user's favourites's to display, putting them in random slots
 	for ($i=0;$i<$favourites_amount;$i++){
 		$random_pos = rand(0,$amount);
 		if(empty($related_creations[$random_pos])){
-			$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+			$random_id = rand(min($user_favourites),max($user_favourites));
+			if (in_array($random_id, $related_creations)){
+				$i--;
+			}
+			else {
+				$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+			}
 		}
 		//If position is already taken, rewind and try that index again
 		else $i--;
 	}
 	
-	print_r($related_creations);
+	//For now, find a random creation for the remaining 25%
+	//Once the search is made, find items with similar titles
+	
+	//Get IDs of all creations
+	$similar_query=mysql_query("SELECT id FROM creations WHERE NOT id=".$creation['id']." AND NOT ownerid=".$creation['ownerid']);
+	//Put all those IDs in an array
+	$i=0;
+	while($similar_iterator=mysql_fetch_row($similar_query)){
+		$similar[$i]=$similar_iterator[0];
+		$i++;
+	}
+	$similar_amount = ceil(0.25*$amount);
+	//Randomly choose creations from the same user's to display, putting them in random slots
+	for ($i=0;$i<$similar_amount;$i++){
+		$random_pos = rand(0,$amount);
+		if(empty($related_creations[$random_pos])){
+			$random_id = rand(min($similar),max($similar));
+			if (in_array($random_id, $related_creations)){
+				$i--;
+			}
+			else {
+				$related_creations[$random_pos] = rand(min($similar),max($similar));
+			}
+		}
+		//If position is already taken, rewind and try that index again
+		else $i--;
+	}
+	//Return IDs for now
+	//TODO: Return all creation data in 2D array
+	return $related_creations;
 }
 
 ?>
