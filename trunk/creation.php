@@ -356,6 +356,10 @@ function getRelatedCreations($creation,$amount){
 	}
 	//Return IDs for now
 	//TODO: Return all creation data in 2D array
+	for($i=0;$i<$amount;$i++){
+		$related_creation_array = mysql_fetch_row(mysql_query("SELECT * FROM creations WHERE id=".$related_creations[$i]));
+		$related_creations[$i] = $related_creation_array;
+	}
 	return $related_creations;
 }
 
