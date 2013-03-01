@@ -514,7 +514,7 @@ while($comment = mysql_fetch_array($comments)){
 		<strong style="display:block;font-size:14px;">Related creations</strong>
 		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;margin-top:10px;width:280px;min-height:600px;">
 			<?php
-			getRelatedCreations($creation,4);
+			print_r(getRelatedCreations($creation,4));
 			?>
 			
 		</div>
