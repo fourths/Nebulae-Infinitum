@@ -512,9 +512,22 @@ while($comment = mysql_fetch_array($comments)){
 	?>
 	<div class="relatedcreationsblock" style="margin:5px;">
 		<strong style="display:block;font-size:14px;">Related creations</strong>
-		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;margin-top:10px;width:280px;min-height:600px;">
+		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;padding:1px;margin-top:10px;width:280px;">
 			<?php
-			print_r(getRelatedCreations($creation,4));
+			$related_amount = 4;
+			$related_creations = getRelatedCreations($creation,$related_amount);
+			
+			//TO-DO: TEST FOR NO THUMB/USER ICON
+			//also center it
+			//there's also some weird bug with the last item
+			
+			foreach($related_creations as $related_creation){
+				echo '<div class="relatedcreation" style="height:200px;width:260px;margin:10px;background-color:grey;">
+				<div class="relatedimgs" style="margin:auto;">
+					<img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$related_creation['id'].'.png" /><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$related_creation['ownerid'].'.png" />
+				</div>
+			</div>';
+			}
 			?>
 			
 		</div>

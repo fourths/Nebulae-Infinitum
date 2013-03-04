@@ -262,7 +262,7 @@ function getRelatedCreations($creation,$amount){
 	}
 	
 	//Get IDs of all creations by this user that aren't this one
-	$user_creations_query=mysql_query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND NOT id=".$creation['id']);
+	$user_creations_query=mysql_query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND hidden='no' AND NOT id=".$creation['id']);
 	//Put all those IDs in an array
 	$i=0;
 	while($user_creation=mysql_fetch_row($user_creations_query)){
@@ -331,7 +331,7 @@ function getRelatedCreations($creation,$amount){
 	//Once the search is made, find items with similar titles
 	
 	//Get IDs of all creations
-	$similar_query=mysql_query("SELECT id FROM creations WHERE NOT id=".$creation['id']." AND NOT ownerid=".$creation['ownerid']);
+	$similar_query=mysql_query("SELECT id FROM creations WHERE NOT id=".$creation['id']." AND hidden='no' AND NOT ownerid=".$creation['ownerid']);
 	//Put all those IDs in an array
 	$i=0;
 	while($similar_iterator=mysql_fetch_row($similar_query)){
@@ -355,11 +355,10 @@ function getRelatedCreations($creation,$amount){
 		else $i--;
 	}
 	//Return IDs for now
+	//TODO: Return all creation data in 2D array
 	for($i=0;$i<$amount;$i++){
-    // Get the data about the creation and insert it as an array where the id formerly was
 		$related_creations[$i] =  mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$related_creations[$i]));
 	}
 	return $related_creations;
 }
-
 ?>
