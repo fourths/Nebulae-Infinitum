@@ -43,6 +43,7 @@ $blog=false;
 
 require_once('functions.php');
 //For hiding the runtime Strict Standards errors caused with no closing tag
-ini_set("display_errors", 0);
+//commented while debugging
+//ini_set("display_errors", 0);
 require_once('include/nbbc.php');
 ?>

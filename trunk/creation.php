@@ -260,71 +260,77 @@ function getRelatedCreations($creation,$amount){
 	for($i=0;$i<$amount;$i++){
 		$related_creations[$i] = '';
 	}
+	$user_amount = ceil(0.50*$amount);	
+	$favourites_amount = ceil(0.25*$amount);
+	$similar_amount = ceil(0.25*$amount);
 	
 	//Get IDs of all creations by this user that aren't this one
 	$user_creations_query=mysql_query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND hidden='no' AND NOT id=".$creation['id']);
-	//Put all those IDs in an array
-	$i=0;
-	while($user_creation=mysql_fetch_row($user_creations_query)){
-		$user_creations[$i]=$user_creation[0];
-		$i++;
-	}
-	
-	//Set the amount of creations to be displayed that are by the same user to 50%
-	//It's okay if we grab an extra one because it'll just get cut off in the loop
-	$user_amount = ceil(0.50*$amount);
-	//Randomly choose creations from the same user's to display, putting them in random slots
-	for ($i=0;$i<$user_amount;$i++){
-		$random_pos = rand(0,$amount);
-		if(empty($related_creations[$random_pos])){
-			$random_id = rand(min($user_creations),max($user_creations));
-			if (in_array($random_id, $related_creations)){
-				$i--;
-			}
-			else {
-				$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
-			}
+	if (mysql_num_rows($user_creations_query)>=$user_amount){
+		//Put all those IDs in an array
+		$i=0;
+		while($user_creation=mysql_fetch_row($user_creations_query)){
+			$user_creations[$i]=$user_creation[0];
+			$i++;
 		}
-		//If position is already taken, rewind and try that index again
-		else $i--;
+
+		//Randomly choose creations from the same user's to display, putting them in random slots
+		for ($i=0;$i<$user_amount;$i++){
+			$random_pos = rand(0,$amount);
+			if(empty($related_creations[$random_pos])){
+				$random_id = rand(min($user_creations),max($user_creations));
+				if (in_array($random_id, $related_creations)){
+					$i--;
+				}
+				else {
+					$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
+				}
+			}
+			//If position is already taken, rewind and try that index again
+			else $i--;
+		}
+	}	
+	else {
+		$favourites_amount+=$user_amount;
 	}
 	
 	//Get IDs of all creations in this user's favourites
 	$user_favourites_query=mysql_query("SELECT creationid FROM favourites WHERE userid=".$creation['ownerid']." AND NOT creationid=".$creation['id']);
-	//Put all those IDs in an array
-	$i=0;
-	while($user_favourite=mysql_fetch_row($user_favourites_query)){
-		$user_favourites_temp[$i]=$user_favourite[0];
-		$i++;
-	}
-	$user_favourites = array();
-	//Construct a new array excluding creations by the creation owner and discard the old one
-	for($i=0;$i<count($user_favourites_temp);$i++){
-		$user_check_query = mysql_fetch_row(mysql_query("SELECT ownerid FROM creations WHERE id=".$i));
-		if($user_check_query=$creation['ownerid']){
-			array_push($user_favourites,$user_favourites_temp[$i]);
+	if (mysql_num_rows($user_favourites_query)>=$favourites_amount){
+		//Put all those IDs in an array
+		$i=0;
+		while($user_favourite=mysql_fetch_row($user_favourites_query)){
+			$user_favourites_temp[$i]=$user_favourite[0];
+			$i++;
 		}
-	}
-	unset($user_favourites_temp);
-	
-	//Set the amount of creations to be displayed that are from the creation owner's favourites to 25%
-	//It's okay if we grab an extra one because it'll just get cut off in the loop
-	$favourites_amount = ceil(0.25*$amount);
-	
-	//Randomly choose creations from the user's favourites's to display, putting them in random slots
-	for ($i=0;$i<$favourites_amount;$i++){
-		$random_pos = rand(0,$amount);
-		if(empty($related_creations[$random_pos])){
-			$random_id = rand(min($user_favourites),max($user_favourites));
-			if (in_array($random_id, $related_creations)){
-				$i--;
-			}
-			else {
-				$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+		$user_favourites = array();
+		//Construct a new array excluding creations by the creation owner and discard the old one
+		for($i=0;$i<count($user_favourites_temp);$i++){
+			$user_check_query = mysql_fetch_row(mysql_query("SELECT ownerid FROM creations WHERE id=".$i));
+			if($user_check_query=$creation['ownerid']){
+				array_push($user_favourites,$user_favourites_temp[$i]);
 			}
 		}
-		//If position is already taken, rewind and try that index again
-		else $i--;
+		unset($user_favourites_temp);
+
+		//Randomly choose creations from the user's favourites's to display, putting them in random slots
+		for ($i=0;$i<$favourites_amount;$i++){
+			$random_pos = rand(0,$amount);
+			if(empty($related_creations[$random_pos])){
+				$random_id = rand(min($user_favourites),max($user_favourites));
+				if (in_array($random_id, $related_creations)){
+					$i--;
+				}
+				else {
+					$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+				}
+			}
+			//If position is already taken, rewind and try that index again
+			else $i--;
+		}
+	}
+	else {
+		$similar_amount+=$favourites_amount;
 	}
 	
 	//For now, find a random creation for the remaining 25%
@@ -338,7 +344,6 @@ function getRelatedCreations($creation,$amount){
 		$similar[$i]=$similar_iterator[0];
 		$i++;
 	}
-	$similar_amount = ceil(0.25*$amount);
 	//Randomly choose creations from the same user's to display, putting them in random slots
 	for ($i=0;$i<$similar_amount;$i++){
 		$random_pos = rand(0,$amount);
@@ -356,7 +361,7 @@ function getRelatedCreations($creation,$amount){
 	}
 	//Return IDs for now
 	//TODO: Return all creation data in 2D array
-	for($i=0;$i<$amount;$i++){
+	for($i=0;$i<=$amount;$i++){
 		$related_creations[$i] =  mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$related_creations[$i]));
 	}
 	return $related_creations;
