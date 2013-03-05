@@ -510,21 +510,36 @@ while($comment = mysql_fetch_array($comments)){
 	</div>'; 
 	}
 	?>
-	<div class="relatedcreationsblock" style="margin:5px;">
-		<strong style="display:block;font-size:14px;">Related creations</strong>
+	<div class="relatedcreationsblock" style="margin-top:20px;">
+		<strong style="display:block;font-size:14px;margin-left:10px;margin-bottom:-5px;">Other creations that may interest you&hellip;</strong>
 		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;padding:1px;margin-top:10px;width:280px;">
 			<?php
 			$related_amount = 4;
 			$related_creations = getRelatedCreations($creation,$related_amount);
-			
-			//TO-DO: TEST FOR NO THUMB/USER ICON
-			//also center it
-			//there's also some weird bug with the last item
-			
 			foreach($related_creations as $related_creation){
-				echo '<div class="relatedcreation" style="height:200px;width:260px;margin:10px;background-color:grey;">
-				<div class="relatedimgs" style="margin:auto;">
-					<img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$related_creation['id'].'.png" /><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$related_creation['ownerid'].'.png" />
+				if(file_exists("data/thumbs/".$related_creation['id'].".png")){
+					$image_thumb = $related_creation['id'];
+				}
+				else{
+					$image_thumb = "default";
+				}
+				if(file_exists("data/usericons/".$related_creation['ownerid'].".png")){
+					$user_thumb = $related_creation['ownerid'];
+				}
+				else{
+					$user_thumb = "default";
+				}
+				echo '<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;background-color:grey;">
+				<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
+					<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$user_thumb.'.png" /></a>
+				</div>
+				<div class="relatedtext" style="margin:5px;">
+					<div class="relatedleft" style="float:left;">
+						<strong style="font-size:18px;"><a href="creation.php?id='.$related_creation['id'].'">'.$related_creation['name'].'</a></strong>
+						<div class="relatedbyline" style="">
+							by <a href="user.php?id='.$related_creation['ownerid'].'">'.get_username_from_id($related_creation['ownerid']).'</a>
+						</div>
+					</div>
 				</div>
 			</div>';
 			}
