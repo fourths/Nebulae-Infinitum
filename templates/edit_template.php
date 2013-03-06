@@ -11,7 +11,9 @@
 <div class="container">
 	<h2>Edit creation</h2>
 	<form method="post" enctype="multipart/form-data">
-	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creation['name'])?>">
+	<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?=stripslashes($creation['name'])?>"/><br/>
+	<input type="file" name="creationfile" style="margin-left:0px;" accept=".png,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.sb2,.mp3,.swf,.txt"/><br/>
+	(<a href="info/filetypes.php">What filetypes are okay?</a>)<br/>
 	<div>
 	<?php
 	$selected='selected="selected"';
