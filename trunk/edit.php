@@ -15,6 +15,8 @@ if (empty($_SESSION['SESS_MEMBER_ID'])){
 	exit();
 }
 
+$mode = "edit";
+
 //Get current user info from database
 if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
@@ -26,7 +28,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 
 //Get creation ID from URL
 //If creation ID not found or is NaN, die
-if (isset($_GET["id"])) $creationid = htmlspecialchars($_GET["id"]);
+if (isset($_GET['id'])) $creationid = htmlspecialchars($_GET["id"]);
 if (!$creationid || strcspn($creationid,"0123456789")>0){
 	include_once("errors/404.php");
 	exit();
@@ -72,7 +74,17 @@ else if ($cur_user['banstatus'] == "deleted") {
 	exit();
 }
 
-include_once("templates/edit_template.php");
+//If mode is versions, do that thing!!
+if (isset($_GET['mode'])||$_GET['mode']=="version"){
+	$mode = "version";
+}	
+
+if($mode == "version"){
+	include_once("templates/version_template.php");
+}
+else {
+	include_once("templates/edit_template.php");
+}
 
 //Update database values upon form submission
 if (isset($_POST['update'])) {

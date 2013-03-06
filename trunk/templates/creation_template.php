@@ -529,7 +529,13 @@ while($comment = mysql_fetch_array($comments)){
 				else{
 					$user_thumb = "default";
 				}
-				echo '<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;background-color:grey;">
+				if(strlen(stripslashes($related_creation['descr']))>500){
+					$creation_description = substr(str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($related_creation['descr']))),0,500);
+				}
+				else{
+					$creation_description = str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($related_creation['descr'])));
+				}
+				echo '<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
 				<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
 					<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$user_thumb.'.png" /></a>
 				</div>
@@ -538,6 +544,9 @@ while($comment = mysql_fetch_array($comments)){
 						<strong style="font-size:18px;"><a href="creation.php?id='.$related_creation['id'].'">'.$related_creation['name'].'</a></strong>
 						<div class="relatedbyline" style="">
 							by <a href="user.php?id='.$related_creation['ownerid'].'">'.get_username_from_id($related_creation['ownerid']).'</a>
+						</div>
+						<div class="relateddesc" style="width:230px;height:45px;overflow:hidden;">
+							'.$creation_description.'
 						</div>
 					</div>
 				</div>
