@@ -535,7 +535,8 @@ while($comment = mysql_fetch_array($comments)){
 				else{
 					$creation_description = str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($related_creation['descr'])));
 				}
-				echo '<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
+				echo '
+			<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
 				<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
 					<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$user_thumb.'.png" /></a>
 				</div>
