@@ -52,35 +52,47 @@ if (isset($_POST['submit'])) {
 	}
 	if ($ext == "gif" || $ext == "png" || $ext == "apng" || $ext == "tif" || $ext == "tiff" || $ext == "jpg" || $ext == "jpeg" || $ext == "jpe" || $ext == "bmp" || 
 		$ext == "svg"){
-		if ($ext == "jpg" || $ext == "jpeg" || $ext == "jpe"){
-			if ($_FILES['creationfile']['type'] != "image/jpeg" && $_FILES['creationfile']['type'] != "image/pjpeg" /*for the silly IE users*/ ) die("Your JPEG file appears to be corrupted.");
-			$jpeg = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($jpeg,2) != "ÿØ") die("Your JPEG file appears to be corrupted.");
-		}
-		else if ($ext == "png" || $ext == "apng"){
-			if ($_FILES['creationfile']['type'] != "image/png" && $_FILES['creationfile']['type'] != "image/x-png" /*for the silly IE users*/ ) die("Your PNG file appears to be corrupted.");
-			$png = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($png,4) != "‰PNG") die("Your PNG file appears to be corrupted.");
-		}
-		else if ($ext == "tif" || $ext == "tiff"){
-			if ($_FILES['creationfile']['type'] != "image/tiff") die("Your TIFF file appears to be corrupted.");
-			$tiff = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($tiff,3) != "II*" /* Intel-type */ && fread($tiff,3) != "MM*" /* Macintosh-type */) die("Your TIFF file appears to be corrupted.");
-		}
-		else if ($ext == "bmp" || $ext == "dib"){
-			if ($_FILES['creationfile']['type'] != "image/bmp") die("Your BMP file appears to be corrupted.");
-			$bmp = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($bmp,2) != "BM") die("Your BMP file appears to be corrupted.");
-		}
-		else if ($ext == "gif"){
-			if ($_FILES['creationfile']['type'] != "image/gif") die("Your GIF file appears to be corrupted.");
-			$gif = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($gif,3) != "GIF") die("Your GIF file appears to be corrupted.");
-		}
-		else if ($ext == "svg"){
-			if ($_FILES['creationfile']['type'] != "image/svg+xml") die("Your SVG file appears to be corrupted.");
-			$svg = fopen($_FILES['creationfile']['tmp_name'],"r");
-			if (fread($svg,11) != "<svg xmlns=") die("Your SVG file appears to be corrupted.");
+		switch($ext){
+			case "jpg":
+			case "jpeg":
+			case "jpe":
+				if ($_FILES['creationfile']['type'] != "image/jpeg" && $_FILES['creationfile']['type'] != "image/pjpeg" /*for the silly IE users*/ ) die("Your JPEG file appears to be corrupted.");
+				$jpeg = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($jpeg,2) != "ÿØ") die("Your JPEG file appears to be corrupted.");
+			break;
+
+			case "png":
+			case "apng":
+				if ($_FILES['creationfile']['type'] != "image/png" && $_FILES['creationfile']['type'] != "image/x-png" /*for the silly IE users*/ ) die("Your PNG file appears to be corrupted.");
+				$png = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($png,4) != "‰PNG") die("Your PNG file appears to be corrupted.");
+			break;
+			
+			case "tif":
+			case "tiff":
+				if ($_FILES['creationfile']['type'] != "image/tiff") die("Your TIFF file appears to be corrupted.");
+				$tiff = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($tiff,3) != "II*" /* Intel-type */ && fread($tiff,3) != "MM*" /* Macintosh-type */) die("Your TIFF file appears to be corrupted.");
+			break;
+			
+			case "bmp":
+			case "dib":
+				if ($_FILES['creationfile']['type'] != "image/bmp") die("Your BMP file appears to be corrupted.");
+				$bmp = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($bmp,2) != "BM") die("Your BMP file appears to be corrupted.");
+			break;
+			
+			case "gif":
+				if ($_FILES['creationfile']['type'] != "image/gif") die("Your GIF file appears to be corrupted.");
+				$gif = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($gif,3) != "GIF") die("Your GIF file appears to be corrupted.");
+			break;
+			
+			case "svg":
+				if ($_FILES['creationfile']['type'] != "image/svg+xml") die("Your SVG file appears to be corrupted.");
+				$svg = fopen($_FILES['creationfile']['tmp_name'],"r");
+				if (fread($svg,11) != "<svg xmlns=") die("Your SVG file appears to be corrupted.");
+			break;
 		}
 		mysql_query("INSERT INTO creations (name,type,ownerid,created,filetype) VALUES ('".addslashes($_POST['title'])."','artwork',".$_SESSION['SESS_MEMBER_ID'].",'$timestamp[0]','$ext')") or die(mysql_error());
 		$art=true;

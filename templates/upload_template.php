@@ -12,7 +12,7 @@
 	<h2>Upload creation</h2>
 	<form method="post" enctype="multipart/form-data">
 	<input type="text" name="title" placeholder="Title"/><br/>
-	<input type="file" name="creationfile" accept=".png,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.sb2,.mp3,.swf,.txt"/><? // by extension
+	<input type="file" name="creationfile" accept=".png,.apng,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.sb2,.mp3,.swf,.txt"/><? // by extension
 	//incomplete mime type list
 /*application/x-shockwave-flash,application/x-scratch-project,application/octet-stream,application/zip,application/x-zip,application/x-zip-compressed,audio/mpeg,audio/x-mpeg,audio/mpeg3,audio/x-mpeg-3,video/mpeg,video/x-mpeg,image/bmp,image/png,video/png,image/x-png,image/tiff,image/x-tiff,image/x-jpeg,image/pjpeg,image/gif,image/jpeg,image/x-gif,image/svg+xml,text/plain */
 	?>
