@@ -74,6 +74,20 @@ else if ($cur_user['banstatus'] == "deleted") {
 	exit();
 }
 
+//Get current version number
+$cur_version_arr = mysql_fetch_row(mysql_query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id']));
+$cur_version = $cur_version_arr[0];
+unset($cur_version_arr);
+if (empty($cur_version)){
+	$cur_version = 1;
+}
+$version_name_arr = mysql_fetch_row(mysql_query("SELECT name FROM versions WHERE creationid=".$creation['id']." AND number=".$cur_version));
+$version_name = $version_name_arr[0];
+unset($version_name_arr);
+if (empty($cur_version)){
+	$version_name = "1.0";
+}
+
 //If mode is versions, do that thing!!
 if (isset($_GET['mode'])||$_GET['mode']=="version"){
 	$mode = "version";
@@ -101,8 +115,8 @@ if (isset($_POST['update'])) {
 	}
 	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") mysql_query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$creationid'") or die(mysql_error());
 	else mysql_query("UPDATE creations SET license='copyright' WHERE id='$creationid'") or die(mysql_error());
-	
 	mysql_query("UPDATE creations SET name='".addslashes(htmlspecialchars($_POST['title']))."' WHERE id='$creationid'") or die(mysql_error());
+	mysql_query("UPDATE versions SET name='".addslashes(htmlspecialchars($_POST['version']))."' WHERE creationid='$creationid' AND number=".$cur_version) or die(mysql_error());
 	mysql_query("UPDATE creations SET descr='".addslashes(htmlspecialchars($_POST['description']))."' WHERE id='$creationid'") or die(mysql_error());
 	mysql_query("UPDATE creations SET advisory='".addslashes(htmlspecialchars($_POST['advisory']))."' WHERE id='$creationid'") or die(mysql_error());
 	if (addslashes($_POST['hidden']) != "no" && addslashes(htmlspecialchars($_POST['hidden'])) != "byowner" && addslashes($_POST['hidden']) != "censored" && addslashes($_POST['hidden']) != "deleted") $hidden = "no";
@@ -213,18 +227,18 @@ if (isset($_POST['upload'])) {
 		mysql_query("UPDATE creations SET type='writing',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
 	}
 	else die("Unsupported file type.");
-	
-	$cur_version_arr = mysql_fetch_row(mysql_query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id']);
-	$cur_version = $cur_version_arr[0];
-	unset($cur_version_arr);
+	$new_version = $cur_version+1;
 	//if user said to save file, back it up
 	if($backup==true){
-		copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype'];
-		//TO-DO: move uploaded file
-		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".$version_number."',".$cur_version+1 .",1)");
+		copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
+		unlink("data/creations/".$creation['filename']);
+		move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$creation['id'].".".$ext);
+		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
 	}
 	else{
-		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".$version_number."',".$cur_version+1 .",0)");
+		unlink("data/creations/".$creation['filename']);
+		move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$creation['id'].".".$ext);
+		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$cur_version.",0)")  or die(mysql_error());
 	}
 	
 	
