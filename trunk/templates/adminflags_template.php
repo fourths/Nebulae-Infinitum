@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<? require_once("config/config.php");?>
+<?php
+require_once("config/config.php");
+?>
 <html>
 <head>
-<title>Flags / Administration | <? echo SITE_NAME ?></title>
+<title>Flags / Administration | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 </head>
 <body>
-<? require_once("header.php"); ?>
+<?php
+require_once("header.php"); 
+?>
 <div class="container">
 	<h1>Recent flags</h1>
 	<div class="adminblock">
 	<div class="flagblock">
 	<table>
-	<?
+	<?php
 	if (isset($flags)&&(int) mysql_fetch_array($flags)!=0){
-	mysql_data_seek($flags,0);
+		mysql_data_seek($flags,0);
 		while($flag=mysql_fetch_array($flags)){
 			if($flag['type']=="creation"){
 				$creationname=mysql_fetch_array(mysql_query("SELECT name FROM creations WHERE id=".$flag['parentid']));
@@ -33,6 +37,7 @@
 		}
 	}
 	?>
+	
 	</table>
 	</div>
 	<a href="admin.php" class="td">&lt; Back</a>
