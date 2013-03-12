@@ -103,7 +103,7 @@ if($mode == "version"){
 				
 			copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
 			unlink("data/creations/".$creation['filename']);*/
-			}
+			//}
 		}
 		else if($action=="delete"){
 		
