@@ -155,7 +155,7 @@ if (isset($_POST['submit'])) {
 		imagecopyresampled($rzthumbimg, $thumbimg, 0, 0, 0, 0, 133, 100, imagesx($thumbimg), imagesy($thumbimg));
 		imagepng($rzthumbimg,"data/thumbs/".$cid[0].".png",9);
 	}
-	
+	mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$cid[0].",'1.0',1,1)") or die(mysql_error());
 	mysql_query("UPDATE creations SET filename='".$cid[0].".".$ext."' WHERE id=$cid[0]") or die(mysql_error());
 	if (!empty($_POST['description'])) mysql_query("UPDATE creations SET descr='".addslashes($_POST['description'])."' WHERE id=$cid[0]") or die(mysql_error());
 	if (!empty($_POST['advisory'])) mysql_query("UPDATE creations SET advisory='".addslashes($_POST['advisory'])."' WHERE id=$cid[0]") or die(mysql_error());

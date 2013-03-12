@@ -46,8 +46,22 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 	<head>
 		<title>
 			Edit creation | <?php echo SITE_NAME; ?>
+			
 		</title>
 		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+		<script type="text/javascript">
+			document.onkeypress = processKey;
+
+			function processKey(e){
+				if (null == e){
+					e = window.event;
+				}
+				if (e.keyCode == 13){
+					document.getElementById("update").click();
+					return false;
+				}
+			}
+		</script>
 	</head>
 	
 	<body>
@@ -55,7 +69,13 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 		<div class="container">
 			<div class="editheader">
 				<h2 style="display:inline;">Edit creation</h2> 
-				<span>(<a href="edit.php?id=<?php echo $creation['id'];?>&mode=version">see versions</a>)</span>
+				<?php 
+				if ($cur_version>1){
+				?>
+					<span>(<a href="edit.php?id=<?php echo $creation['id'];?>&mode=version">see versions</a>)</span>
+				<?php
+				}
+				?>
 			</div>
 			<form method="post" enctype="multipart/form-data">
 				<div>
@@ -64,7 +84,7 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 				</div>
 				<input type="file" name="creationfile" style="margin-left:0px;display:inline;" accept=".png,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.sb2,.mp3,.swf,.txt"/>
 				<input type="submit" name="upload" value="Upload" style="margin-left:0px;display:inline;"/>
-				<div>The uploaded file will be version <input type="text" name="version" style="margin-left:0px;width:20px;" value="<?php echo stripslashes(1+$version_name.".0")?>"/></div>
+				<div>The uploaded file will be version <input type="text" name="newversion" style="margin-left:0px;width:20px;" value="<?php echo stripslashes(1+$version_name.".0")?>"/></div>
 				<div><input type="checkbox" name="copy" id="copy" value="save" /><label for="copy">Save a copy of the current version</label></div>
 				<div>(<a href="info/filetypes.php">What filetypes are okay?</a>)</div>
 				
@@ -101,7 +121,7 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 					
 				</select>
 				
-				<input type="submit" name="update" value="Update" style="margin-left:0px;"/>
+				<input type="submit" id="update" name="update" value="Update" style="margin-left:0px;"/>
 				<?php
 				if ($creation['hidden'] == "deleted"){
 					echo '&nbsp;

@@ -54,7 +54,7 @@ $(document).ready(function(){
 		if (!empty($cur_user)&&$cur_user['id']!=$user['id']){
 			echo '
 			<form method="post" style="position:relative;top:10px;left:-5px;">
-			<textarea name="pmbody" placeholder="Message" style="height:100px;width:180px;max-height:200px;margin-left:2px;"></textarea>
+			<textarea name="pmbody" placeholder="Message" style="height:100px;width:180px;max-height:200px;max-width:180px;margin-left:2px;resize:vertical;"></textarea>
 			<br/>
 			<input type="submit" name="pmsubmit" value="Submit"/>
 			</form>
