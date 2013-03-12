@@ -89,18 +89,46 @@ if (empty($cur_version)){
 }
 
 //If mode is versions, do that thing!!
-if (isset($_GET['mode'])||$_GET['mode']=="version"){
+if (isset($_GET['mode'])&&$_GET['mode']=="version"){
 	$mode = "version";
 }	
 
 if($mode == "version"){
-	$version_query = mysql_query("SELECT * FROM versions WHERE creationid=".$creation['id']);
+	if (isset($_GET['action'])&&($_GET['action']=="delete"||$_GET['action']=="revert")){
+		$action = $_GET['action'];
+		$id = (int) $_GET['id'];
+		
+		if($action=="revert"){
+			/*mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
+				
+			copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
+			unlink("data/creations/".$creation['filename']);*/
+			}
+		}
+		else if($action=="delete"){
+		
+		}
+	}
+	
+	$version_query = mysql_query("SELECT * FROM versions WHERE creationid=".$creation['id']." ORDER BY number DESC") or die(mysql_error());
 	$versions = array();
 	$j=0;
 	while($version_i = mysql_fetch_array($version_query)){
 		$versions[$j] = $version_i;
+		$j++;
 	}
 	unset($version_query);
+	$old_versions = scandir(BASE_DIRECTORY."/data/creations/old");
+	$filenames=array();
+	foreach($old_versions as $old_version){
+		$hyphen_parts=explode('-', $old_version);
+		if($hyphen_parts[0]==$creation['id']){
+			$latter_parts = explode('.', $hyphen_parts[1]);
+			$version = substr($latter_parts[0],1);
+			$ext = $latter_parts[1];
+			$filenames[$version]=$creation['id'].'-v'.$version.'.'.$ext;
+		}
+	}
 	include_once("templates/version_template.php");
 }
 else {
@@ -228,20 +256,19 @@ if (isset($_POST['upload'])) {
 	}
 	else die("Unsupported file type.");
 	$new_version = $cur_version+1;
+	mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
 	//if user said to save file, back it up
 	if($backup==true){
 		copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
 		unlink("data/creations/".$creation['filename']);
 		move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$creation['id'].".".$ext);
-		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
+		//since saved will be 1 when uploaded, it doesn't need to be updated
 	}
 	else{
 		unlink("data/creations/".$creation['filename']);
 		move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$creation['id'].".".$ext);
-		mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$cur_version.",0)")  or die(mysql_error());
+		mysql_query("UPDATE versions SET saved=0 WHERE number=".$cur_version) or die(mysql_error());
 	}
-	
-	
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 	exit();
 }
