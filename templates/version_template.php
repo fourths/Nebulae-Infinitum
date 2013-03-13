@@ -26,7 +26,7 @@
 						//don't forget to do the saved thing for current versions on the edit.php thing
 							if($version['saved']==1){
 								//TO-DO: get extension of version
-								echo '<td class="versionrow" style="width:400px;"><a href="?mode=version&action=revert&id='.$version['number'].'">Revert</a> <a href="data/creations/old/'.$filenames[$version['number']].'">Download</a> <a href="?mode=version&action=delete&id='.$version['number'].'">Delete</a></td>';
+								echo '<td class="versionrow" style="width:400px;"><a href="?id='.$creation['id'].'&mode=version&action=revert&aid='.$version['number'].'">Revert</a> <a href="data/creations/old/'.$filenames[$version['number']].'">Download</a> <a href="?id='.$creation['id'].'&mode=version&action=delete&aid='.$version['number'].'">Delete</a></td>';
 							}
 							else{
 								echo '<td class="versionrow" style="width:400px;"></td>';
