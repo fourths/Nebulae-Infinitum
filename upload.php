@@ -48,7 +48,10 @@ if (isset($_POST['submit'])) {
 		else if ($ext=="txt") $gentxt=true;
 	}
 	if (empty($_POST['title'])) {
-		die("Please enter a title for your creation.");
+		//if no title is given, use the filename
+		$default_title=explode('.',$_FILES['creationfile']['name']);
+		$_POST['title']=str_replace('-',' ',str_replace('_',' ',$default_title[0]));
+		//die("Please enter a title for your creation.");
 	}
 	if ($ext == "gif" || $ext == "png" || $ext == "apng" || $ext == "tif" || $ext == "tiff" || $ext == "jpg" || $ext == "jpeg" || $ext == "jpe" || $ext == "bmp" || 
 		$ext == "svg"){
