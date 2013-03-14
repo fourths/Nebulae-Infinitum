@@ -119,17 +119,53 @@ if($mode == "version"){
 		$action = $_GET['action'];
 		$id = floatval($_GET['aid']);
 		if($action=="revert"){
-			mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
+			mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".floatval($version_name+1).".0"."',".$new_version.",1)") or die(mysql_error());
 			$ext = strtolower(substr(strrchr($filenames[$id], '.'), 1));
 			copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
 			unlink("data/creations/".$creation['filename']);
-			mysql_query("UPDATE creations SET filetype='".$ext."',filename='".$creation['id'].'.'.$ext."' WHERE id=".$creation['id']) or die(mysql_error());
-			//also change type
+			
+			switch($ext){
+				case "jpg":
+				case "jpeg":
+				case "jpe":
+				case "png":
+				case "apng":
+				case "tif":
+				case "tiff":
+				case "bmp":
+				case "dib":
+				case "gif":
+				case "svg":
+					$type = "artwork";
+				break;
+				
+				case "mp3":
+					$type = "audio";
+				break;
+				
+				case "txt":
+					$type = "writing";
+				break;
+				
+				case "sb":
+				case "scratch":
+				case "sb2":
+					$type = "scratch";
+				break;
+				
+				case "swf":
+					$type = "flash";
+				break;
+			}
+			
+			mysql_query("UPDATE creations SET filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',type='".$type."' WHERE id=".$creation['id']) or die(mysql_error());
 			copy("data/creations/old/".$filenames[$id],"data/creations/".$creation['id'].'.'.$ext);
-			echo "<meta http-equiv='Refresh' content='0; URL=edit.php?id=".$creation['id']."'>";
+			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 		}
 		else if($action=="delete"){
-		
+			mysql_query("UPDATE versions SET saved=0 WHERE number=".$id) or die(mysql_error());
+			unlink("data/creations/old/".$filenames[$id]);
+			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 		}
 	}
 	include_once("templates/version_template.php");

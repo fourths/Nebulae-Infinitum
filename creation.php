@@ -184,6 +184,13 @@ while($row = mysql_fetch_array($result)){
 if (empty($ratings[0])) $ratings[0] = 0;
 if (isset($cur_user['id'])) $lrating = mysql_fetch_array(mysql_query("SELECT rating FROM ratings WHERE creationid=".$creation['id']." AND userid=".$cur_user['id']));
 $comments = mysql_query("SELECT * FROM comments WHERE creationid=".$creation['id']." ORDER BY timestamp DESC,userid DESC");
+//Get current version
+$cur_version_arr = mysql_fetch_row(mysql_query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id']));
+$cur_version = $cur_version_arr[0];
+unset($cur_version_arr);
+if (empty($cur_version)){
+	$cur_version = 1;
+}
 
 //If creation ID is a number and corresponds to valid data in the database, display creation
 require_once("templates/creation_template.php");

@@ -82,7 +82,7 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 					<input type="text" name="title" style="margin-left:0px;" placeholder="Title" value="<?php echo stripslashes($creation['name'])?>"/> version 
 					<input type="text" name="version" style="margin-left:0px;width:20px;" value="<?php echo stripslashes($version_name)?>"/>
 				</div>
-				<input type="file" name="creationfile" style="margin-left:0px;display:inline;" accept=".png,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.sb2,.mp3,.swf,.txt"/>
+				<input type="file" name="creationfile" style="margin-left:0px;display:inline;" accept=".png,.gif,.jpg,.jpeg,.jpe,.bmp,.dib,.svg,.tif,.tiff,.sb,.scratch,.sb2,.mp3,.swf,.txt"/>
 				<input type="submit" name="upload" value="Upload" style="margin-left:0px;display:inline;"/>
 				<div>The uploaded file will be version <input type="text" name="newversion" style="margin-left:0px;width:20px;" value="<?php echo stripslashes(1+$version_name.".0")?>"/></div>
 				<div><input type="checkbox" name="copy" id="copy" value="save" /><label for="copy">Save a copy of the current version</label></div>

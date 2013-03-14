@@ -385,9 +385,11 @@ while($comment = mysql_fetch_array($comments)){
 	<div class="ctitle">
 		<?php 
 		echo stripslashes($creation['name']); 
+		echo '<span style="font-size:11px;"> v'.$cur_version;
 		if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
-			echo '<span style="font-size:11px;"> (<a href="edit.php?id='.$creation['id'].'">edit</a>)</span>'; 
+			echo ' (<a href="edit.php?id='.$creation['id'].'">edit</a>)'; 
 		}
+		echo '</span>';
 		?>
 		
 	</div>
