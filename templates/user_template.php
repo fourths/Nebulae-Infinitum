@@ -15,19 +15,33 @@ error_reporting(E_ALL ^ E_NOTICE);
 		
 		<script type="text/javascript">
 			$(document).ready(function(){
-			//display:none?
-				overview = document.getElementsByName("overview");
-				tabs_content = {"overview": "brr","writing":[],"artwork":[],"audio":[],"other":[],};
-				set_tab("overview");
+				tabs_content = {"overview":[],"writing":[],"artwork":[],"audio":[],"other":[]};
+				pages = document.getElementsByClassName("tab_content");
+				for(i=0;i<pages.length;i++){
+					tabs_content[pages[i].getAttribute("name")][pages[i].getAttribute("data-page")] = pages[i].innerHTML;
+				}
+				set_tab("overview",0);
 			});
 
-			function set_tab(new_tab){
-				document.getElementById("tabs_content_container").innerHTML=tabs_content[new_tab];
+			function set_tab(new_tab,page){
+				document.getElementById("tabs_content_container").innerHTML=tabs_content[new_tab][page];
+				
+				if(typeof current_tab == "undefined" || current_tab != new_tab){
+					if (typeof current_tab != "undefined"){
+						document.getElementById(current_tab+"_tab").className="";
+					}
+					current_tab=new_tab;
+					document.getElementById(new_tab+"_tab").className="active";
+				}
 			}
 
-			if ("onhashchange" in window)
+			if ("onhashchange" in window){
 				window.onhashchange = function () {
-					set_tab(window.location.hash.substring(1));
+					new_tab = window.location.hash.substring(1);
+					if(current_tab != new_tab){
+						set_tab(new_tab,0);
+					}
+				}
 			}
 		</script>
 	</head>
@@ -103,15 +117,19 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<div id="tabs_wrapper">
 				<div id="tabs_container">
 					<ul id="tabs">
-						<li class="active"><a href="#overview">Overview</a></li>
-						<li><a href="#writing">Writing</a></li>
-						<li><a href="#artwork">Artwork</a></li>
-						<li><a href="#audio">Audio</a></li>
-						<li><a href="#other">Other</a></li>
+						<li id="overview_tab" class="active"><a href="#overview">Overview</a></li>
+						<li id="writing_tab"><a href="#writing">Writing</a></li>
+						<li id="artwork_tab"><a href="#artwork">Artwork</a></li>
+						<li id="audio_tab"><a href="#audio">Audio</a></li>
+						<li id="other_tab"><a href="#other">Other</a></li>
 					</ul>
 				</div>
 				<div id="tabs_content_container">
-					<div data-page="1" name="overview" class="tab_content">
+					
+				</div>
+				
+				<div style="display:none;" id="tabs_content_data">
+					<div data-page="0" name="overview" class="tab_content">
 						<?php
 						$aboutme = strval($user['about']);
 						if (!empty($aboutme)){
@@ -127,25 +145,25 @@ error_reporting(E_ALL ^ E_NOTICE);
 						
 						</div>
 					</div>
-					<div data-page="1" name="writing" class="tab_content">
+					<div data-page="0" name="writing" class="tab_content">
 						<?php
 						show_creations($writing,$cur_user,$user);
 						?>
 						
 					</div>
-					<div data-page="1" name="artwork" class="tab_content">
+					<div data-page="0" name="artwork" class="tab_content">
 						<?php 
 						show_creations($artwork,$cur_user,$user);
 						?>
 						
 					</div>
-					<div data-page="1" name="audio" class="tab_content">
+					<div data-page="0" name="audio" class="tab_content">
 						<?php
 						show_creations($audio,$cur_user,$user);
 						?>
 						
 					</div>
-					<div data-page="1" name="other" class="tab_content">
+					<div data-page="0" name="other" class="tab_content">
 						<?php 
 						show_creations($other,$cur_user,$user);
 						?>

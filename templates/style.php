@@ -91,6 +91,7 @@ img.usericon{
 	-moz-border-radius: 5px 5px 0 0;
 	-webkit-border-top-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
+	color:#12c;
 }
 #tabs li a:hover {
 	background-color: #dddddd;
