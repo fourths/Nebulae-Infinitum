@@ -52,13 +52,20 @@ if (!$user){
 	include_once("errors/404.php");
 	exit();
 }
-$favourites=mysql_query("SELECT creationid FROM favourites WHERE userid=".$userid." ORDER BY timestamp DESC");
-$writing=mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='writing' ORDER BY created DESC");
-$artwork=mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='artwork' ORDER BY created DESC");
-$audio=mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='audio' ORDER BY created DESC");
-$other=mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='flash' OR ownerid=".$userid." AND type='scratch' ORDER BY created DESC");
-
-$i=0;
+$amounts = array();
+$creations=array(
+	"favourites" => mysql_query("SELECT creationid FROM favourites WHERE userid=".$userid." ORDER BY timestamp DESC"),
+	"writing"    => mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='writing' ORDER BY created DESC"),
+	"artwork"    => mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='artwork' ORDER BY created DESC"),
+	"audio"      => mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='audio' ORDER BY created DESC"),
+	"other"      => mysql_query("SELECT id FROM creations WHERE ownerid=".$userid." AND type='flash' OR ownerid=".$userid." AND type='scratch' ORDER BY created DESC")
+);
+$creation_types = array_keys($creations);
+$j=0;
+foreach($creations as $creation){
+	$amounts[$j] = mysql_num_rows($creation);
+	$j++;
+}
 
 //If user ID is a number and corresponds to valid data in the database, display userpage
 require_once("templates/user_template.php");
@@ -73,7 +80,7 @@ $cur_user (array) - Array of info from database about logged-in user. Always cal
 $user (array) - Like $cur_user, this is an array of user info. It, however, is data of the user whose userpage is being viewed.
 $favourites (boolean) - Specifies whether this should display favourites thumbnails, which include a remove from favourites icon instead of the standard edit and delete ones.
 */
-function show_creations($creationlist,$cur_user,$user,$favourites=false){
+function show_creations($creationlist,$cur_user,$user,$page,$favourites=false){
 	if (isset($creationlist)){
 		if((int) mysql_fetch_row($creationlist) == 0){
 			if ($favourites==true) echo "This user has no favourites.";
@@ -81,10 +88,11 @@ function show_creations($creationlist,$cur_user,$user,$favourites=false){
 		}
 		//reset pointer so it displays all creations
 		else{
+			$offset=$page*16;
+			
 			mysql_data_seek($creationlist,0);
 			while ($creation = mysql_fetch_array($creationlist)){
 				$creationcondition="";
-				//FIX THIS
 				if($favourites==true) $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['creationid']));
 				else $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
 				//set the background colour of the thumbnails

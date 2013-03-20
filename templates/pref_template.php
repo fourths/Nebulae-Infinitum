@@ -20,7 +20,12 @@ require_once("config/config.php");
 				for(i=0;i<pages.length;i++){
 					tabs_content[pages[i].getAttribute("name")][pages[i].getAttribute("data-page")] = pages[i].innerHTML;
 				}
-				set_tab("general",0);
+				if(typeof window.location.hash.substring(1) == "undefined"||!window.location.hash.substring(1)){
+					set_tab("general",0);
+				}
+				else{
+					set_tab(window.location.hash.substring(1),0);
+				}
 			});
 
 			function set_tab(new_tab,page){

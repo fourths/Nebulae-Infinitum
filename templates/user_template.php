@@ -20,7 +20,12 @@ error_reporting(E_ALL ^ E_NOTICE);
 				for(i=0;i<pages.length;i++){
 					tabs_content[pages[i].getAttribute("name")][pages[i].getAttribute("data-page")] = pages[i].innerHTML;
 				}
-				set_tab("overview",0);
+				if(typeof window.location.hash.substring(1) == "undefined"||!window.location.hash.substring(1)){
+					set_tab("overview",0);
+				}
+				else{
+					set_tab(window.location.hash.substring(1),0);
+				}
 			});
 
 			function set_tab(new_tab,page){
@@ -129,46 +134,38 @@ error_reporting(E_ALL ^ E_NOTICE);
 				</div>
 				
 				<div style="display:none;" id="tabs_content_data">
-					<div data-page="0" name="overview" class="tab_content">
-						<?php
-						$aboutme = strval($user['about']);
-						if (!empty($aboutme)){
-							echo "<h2>About Me</h2><div>".bbcode_parse(stripslashes($aboutme))."</div>";
-						}
-						?>
-						
-						<h2>Favourites</h2>
-						<div>
-						<?php
-						show_creations($favourites,$cur_user,$user,true);
-						?>
-						
+					<?php
+					$i=0;
+					foreach($creations as $creation){
+						if ($creation_types[$i] == "favourites") {
+					?>
+						<div data-page="0" name="overview" class="tab_content">
+							<?php
+							$aboutme = strval($user['about']);
+							if (!empty($aboutme)){
+								echo "<h2>About Me</h2><div>".bbcode_parse(stripslashes($aboutme))."</div>";
+							}
+							?>
+							
+							<h2>Favourites</h2>
+							<div>
+							<?php
+							show_creations($creation,$cur_user,$user,0,true);
+							?>
+							
+							</div>
 						</div>
-					</div>
-					<div data-page="0" name="writing" class="tab_content">
-						<?php
-						show_creations($writing,$cur_user,$user);
-						?>
-						
-					</div>
-					<div data-page="0" name="artwork" class="tab_content">
-						<?php 
-						show_creations($artwork,$cur_user,$user);
-						?>
-						
-					</div>
-					<div data-page="0" name="audio" class="tab_content">
-						<?php
-						show_creations($audio,$cur_user,$user);
-						?>
-						
-					</div>
-					<div data-page="0" name="other" class="tab_content">
-						<?php 
-						show_creations($other,$cur_user,$user);
-						?>
-						
-					</div>
+					<?php
+						}
+						else {
+							echo '<div data-page="0" name="'.$creation_types[$i].'" class="tab_content">';
+							show_creations($creation,$cur_user,$user,0);
+							echo '</div>';
+						}
+						$i++;
+					}	
+					?>
+					
 				</div>
 		</div>
 		<div style="clear:both;width:100%;height:5px;"></div>
