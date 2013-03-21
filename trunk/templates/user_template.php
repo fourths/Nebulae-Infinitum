@@ -14,32 +14,51 @@ error_reporting(E_ALL ^ E_NOTICE);
 		<script src="data/jquery.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
+			// jQuery function run on page load
 			$(document).ready(function(){
+				// Create an associative array of empty arrays for each type
 				tabs_content = {"overview":[],"writing":[],"artwork":[],"audio":[],"other":[]};
+				// Get all of the tab_content elements, which have display:none set on the page
 				pages = document.getElementsByClassName("tab_content");
+				// Sort each element into one of the arrays based on its name element and with the index of its data-page
 				for(i=0;i<pages.length;i++){
 					tabs_content[pages[i].getAttribute("name")][pages[i].getAttribute("data-page")] = pages[i].innerHTML;
 				}
+				// If there's no anchor in the window, set the current tab to the default overview tab
 				if(typeof window.location.hash.substring(1) == "undefined"||!window.location.hash.substring(1)){
 					set_tab("overview",0);
 				}
+				// Otherwise, set the tab to the current anchor
 				else{
-					set_tab(window.location.hash.substring(1),0);
+					// Run function, and if it returns false, set the tab to the default (overview)
+					if(!set_tab(window.location.hash.substring(1),0)){
+						set_tab("overview",0);
+					}
 				}
 			});
-
+			
 			function set_tab(new_tab,page){
+				// Test whether the category is valid
+				if(!tabs_content.hasOwnProperty(new_tab)){
+					return false;
+				}
+				// Set the content of the tab container to the tab of the given type and with the given page ID
 				document.getElementById("tabs_content_container").innerHTML=tabs_content[new_tab][page];
-				
+				// If there's no current tab or the current tab is different than the new tab, show the new tab as "active" (lit up and in front
 				if(typeof current_tab == "undefined" || current_tab != new_tab){
+					// If there is a current tab that is different than the new tab, deactivate it
 					if (typeof current_tab != "undefined"){
 						document.getElementById(current_tab+"_tab").className="";
 					}
+					// Set the current tab to be the new tab
 					current_tab=new_tab;
-					document.getElementById(new_tab+"_tab").className="active";
+					// Activate the new current tab
+					document.getElementById(current_tab+"_tab").className="active";
 				}
 			}
-
+			
+			// When the anchor (the text after '#' in the URL) changes, change the tab to the first page of whatever category it changes to
+			// This is used for the links, as each is an anchor link (which is most convenient, since it doesn't require a page reload)
 			if ("onhashchange" in window){
 				window.onhashchange = function () {
 					new_tab = window.location.hash.substring(1);
