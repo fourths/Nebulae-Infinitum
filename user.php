@@ -88,19 +88,26 @@ function show_creations($creationlist,$cur_user,$user,$page,$favourites=false){
 		}
 		//reset pointer so it displays all creations
 		else{
-			$offset=$page*16;
+			$offset=$page*4;
 			$creations = array();
 			mysql_data_seek($creationlist,0);
-			for($i=$offset;$i<$offset+16;$i++){
+			for($i=$offset;$i<$offset+4;$i++){
 				$creations[$i]=mysql_fetch_array($creationlist);
 			}
-			echo "<pre>".print_r($creations,true)."</pre>";
+			//echo "<pre>".print_r($creations,true)."</pre>";
 			mysql_data_seek($creationlist,0);
 			foreach ($creations as $creation){
 				$creationcondition="";
-				//INVALID MYSQL -- CHECK
-				if($favourites==true) $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['creationid']) /*or die(mysql_error())*/);
-				else $creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
+				// If there's no creation there, get out of the foreach
+				if (!$creation){
+					break;
+				}
+				if($favourites){
+					$creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['creationid']));
+				}
+				else{
+					$creation=mysql_fetch_array(mysql_query("SELECT * FROM creations WHERE id=".$creation['id']));
+				}
 				//set the background colour of the thumbnails
 				switch ($creation['type']){
 					case "artwork":

@@ -31,7 +31,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 				// Otherwise, set the tab to the current anchor
 				else{
 					// Run function, and if it returns false, set the tab to the default (overview)
-					if(!set_tab(window.location.hash.substring(1),0)){
+					if(set_tab(window.location.hash.substring(1),0)==false){
 						set_tab("overview",0);
 					}
 				}
@@ -63,7 +63,12 @@ error_reporting(E_ALL ^ E_NOTICE);
 				window.onhashchange = function () {
 					new_tab = window.location.hash.substring(1);
 					if(current_tab != new_tab){
-						set_tab(new_tab,0);
+						if(typeof window.location.hash.substring(1).split('-')[1] != "undefined"){
+							set_tab(new_tab,window.location.hash.substring(1).split('-')[1]);
+						}
+						else{
+							set_tab(new_tab,0);
+						}
 					}
 				}
 			}
@@ -157,8 +162,9 @@ error_reporting(E_ALL ^ E_NOTICE);
 					$i=0;
 					foreach($creations as $creation){
 						if ($creation_types[$i] == "favourites") {
+							for($page=0;$page<ceil(mysql_num_rows($creation)/4);$page++){
 					?>
-						<div data-page="0" name="overview" class="tab_content">
+						<div data-page="<?php echo $page; ?>" name="overview" class="tab_content">
 							<?php
 							$aboutme = strval($user['about']);
 							if (!empty($aboutme)){
@@ -169,17 +175,20 @@ error_reporting(E_ALL ^ E_NOTICE);
 							<h2>Favourites</h2>
 							<div>
 							<?php
-							show_creations($creation,$cur_user,$user,0,true);
+							show_creations($creation,$cur_user,$user,$page,true);
 							?>
 							
 							</div>
 						</div>
 					<?php
+							}
 						}
 						else {
-							echo '<div data-page="0" name="'.$creation_types[$i].'" class="tab_content">';
-							show_creations($creation,$cur_user,$user,0);
-							echo '</div>';
+							for($page=0;$page<ceil(mysql_num_rows($creation)/4);$page++){
+								echo '<div data-page="'.$page.'" name="'.$creation_types[$i].'" class="tab_content">';
+								show_creations($creation,$cur_user,$user,$page);
+								echo '</div>';
+							}
 						}
 						$i++;
 					}	
