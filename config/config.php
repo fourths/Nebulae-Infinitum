@@ -14,7 +14,7 @@ define("STAFF_SYMBOL","*",true);
 //Flags to be displayed on the admin page before clicking through to the full list
 define("ADMIN_FLAGS",10,true);
 //Base URL of the site without trailing slash
-define("BASE_URL","http://localhost/mediasite",true);
+define("BASE_URL","http://localhost",true);
 //Base directory of the site's folder on the server including trailing slash
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
 
@@ -25,7 +25,7 @@ define("MYSQL_DATABASE","mediasite",true);
 //Database username
 define("MYSQL_USER","root",true);
 //Database password
-define("MYSQL_PASS","ok",true);
+define("MYSQL_PASS","",true);
 
 //Writing creation file encoding (from which you're encoding); you may need to test a few here to see which is right for your system
 //Required to translate special characters to their HTML entities for proper display
