@@ -88,10 +88,10 @@ function show_creations($creationlist,$cur_user,$user,$page,$favourites=false){
 		}
 		//reset pointer so it displays all creations
 		else{
-			$offset=$page*4;
+			$offset=$page*16;
 			$creations = array();
-			mysql_data_seek($creationlist,0);
-			for($i=$offset;$i<$offset+4;$i++){
+			mysql_data_seek($creationlist,$offset);
+			for($i=$offset;$i<$offset+16;$i++){
 				$creations[$i]=mysql_fetch_array($creationlist);
 			}
 			//echo "<pre>".print_r($creations,true)."</pre>";
@@ -221,7 +221,7 @@ function show_creations($creationlist,$cur_user,$user,$page,$favourites=false){
 				}
 			}
 		}
-		echo '<div style="clear:both;width:100%;height:5px;"></div>';
+		//echo '<div style="clear:both;width:100%;height:5px;"></div>';
 	}
 	else{
 		if (!$favourites) echo "This user has no creations of this type.";
