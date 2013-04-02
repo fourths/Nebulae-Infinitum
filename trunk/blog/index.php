@@ -42,8 +42,23 @@ if (!$userid || strcspn($userid,"0123456789")>0){
 	$userid = 0;
 }
 if($userid>0){
-	$type="blog";
+	$type="user";
 }
+else{
+	$type="admin";
+}
+
+//If valid user, get data of user (else, get data of user for each post which will be a nightmare I guess)
+$result = mysql_query("SELECT * FROM users WHERE id = $userid");
+if (!$result) {
+    die(mysql_error());
+}
+$user = mysql_fetch_array($result);
+if ($user['banstatus'] == "deleted") {
+	include_once("templates/user_deleted.php");
+	exit();
+}
+
 
 // Get page number
 if (isset($_GET["page"])){
