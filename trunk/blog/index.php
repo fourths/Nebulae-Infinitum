@@ -64,26 +64,19 @@ if (!$page || strcspn($page,"0123456789")>0 || floatval($page) == 0){
 }
 
 // Get data for blog posts on the specified page
+$posts=array();
 if($type=="user"){
-	$posts=array();
 	$posts_query=mysql_query("SELECT * FROM blog WHERE userid=".$user['id']." ORDER BY postid DESC LIMIT ".(($page-1)*10).",10") or die(mysql_error());
-	$i=0;
-	while($posts_arr=mysql_fetch_array($posts_query)){
-		$posts[$i]=$posts_arr;
-		$i++;
-	}
-	unset($posts_query);
 }
 else{
-	$posts=array();
 	$posts_query=mysql_query("SELECT * FROM blog WHERE admin=1 ORDER BY postid DESC LIMIT ".(($page-1)*10).",10") or die(mysql_error());
-	$i=0;
-	while($posts_arr=mysql_fetch_array($posts_query)){
-		$posts[$i]=$posts_arr;
-		$i++;
-	}
-	unset($posts_query);
 }
+$i=0;
+while($posts_arr=mysql_fetch_array($posts_query)){
+	$posts[$i]=$posts_arr;
+	$i++;
+}
+unset($posts_query);
 
 require_once("../templates/blog_template.php");
 
