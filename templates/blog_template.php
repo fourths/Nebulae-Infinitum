@@ -35,7 +35,7 @@
 			foreach($posts as $post){
 				echo '<div class="blog_post" style="margin:10px;padding:10px;background-color:gainsboro;" id="post'.$post['postid'].'">
 					<h2 style="margin:0px;">'.$post['title'].'</h2>';
-					
+				echo '<div class="blog_post_content">'.bbcode_parse($post['content']).'</div>';
 				// Inform the user of who the post is by if it's on the admin blog
 				if($type=="admin"){
 					echo '<div class="postedby" style="color:grey;">Posted by <a style="color:grey" href="../user.php?id='.$post['userid'].'">'.get_username_from_id($post['userid']).'</a> at '.date("g:ia m/d/y T",strtotime($post['timestamp'])).'</div>';
@@ -43,8 +43,6 @@
 				else{
 					echo '<div class="postedby" style="color:grey;">Posted at '.date("g:ia m/d/y T",strtotime($post['timestamp'])).'</div>';
 				}
-				echo '<div class="blog_post_content">'.bbcode_parse($post['content']).'</div>';
-				
 				echo '</div>';
 			}
 			?>
