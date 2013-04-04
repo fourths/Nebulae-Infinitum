@@ -42,7 +42,8 @@ else{
 	$type="admin";
 }
 
-//If valid user, get data of user (else, get data of user for each post which will be a nightmare I guess)
+// If valid user, get data of user
+// In the case that it's the admin blog, we don't need to do this for each post because all it needs is the username (which can be extraced from the ID with the get_username_from_id() function)
 if($type=="user"){
 	$result = mysql_query("SELECT * FROM users WHERE id = $userid");
 	if (!$result) {
@@ -62,6 +63,33 @@ if (isset($_GET["page"])){
 if (!$page || strcspn($page,"0123456789")>0 || floatval($page) == 0){
 	$page = 1;
 }
+
+$post_counts=array();
+// Get amounts of posts posted each month the blog has been active
+if($type=="user"){
+	$post_count_query=mysql_query("SELECT timestamp FROM blog WHERE userid=".$user['id']." LIMIT 0,1");
+}
+else{
+	$post_count_query=mysql_query("SELECT timestamp FROM blog WHERE admin=1 LIMIT 0,1");
+}
+$i=0;
+while($post_count = mysql_fetch_row($post_count_query)){
+	$post_counts[$i] = [ strtotime($post_count[0]), date("Y",strtotime($post_count[0])), date("n",strtotime($post_count[0])) ];
+	$i++;
+}
+sort($post_counts);
+
+// Cycle through each year there's posts
+echo date("Y")-$post_counts[0][1];
+for($i=0;$i<=date("Y")-$post_counts[0][1];$i++){
+	if(in_array(date("Y")-$post_counts[$i][1]),$post_counts){
+		// Cycle through each month of the year
+		for($j=1;$j<=12;$j++){
+			echo $post_counts[$i][0];
+		}
+	}
+}
+
 
 // Get data for blog posts on the specified page
 $posts=array();
