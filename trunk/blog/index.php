@@ -80,9 +80,8 @@ while($post_count = mysql_fetch_row($post_count_query)){
 sort($post_counts);
 
 // Cycle through each year there's posts
-echo date("Y")-$post_counts[0][1];
 for($i=0;$i<=date("Y")-$post_counts[0][1];$i++){
-	if(in_array(date("Y")-$post_counts[$i][1]),$post_counts){
+	if(in_array(date("Y")-$i,$post_counts)){
 		// Cycle through each month of the year
 		for($j=1;$j<=12;$j++){
 			echo $post_counts[$i][0];
