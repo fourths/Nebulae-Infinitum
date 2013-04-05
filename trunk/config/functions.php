@@ -88,7 +88,6 @@ function bbcode_parse($text,$writing=false){
 	$bbcode->RemoveRule('acronym');
 	$bbcode->RemoveRule('size');
 	$bbcode->RemoveRule('font');
-	$bbcode->RemoveRule('wiki');
 	$bbcode->RemoveRule('img');
 	$bbcode->RemoveRule('rule');
 	$bbcode->RemoveRule('br');
@@ -104,6 +103,16 @@ function bbcode_parse($text,$writing=false){
 	if($writing)$bbcode->SetAllowAmpersand(true);
 	return $bbcode->Parse($text);
 }
+function bbcode_parse_blog($text){
+	$bbcode = new BBCode;
+	$bbcode->RemoveRule('acronym');
+	$bbcode->RemoveRule('rule');
+	$bbcode->RemoveRule('br');
+	$bbcode->RemoveRule('indent');
+	$bbcode->RemoveRule('columns');
+	$bbcode->RemoveRule('nextcol');
+	return $bbcode->Parse($text);
+}
 function bbcode_parse_description($text){
 	$bbcode = new BBCode;
 	$bbcode->RemoveRule('acronym');
@@ -111,7 +120,6 @@ function bbcode_parse_description($text){
 	$bbcode->RemoveRule('size');
 	$bbcode->RemoveRule('quote');
 	$bbcode->RemoveRule('font');
-	$bbcode->RemoveRule('wiki');
 	$bbcode->RemoveRule('img');
 	$bbcode->RemoveRule('rule');
 	$bbcode->RemoveRule('br');
