@@ -80,14 +80,31 @@ while($post_count = mysql_fetch_row($post_count_query)){
 sort($post_counts);
 
 // Cycle through each year there's posts
+$calendar=array();
+for($k=0;$k<count($post_counts);$k++){
+	if(!in_array($post_counts[$k][1],$calendar)){
+		array_push($calendar,$post_counts[$k][1]);
+	}
+}
 for($i=0;$i<=date("Y")-$post_counts[0][1];$i++){
-	if(in_array(date("Y")-$i,$post_counts)){
+	// WHAT: Why isn't the below line working?
+	if(in_array(date("Y")-$i,$calendar)){
+		print_r($post_counts[$i]);
 		// Cycle through each month of the year
 		for($j=1;$j<=12;$j++){
-			echo $post_counts[$i][0];
+			
+			if($post_counts[$i][2]==$j){
+				$calendar[date("Y")-$i][$j]++;
+			}
 		}
 	}
 }
+foreach($calendar as &$year){
+	if(is_string($year)){
+		$year = null;
+	}
+}
+print_r($calendar);
 
 
 // Get data for blog posts on the specified page
