@@ -50,7 +50,12 @@ if(isset($_GET['action'])){
 	}
 }
 else {
-	$action="new";
+	if (isset($_GET['id'])){
+		$action="edit";
+	}
+	else {
+		$action="new";
+	}
 }
 
 if($action=="new"){
@@ -67,6 +72,9 @@ else{
 
 	// Get the data of the selected blog post
 	$blog_post = mysql_fetch_array( mysql_query( "SELECT * FROM blog WHERE postid=".$blog_post_id ) );
+	if(!$blog_post){
+		$action="new";
+	}
 	unset($blog_post_id);
 	if ( $blog_post['userid'] != $cur_user['id'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod"){
 		include_once("../errors/403.php");
@@ -93,6 +101,6 @@ if (isset($_POST['update'])) {
 
 // Delete blog post
 if (isset($_POST['delete'])) {
-	
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$blog_post['userid']."&action=delete'>";
 }
 ?>

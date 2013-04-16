@@ -55,23 +55,22 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 		<?php require_once("header.php"); ?>
 		<div class="container">
 			<div class="editheader">
-				<h2 style="display:inline;">Edit blog post</h2> 
-				<?php 
-				if ($cur_version>1){
-				?>
-					<span>(<a href="edit.php?id=<?php echo $creation['id'];?>&mode=version">see versions</a>)</span>
-				<?php
-				}
-				?>
+				<h2 style="display:inline;">Edit blog post</h2>
 			</div>
 			<div>
 				<input type="text" name="title" style="margin-left:0px;width:350px;" placeholder="Title" value="<?php echo stripslashes($blog_post['title'])?>"/>
 			</div>
 			
-			<textarea name="post_body" style="width:795px;height:300px;max-height:600px;resize:y;font-family:Arial,Helvetica,sans-serif;display:block;" selected="selected"><?php
+			<textarea name="post_body" style="width:795px;height:300px;max-height:600px;resize:vertical;font-family:Arial,Helvetica,sans-serif;display:block;" selected="selected"><?php
 				echo stripslashes($blog_post['content']);
 			?></textarea>
 			
 			<input type="submit" id="update" name="update" value="Update" style="margin-left:0px;"/>
+			<?php
+				if ($action="edit"){
+					echo '<input type="submit" id="update" name="update" value="Update" style="margin-left:0px;"/>';
+				}
+			?>
+			
 	</body>
 </html>

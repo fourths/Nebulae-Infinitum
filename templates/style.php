@@ -376,3 +376,7 @@ td.comment{
 	margin:5px;
 	color:red;
 }
+.bbcode_img{
+	max-width:520px;
+	max-height:600px;
+}
