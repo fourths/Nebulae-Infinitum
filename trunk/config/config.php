@@ -14,7 +14,7 @@ define("STAFF_SYMBOL","*",true);
 //Flags to be displayed on the admin page before clicking through to the full list
 define("ADMIN_FLAGS",10,true);
 //Base URL of the site without trailing slash
-define("BASE_URL","http://localhost",true);
+define("BASE_URL","http://localhost/mediasite",true);
 //Base directory of the site's folder on the server including trailing slash
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
 
