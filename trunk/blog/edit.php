@@ -57,7 +57,6 @@ else {
 		$action="new";
 	}
 }
-
 if($action=="new"){
 	require_once("../templates/blog_edit_template.php");
 }
@@ -94,13 +93,19 @@ else{
 }
 
 // Submit blog post
+if (isset($_POST['submit'])) {
+	mysql_query("INSERT INTO blog (userid,title,content,admin) VALUES (".$cur_user['id'].",'".addslashes($_POST['title'])."','".addslashes($_POST['content'])."',0)");
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."'>";
+}
+
+// Update blog post
 if (isset($_POST['update'])) {
 	
-	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$blog_post['userid']."'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."'>";
 }
 
 // Delete blog post
 if (isset($_POST['delete'])) {
-	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$blog_post['userid']."&action=delete'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."&action=delete'>";
 }
 ?>
