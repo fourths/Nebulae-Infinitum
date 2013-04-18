@@ -247,16 +247,16 @@ if (isset($_POST['reply'])){
 //function used to set the light-up rating globes to their default
 function globesToCurrentRating($crating_arr){
 	$crating=$crating_arr[0];
-	if ($crating>=1) echo '$("#rating1").css("background-image","url(\'data/icons/prostar.png\')");';
-	else echo '$("#rating1").css("background-image","url(\'data/icons/antistar.png\')");';
-	if ($crating>=2) echo '$("#rating2").css("background-image","url(\'data/icons/prostar.png\')");';
-	else echo '$("#rating2").css("background-image","url(\'data/icons/antistar.png\')");';
-	if ($crating>=3) echo '$("#rating3").css("background-image","url(\'data/icons/prostar.png\')");';
-	else echo '$("#rating3").css("background-image","url(\'data/icons/antistar.png\')");';
-	if ($crating>=4) echo '$("#rating4").css("background-image","url(\'data/icons/prostar.png\')");';
-	else echo '$("#rating4").css("background-image","url(\'data/icons/antistar.png\')");';
-	if ($crating>=5) echo '$("#rating5").css("background-image","url(\'data/icons/prostar.png\')");';
-	else echo '$("#rating5").css("background-image","url(\'data/icons/antistar.png\')");';
+	if ($crating>=1) echo '$("#rating1").css("background-image","url(\'../data/icons/prostar.png\')");';
+	else echo '$("#rating1").css("background-image","url(\'../data/icons/antistar.png\')");';
+	if ($crating>=2) echo '$("#rating2").css("background-image","url(\'../data/icons/prostar.png\')");';
+	else echo '$("#rating2").css("background-image","url(\'../data/icons/antistar.png\')");';
+	if ($crating>=3) echo '$("#rating3").css("background-image","url(\'../data/icons/prostar.png\')");';
+	else echo '$("#rating3").css("background-image","url(\'../data/icons/antistar.png\')");';
+	if ($crating>=4) echo '$("#rating4").css("background-image","url(\'../data/icons/prostar.png\')");';
+	else echo '$("#rating4").css("background-image","url(\'../data/icons/antistar.png\')");';
+	if ($crating>=5) echo '$("#rating5").css("background-image","url(\'../data/icons/prostar.png\')");';
+	else echo '$("#rating5").css("background-image","url(\'../data/icons/antistar.png\')");';
 }
 
 // Get info for related creations

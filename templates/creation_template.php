@@ -13,20 +13,20 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 <html>
 <head>
 <title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
-<script src="data/jquery.js" type="text/javascript"></script>
-<script src="templates/creation.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
+<script src="../data/jquery.js" type="text/javascript"></script>
+<script src="../templates/creation.js" type="text/javascript"></script>
 <?php 
 if ($creation['type']=="audio"){
-	echo '<script type="text/javascript" src="data/audio-player.js"></script>';
+	echo '<script type="text/javascript" src="../data/audio-player.js"></script>';
 }
 else if ($creation['type']=="scratch"&&$creation['filetype']=="sb2"&&$cur_user['sb2player']=="js"){
-	echo '<script type="text/javascript" src="data/sb2js/script/ZipFile.complete.js"></script>
+	echo '<script type="text/javascript" src="../data/sb2js/script/ZipFile.complete.js"></script>
 <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script>
 <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="data/sb2js/script/sb2.js"></script>';
+<script type="text/javascript" src="../data/sb2js/script/sb2.js"></script>';
 }
 ?>
 <script type="text/javascript">
@@ -44,59 +44,61 @@ else echo 'function expand(){
 	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 ?>
+//globes aren't showing up by default
+
 
 //lighting up the planets
 $(document).ready(function(){
 	$("#rating1").hover(function(){
-	  $("#rating1").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating2").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating3").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
+	  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating2").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating3").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 	  },function(){
 	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
 	$("#rating2").hover(function(){
-	  $("#rating1").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating2").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating3").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
+	  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating2").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating3").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 	  },function(){
 	<?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
 	$("#rating3").hover(function(){
-	  $("#rating1").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating2").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating3").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating4").css("background-image","url('data/icons/antistar.png')");
-	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
+	  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating2").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating3").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
+	  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 	  },function(){
 	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
 	$("#rating4").hover(function(){
-	  $("#rating1").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating2").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating3").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating4").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating5").css("background-image","url('data/icons/antistar.png')");
+	  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating2").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating3").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating4").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 	  },function(){
 	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
 });
 $(document).ready(function(){
 	$("#rating5").hover(function(){
-	  $("#rating1").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating2").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating3").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating4").css("background-image","url('data/icons/prostar.png')");
-	  $("#rating5").css("background-image","url('data/icons/prostar.png')");
+	  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating2").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating3").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating4").css("background-image","url('../data/icons/prostar.png')");
+	  $("#rating5").css("background-image","url('../data/icons/prostar.png')");
 	  },function(){
 	  <?php globesToCurrentRating($lrating[0]); ?>
 	});
@@ -105,7 +107,7 @@ $(document).ready(function(){
 <?php
 if ($creation['type']=="audio"){
 	echo "//audio player
-AudioPlayer.setup(\"data/player.swf\", {  
+AudioPlayer.setup(\"../data/player.swf\", {  
 	width: 100,  
 	initialvolume: 100,  
 	transparentpagebg: \"yes\"
@@ -113,8 +115,8 @@ AudioPlayer.setup(\"data/player.swf\", {
 }
 else if ($creation['type']=="scratch"&&$creation['filetype']=="sb2"&&$cur_user['sb2player']=="js"){
 	echo '//sb2js init
-autoLoad = "data/creations/'.$creation['filename'].'";
-basedir = "data/sb2js/"';
+autoLoad = "../data/creations/'.$creation['filename'].'";
+basedir = "../data/sb2js/"';
 }
 else if ($creation['type']=="writing"){
 	echo 'function resize(amount){
@@ -149,13 +151,13 @@ else if ($creation['type']=="writing"){
 							$svgwidth = 'style="width:500px;"';
 						}
 					}
-					echo '<img src="data/creations/'.$creation['filename'].'" class="cimg" '.$svgwidth.'/>';
+					echo '<img src="../data/creations/'.$creation['filename'].'" class="cimg" '.$svgwidth.'/>';
 				break;
 				case "audio":
 					echo '<div id="audioplayer">You need the Flash player to view this content.</div>
 				<script type="text/javascript">
 					AudioPlayer.embed("audioplayer", {
-						soundFile: "data/creations/'.$creation['filename'].'",
+						soundFile: "../data/creations/'.$creation['filename'].'",
 						titles: "'.$creation['name'].'",
 						artists: "'.$user['username'].'"
 					});
@@ -166,10 +168,10 @@ else if ($creation['type']=="writing"){
 				<div class="flashwrapper" style="padding-bottom:'.($imgsize[1]/$imgsize[0])*100 .'%">
 					<object style="border:1px solid;" class="flash" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" id="editorObj" 
 					codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
-						<param name="movie" value="data/creations/'.$creation['filename'].'" />
+						<param name="movie" value="../data/creations/'.$creation['filename'].'" />
 						<param name="quality" value="high" />
 						<param name="bgcolor" value="#ffffff" />
-						<embed id="editor" src="data/creations/'.$creation['filename'].'"
+						<embed id="editor" src="../data/creations/'.$creation['filename'].'"
 							quality="high" 
 							bgcolor="#ffffff"
 							scale="exactfit"
@@ -192,14 +194,14 @@ else if ($creation['type']=="writing"){
 			</canvas>';
 						}
 						else{
-							echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="data/PlayerOnly.swf">
+							echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="../data/PlayerOnly.swf">
 				<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
 				<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
 			</object>';
 						}
 					}
 					else{
-						echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="data/PlayerOnly.swf">
+						echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="../data/PlayerOnly.swf">
 				<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
 				<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
 			</object>';
@@ -212,7 +214,7 @@ else if ($creation['type']=="writing"){
 						<a href="javascript:resize(-2);" class="minus"></a>
 					</div>
 					<div class="wtext">
-						'.bbcode_parse(mb_convert_encoding(stripslashes(file_get_contents("data/creations/".$creation['filename'])),"HTML-ENTITIES",WRITING_ENCODING),true).'
+						'.bbcode_parse(mb_convert_encoding(stripslashes(file_get_contents("../data/creations/".$creation['filename'])),"HTML-ENTITIES",WRITING_ENCODING),true).'
 					</div>
 				</div>';
 				break;
@@ -339,8 +341,8 @@ while($comment = mysql_fetch_array($comments)){
 	$cflags=array();
 	if (!$hidden&&$comment['status']!='censored'||($comment['status']=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
 		$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$comment['userid']));
-		if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/'.$com_user['icon'].'"/>';
-		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="data/usericons/default.png"/>';
+		if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/'.$com_user['icon'].'"/>';
+		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/default.png"/>';
 		echo '
 		<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id='.$com_user['id'].'">'.$com_user['username'].'</a>';
 		if ($com_user['rank'] == "admin" || $com_user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
@@ -396,8 +398,8 @@ while($comment = mysql_fetch_array($comments)){
 	<div class="cinfo">
 		<div class="creationownericon">
 			<?php
-			if (!empty($user['icon'])) echo '<img class="cicon" src="data/usericons/'.$user['icon'].'"/>';
-			else echo '<img class="cicon" src="data/usericons/default.png"/>';
+			if (!empty($user['icon'])) echo '<img class="cicon" src="../data/usericons/'.$user['icon'].'"/>';
+			else echo '<img class="cicon" src="../data/usericons/default.png"/>';
 			?>
 			
 		</div>
@@ -441,52 +443,52 @@ while($comment = mysql_fetch_array($comments)){
 				<?php
 				switch($creation['license']){
 					case 'copyright':
-						echo '<img src="data/icons/licenses/copyright.png"/>';
+						echo '<img src="../data/icons/licenses/copyright.png"/>';
 						break;
 					case 'cc-0':
-						echo '<img src="data/icons/licenses/publicdomain.png"/>
-				<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-zero.png"/>';
+						echo '<img src="../data/icons/licenses/publicdomain.png"/>
+				<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-zero.png"/>';
 						break;
 					case 'cc-by':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>';
 						break;
 					case 'cc-by-nd':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>
-				<img src="data/icons/licenses/cc-nd.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>
+				<img src="../data/icons/licenses/cc-nd.png"/>';
 						break;
 					case 'cc-by-sa':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>
-				<img src="data/icons/licenses/cc-sa.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>
+				<img src="../data/icons/licenses/cc-sa.png"/>';
 						break;
 					case 'cc-by-nc':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>
-				<img src="data/icons/licenses/cc-nc.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>
+				<img src="../data/icons/licenses/cc-nc.png"/>';
 						break;
 					case 'cc-by-nc-nd':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>
-				<img src="data/icons/licenses/cc-nc.png"/>
-				<img src="data/icons/licenses/cc-nd.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>
+				<img src="../data/icons/licenses/cc-nc.png"/>
+				<img src="../data/icons/licenses/cc-nd.png"/>';
 						break;
 					case 'cc-by-nc-sa':
-						echo '<img src="data/icons/licenses/cc.png"/>
-				<img src="data/icons/licenses/cc-by.png"/>
-				<img src="data/icons/licenses/cc-nc.png"/>
-				<img src="data/icons/licenses/cc-sa.png"/>';
+						echo '<img src="../data/icons/licenses/cc.png"/>
+				<img src="../data/icons/licenses/cc-by.png"/>
+				<img src="../data/icons/licenses/cc-nc.png"/>
+				<img src="../data/icons/licenses/cc-sa.png"/>';
 						break;
 					case 'mit':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/mit.png"/></a>';
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/mit.png"/></a>';
 						break;
 					case 'gpl':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/gpl.png"/></a>';
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/gpl.png"/></a>';
 						break;
 					case 'bsd':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="data/icons/licenses/bsd.png"/></a>';
+						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/bsd.png"/></a>';
 						break;
 					default:
 						echo "An error occurred";
@@ -540,7 +542,7 @@ while($comment = mysql_fetch_array($comments)){
 				echo '
 			<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
 				<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
-					<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="data/usericons/'.$user_thumb.'.png" /></a>
+					<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="../data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="../data/usericons/'.$user_thumb.'.png" /></a>
 				</div>
 				<div class="relatedtext" style="margin:5px;">
 					<div class="relatedleft" style="float:left;">
