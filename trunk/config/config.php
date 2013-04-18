@@ -27,6 +27,8 @@ define("MYSQL_USER","root",true);
 //Database password
 define("MYSQL_PASS","",true);
 
+define("USERNAME_STRING","abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_ÁÉÍÓÚáéíóúÀÈÌÒÙàèìòùÄËÏÖÜäëïöüÃÑÕãñõÂÊÎÔÛâêîôûÇçÅåØø");
+
 //Writing creation file encoding (from which you're encoding); you may need to test a few here to see which is right for your system
 //Required to translate special characters to their HTML entities for proper display
 define("WRITING_ENCODING","ISO-8859-15",true);

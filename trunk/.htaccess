@@ -1,4 +1,11 @@
-Options +FollowSymLinks
+RewriteEngine on 
+Options +FollowSymlinks
+RewriteBase /mediasite/
+
+RewriteRule ^creations/(.*) creation.php?id=$1
+RewriteRule ^users/(.*) user.php?id=$1
+RewriteRule ^blog/(.*) blog/index.php?uid=$1
+RewriteRule ^include/style.css$ templates/style.php
 
 ErrorDocument 404 /mediasite/errors/404.php
 ErrorDocument 403 /mediasite/errors/403.php

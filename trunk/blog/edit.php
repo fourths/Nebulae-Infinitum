@@ -94,18 +94,18 @@ else{
 
 // Submit blog post
 if (isset($_POST['submit'])) {
-	mysql_query("INSERT INTO blog (userid,title,content,admin) VALUES (".$cur_user['id'].",'".addslashes($_POST['title'])."','".addslashes($_POST['content'])."',0)");
-	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."'>";
+	mysql_query("INSERT INTO blog (userid,title,content,admin) VALUES (".$cur_user['id'].",'".addslashes($_POST['title'])."','".addslashes($_POST['post_body'])."',0)");
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?uid=".$cur_user['id']."'>";
 }
 
 // Update blog post
 if (isset($_POST['update'])) {
 	
-	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?uid=".$cur_user['id']."'>";
 }
 
 // Delete blog post
 if (isset($_POST['delete'])) {
-	echo "<meta http-equiv='Refresh' content='0; URL=../blog/?id=".$cur_user['id']."&action=delete'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=../blog/edit.php?id=".$blog_post['postid']."&action=delete'>";
 }
 ?>

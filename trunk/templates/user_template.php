@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <?php
-require_once("config/config.php"); 
 error_reporting(E_ALL ^ E_NOTICE);
 ?>
 <html>
@@ -9,9 +8,9 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<?php echo $user['username']; ?>'s Creations | <?php echo SITE_NAME; ?>
 		
 		</title>
-		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
 		
-		<script src="data/jquery.js" type="text/javascript"></script>
+		<script src="../data/jquery.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
 			// jQuery function run on page load
@@ -82,8 +81,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 		<div class="container">
 			<div class="left">
 				<?php
-				if (!empty($user['icon'])) echo '<img class="usericon" src="data/usericons/'.$user['icon'].'"/>';
-				else echo '<img class="usericon" src="data/usericons/default.png"/>'
+				if (!empty($user['icon'])) echo '<img class="usericon" src="../data/usericons/'.$user['icon'].'"/>';
+				else echo '<img class="usericon" src="../data/usericons/default.png"/>'
 				?>
 				<div style="font-size:18px;">
 					<?php 
