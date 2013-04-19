@@ -1,4 +1,4 @@
-<?
+<?php
 //Include config
 require_once("config/config.php");
 error_reporting(E_ALL ^ E_NOTICE);
@@ -24,7 +24,7 @@ if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '
 		else header("location: .");
 		exit();
 	}
-	header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
+	header("location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
 	exit();
 }
 
@@ -47,13 +47,13 @@ if (isset($_POST['submit'])) {
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
 	if(isset($return_to)) header("location: ".$return_to);
-    else header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
+    else header("location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
     exit();
 }
 
 //Get information from register form when submitted
 if (isset($_POST['rsubmit'])) {
-	$_POST['user']=str_replace(" ","",$_POST['user']);
+	$_POST['user']=str_replace(" ","_",$_POST['user']);
 	if (empty($_POST['pass']) || empty($_POST['cpass'])){
 		die("Please enter a password.");
 	}
@@ -66,7 +66,6 @@ if (isset($_POST['rsubmit'])) {
 	if (strlen($_POST['user'])<4){
 		die("Please enter a username at least four characters long.");
 	}
-	##abcdefghijklmnopqrstuvwxyz0123456789-_
 	if (strcspn($_POST['user'],USERNAME_STRING)>0){
 		die("Only alphanumeric characters, dashes, and underscores are allowed in usernames.");
 	}	
@@ -85,7 +84,7 @@ if (isset($_POST['rsubmit'])) {
 	if(!empty($_POST['gender'])) mysql_query("UPDATE users SET gender='".addslashes($_POST['gender'])."' WHERE id=$max[0]+1") or die(mysql_error());
 	if(!empty($_POST['location'])) mysql_query("UPDATE users SET location='".addslashes($_POST['location'])."' WHERE id=$max[0]+1") or die(mysql_error());
 	
-	$result = mysql_query("SELECT * FROM users WHERE username='$_POST[user]'") or die(mysql_error());
+	$result = mysql_query("SELECT * FROM users WHERE username='".$_POST['user']".'") or die(mysql_error());
 	if (mysql_num_rows($result) != 1){
 		die("<br/>An error occured. Please try again.");
 	}
@@ -94,7 +93,7 @@ if (isset($_POST['rsubmit'])) {
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
     if(isset($return_to)) header("location: ".$return_to);
-    else header("location: user.php?id=".$_SESSION['SESS_MEMBER_ID']);
+    header("location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
     exit();
 }
 ?>

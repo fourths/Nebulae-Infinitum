@@ -20,7 +20,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	}
 	$cur_user = mysql_fetch_array($lresult);
 }
-//disabled for now so people can set password
+//Once you've set the password for your account, uncomment this block to prevent other users from viewing this page
 /*if ($cur_user['rank'] != "admin"){
 	require_once("errors/403.php");
 }*/
@@ -28,7 +28,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 <html>
 <head>
 <title>Encrypt | <? echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 </head>
 
 <body>

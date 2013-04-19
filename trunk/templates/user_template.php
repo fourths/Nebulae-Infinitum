@@ -8,7 +8,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 			<?php echo $user['username']; ?>'s Creations | <?php echo SITE_NAME; ?>
 		
 		</title>
-		<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 		
 		<script src="../data/jquery.js" type="text/javascript"></script>
 		

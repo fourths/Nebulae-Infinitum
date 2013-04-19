@@ -2,10 +2,35 @@ RewriteEngine on
 Options +FollowSymlinks
 RewriteBase /mediasite/
 
-RewriteRule ^creations/(.*) creation.php?id=$1
-RewriteRule ^users/(.*) user.php?id=$1
+RewriteRule ^admin$ admin.php
+RewriteRule ^admin/$ admin [R]
+RewriteRule ^admin/flags$ admin.php?mode=flags
+RewriteRule ^admin/flags/(.*)/(.*) admin.php?mode=flags&action=$1&id=$2
+
+RewriteRule ^login$ login.php
+RewriteRule ^register$ login.php?action=register
+RewriteRule ^logout$ login.php?action=logout
+
+RewriteRule ^tools/encrypt$ encrypt.php
+
+RewriteRule ^creations/(.*)/(.*)$ creations.php?mode=$1&page=$2
+RewriteRule ^creations/a/(.*)/(.*)$ creations.php?mode=action&action=$1&id=$2
+RewriteRule ^creations$ creations/newest/1  [R]
+RewriteRule ^creations/$ creations/newest/1 [R]
+RewriteRule ^creations/$ creations/newest/1 [R]
+RewriteRule ^creations/(.*)$ creations/$1/1 [R]
+
+RewriteRule ^creation/(.*) creation.php?id=$1
+
+RewriteRule ^creation/delete/(.*) delete.php?id=$1
+
+RewriteRule ^user/(.*) user.php?id=$1
+
 RewriteRule ^blog/(.*) blog/index.php?uid=$1
+
 RewriteRule ^include/style.css$ templates/style.php
+
+
 
 ErrorDocument 404 /mediasite/errors/404.php
 ErrorDocument 403 /mediasite/errors/403.php

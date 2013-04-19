@@ -25,29 +25,29 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	<br/>
 	<div class="headlinks">
 		<a class="head" href="<?php echo BASE_URL ?>/">home</a> &bull; 
-		<a class="head" href="<?php echo BASE_URL ?>/creations.php">creations</a> &bull; 
+		<a class="head" href="<?php echo BASE_URL ?>/creations">creations</a> &bull; 
 		<a class="head" href="<? echo BASE_URL ?>/info/">about</a> &bull; 
 		<a class="head" href="<? echo BASE_URL ?>/forums/">forums</a> 
 		<?php
 		if ($cur_user['rank']=="admin" || $cur_user['rank']=="mod"){
-			echo ' &bull; <a class="head" href="'.BASE_URL.'/admin.php">admin</a>';
+			echo ' &bull; <a class="head" href="'.BASE_URL.'/admin">admin</a>';
 		}
 		
 		if (isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')){
 			echo '
-			<div style="padding-top:5px;">logged in as <a class="head" href="'.BASE_URL.'/user.php?id='.$_SESSION['SESS_MEMBER_ID'].'">'.$cur_user['username'].'</a> (<a href="'.BASE_URL.'/messages.php" class="head">&#9993;</a>) &bull;
-			<a class="head" href="'.BASE_URL.'/upload.php">upload</a> &bull;
-			<a class="head" href="'.BASE_URL.'/login.php?action=logout&amp;returnto='.$_SERVER['REQUEST_URI'].'">logout</a></div>';
+			<div style="padding-top:5px;">logged in as <a class="head" href="'.BASE_URL.'/user/'.$cur_user['username'].'">'.$cur_user['username'].'</a> (<a href="'.BASE_URL.'/messages" class="head">&#9993;</a>) &bull;
+			<a class="head" href="'.BASE_URL.'/upload">upload</a> &bull;
+			<a class="head" href="'.BASE_URL.'/logout?returnto='.$_SERVER['REQUEST_URI'].'">logout</a></div>';
 		}
 		else{
-			echo '&bull; <a class="head" href="'.BASE_URL.'/login.php?returnto='.$_SERVER['REQUEST_URI'].'">login</a>';
+			echo '&bull; <a class="head" href="'.BASE_URL.'/login?returnto='.$_SERVER['REQUEST_URI'].'">login</a>';
 		}
 		?>
 	</div>
 </div>
 <?php
 if ($msg>0){
-	echo '<div class="msgalert"><a href="'.BASE_URL.'/messages.php" class="msgalertlink">You have '.$msg.' new message';
+	echo '<div class="msgalert"><a href="'.BASE_URL.'/messages" class="msgalertlink">You have '.$msg.' new message';
 	if ($msg>1){
 		echo 's';
 	}

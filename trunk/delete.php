@@ -11,7 +11,7 @@ mysql_select_db(MYSQL_DATABASE, $connection);
 
 //If user isn't logged in, redirect to login
 if (empty($_SESSION['SESS_MEMBER_ID'])){
-	header("location: login.php");
+	header("location: ../../login");
 	exit();
 }
 
@@ -78,9 +78,9 @@ include_once("templates/delete_template.php");
 if (isset($_POST['yes'])) {
 	if ($cur_user['id'] != $creation['ownerid'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") die("Insufficient permissions.");
 	mysql_query("UPDATE creations SET hidden='deleted' WHERE id='$creationid'") or die(mysql_error());
-	echo "<meta http-equiv='Refresh' content='0; URL=user.php?id=$cur_user['id']'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=../../user/".$cur_user['username']."'>";
 }
 if (isset($_POST['no'])) {
-	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=creation/$creationid'>";
 }
 ?>
