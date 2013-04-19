@@ -10,7 +10,7 @@
 				}?> | <?php echo SITE_NAME; ?>
 			
 		</title>
-		<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 	</head>
 	
 	<body>

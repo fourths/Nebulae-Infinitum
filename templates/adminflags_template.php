@@ -5,7 +5,7 @@ require_once("config/config.php");
 <html>
 <head>
 <title>Flags / Administration | <?php echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 </head>
 <body>
 <?php

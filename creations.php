@@ -45,24 +45,24 @@ switch($mode){
 				switch($action){
 					case "delete":
 						mysql_query("UPDATE creations SET hidden='deleted' WHERE id='$id'") or die(mysql_error());
-						die("<meta http-equiv='Refresh' content='0; URL=creations.php'>");
+						die("<meta http-equiv='Refresh' content='0; URL=creations/'>");
 					case "hide":
 						mysql_query("UPDATE creations SET hidden='byowner' WHERE id='$id'") or die(mysql_error());
-						die("<meta http-equiv='Refresh' content='0; URL=creations.php'>");
+						die("<meta http-equiv='Refresh' content='0; URL=creations/'>");
 					case "censor":
 						mysql_query("UPDATE creations SET hidden='censored' WHERE id='$id'") or die(mysql_error());
-						die("<meta http-equiv='Refresh' content='0; URL=creations.php'>");
+						die("<meta http-equiv='Refresh' content='0; URL=creations/'>");
 					default:
-						die("<meta http-equiv='Refresh' content='0; URL=creations.php'>");
+						die("<meta http-equiv='Refresh' content='0; URL=creations/'>");
 				}
 			}
 		}
-		//intentional non-breaking; if invalid, go on to default
+		//intentional non-breaking; if invalid creation, go on to default
 	case "views":
 		$typetext="Top viewed";
 		$creations=mysql_query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY views DESC LIMIT ".($page*10-10).",10");
 		if((int) mysql_fetch_array($creations)==0){
-			die("<meta http-equiv='Refresh' content='0; URL=creations.php?mode=newest'>");
+			die("<meta http-equiv='Refresh' content='0; URL=../../creations/newest/1'>");
 		}
 		mysql_data_seek($creations,0);
 	break;
@@ -70,7 +70,7 @@ switch($mode){
 		$typetext="Top rated";
 		$creations=mysql_query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY rating DESC LIMIT ".($page*10-10).",10");
 		if((int) mysql_fetch_array($creations)==0){
-			die("<meta http-equiv='Refresh' content='0; URL=creations.php?mode=newest'>");
+			die("<meta http-equiv='Refresh' content='0; URL=../../creations/newest/1'>");
 		}
 		mysql_data_seek($creations,0);
 	break;
@@ -78,7 +78,7 @@ switch($mode){
 		$typetext="Random";
 		$creations=mysql_query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY RAND() DESC LIMIT ".($page*10-10).",10");
 		if((int) mysql_fetch_array($creations)==0){
-			die("<meta http-equiv='Refresh' content='0; URL=creations.php?mode=newest'>");
+			die("<meta http-equiv='Refresh' content='0; URL=../../creations/newest/1'>");
 		}
 		mysql_data_seek($creations,0);
 	break;
@@ -86,7 +86,7 @@ switch($mode){
 		$typetext="Most favourited";
 		$creations=mysql_query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY favourites DESC LIMIT ".($page*10-10).",10");
 		if((int) mysql_fetch_array($creations)==0){
-			die("<meta http-equiv='Refresh' content='0; URL=creations.php?mode=newest'>");
+			die("<meta http-equiv='Refresh' content='0; URL=../../creations/newest/1'>");
 		}
 		mysql_data_seek($creations,0);
 	break;
@@ -95,7 +95,7 @@ switch($mode){
 		$typetext="Newest";
 		$creations=mysql_query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY created DESC LIMIT ".($page*10-10).",10");
 		if((int) mysql_fetch_array($creations)==0){
-			die("<meta http-equiv='Refresh' content='0; URL=creations.php?mode=newest'>");
+			die("<meta http-equiv='Refresh' content='0; URL=../../creations/newest/1'>");
 		}
 		mysql_data_seek($creations,0);
 }
@@ -113,11 +113,11 @@ function displayCreations($mysql,$cur_user,$admin){
 		while($creation=mysql_fetch_array($mysql)){
 			$user=mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$creation['ownerid']));
 			echo '<div class="creationblock">';
-			if(file_exists('data/thumbs/'.$creation['id'].'.png')) echo '<a href="creation.php?id='.$creation['id'].'"><img class="creationblockthumb" src="data/thumbs/'.$creation['id'].'.png"/></a>';
-			else echo '<a href="creation.php?id='.$creation['id'].'"><img class="creationblockthumb" src="data/thumbs/default.png"/></a>';
+			if(file_exists('data/thumbs/'.$creation['id'].'.png')) echo '<a href="../../creation/'.$creation['id'].'"><img class="creationblockthumb" src="../../data/thumbs/'.$creation['id'].'.png"/></a>';
+			else echo '<a href="../../creation/'.$creation['id'].'"><img class="creationblockthumb" src="../../data/thumbs/default.png"/></a>';
 			$creationtitle=strlen(stripslashes($creation['name']))>20?substr(stripslashes($creation['name']),0,20)."&hellip;":stripslashes($creation['name']);
-			echo '<div class="creationblockhead"><a href="creation.php?id='.$creation['id'].'" class="creationblocktitle">'.$creationtitle.'</a>';
-			echo '<div><a href="user.php?id='.$user['id'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';echo "</div>";
+			echo '<div class="creationblockhead"><a href="../../creation/'.$creation['id'].'" class="creationblocktitle">'.$creationtitle.'</a>';
+			echo '<div><a href="../../user/'.$user['username'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="../../info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';echo "</div>";
 			echo '<div>'.date("F jS, Y", strtotime($creation['created'])).'</div>';
 			switch($creation['views']){
 				case 1:
@@ -153,13 +153,13 @@ function displayCreations($mysql,$cur_user,$admin){
 				echo '<div class="creationblockadv"><strong>Content advisory:</strong> '.$creationadv.'</div>';
 			}
 			if($admin){
-				echo '<div style="position:absolute;top:0;right:0;"><a href="creations.php?mode=action&action=hide&id='.$creation['id'].'">H</a> <a href="creations.php?mode=action&action=censor&id='.$creation['id'].'">C</a> <a href="creations.php?mode=action&action=delete&id='.$creation['id'].'">D</a></div>';
+				echo '<div style="position:absolute;top:0;right:0;"><a href="../../creations/a/hide/'.$creation['id'].'">H</a> <a href="../../creations/a/censor/'.$creation['id'].'">C</a> <a href="../../creations/a/delete/'.$creation['id'].'">D</a></div>';
 			}
 			//echo '<div style="clear:both;"></div>';
 			echo '</div>';
 		}
 		echo '<div style="clear:both;"></div>';
 	}
-	else echo 'An error occurred. Please try reloading the page or, if the error continues to occur, contact a <a href="info/admin.php">site administrator</a>.';
+	else echo 'An error occurred. Please try reloading the page or, if the error continues to occur, contact a <a href="../../info/admin.php">site administrator</a>.';
 }
 ?>

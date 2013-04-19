@@ -13,7 +13,7 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 <html>
 <head>
 <title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
+<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 <script src="../data/jquery.js" type="text/javascript"></script>
 <script src="../templates/creation.js" type="text/javascript"></script>
 <?php 
