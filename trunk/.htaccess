@@ -5,7 +5,7 @@ RewriteBase /mediasite/
 RewriteRule ^admin$ admin.php
 RewriteRule ^admin/$ admin [R]
 RewriteRule ^admin/flags$ admin.php?mode=flags
-RewriteRule ^admin/flags/(.*)/(.*) admin.php?mode=flags&action=$1&id=$2
+RewriteRule ^admin/flags/(.*)/(.*)$ admin.php?mode=flags&id=$1&action=$2
 
 RewriteRule ^login$ login.php
 RewriteRule ^register$ login.php?action=register
@@ -14,23 +14,48 @@ RewriteRule ^logout$ login.php?action=logout
 RewriteRule ^tools/encrypt$ encrypt.php
 
 RewriteRule ^creations/(.*)/(.*)$ creations.php?mode=$1&page=$2
-RewriteRule ^creations/a/(.*)/(.*)$ creations.php?mode=action&action=$1&id=$2
+RewriteRule ^creations/(.*)/a/(.*)$ creations.php?mode=action&action=$1&id=$2
 RewriteRule ^creations$ creations/newest/1  [R]
 RewriteRule ^creations/$ creations/newest/1 [R]
 RewriteRule ^creations/$ creations/newest/1 [R]
 RewriteRule ^creations/(.*)$ creations/$1/1 [R]
 
-RewriteRule ^creation/(.*) creation.php?id=$1
+RewriteRule ^creation/(.*)$ creation.php?id=$1
 
-RewriteRule ^creation/delete/(.*) delete.php?id=$1
+RewriteRule ^creation/(.*)/viewer$ viewer.php?id=$1
+RewriteRule ^creation/(.*)/viewer?download$ viewer.php?id=$1&flash=download
 
-RewriteRule ^user/(.*) user.php?id=$1
+RewriteRule ^creation/(.*)/delete$ delete.php?id=$1
 
-RewriteRule ^blog/(.*) blog/index.php?uid=$1
+RewriteRule ^creation/(.*)/edit$ edit.php?id=$1
+RewriteRule ^creation/(.*)/versions$ edit.php?id=$1&mode=version
+RewriteRule ^creation/(.*)/version/(.*)/(.*)$ edit.php?id=$1&mode=version&action=$3&aid=$2
+
+RewriteRule ^creation/(.*)/license$ license.php?id=$1
+
+RewriteRule ^(.*)/(.*)/flag$ flag.php?type=$1&id=$2
+RewriteRule ^creation/(.*)/a/(.*)$ flag.php?action=$3&type=creation&id=$2
+RewriteRule ^comment/(.*)/a/(.*)$ flag.php?action=$3&type=comment&id=$2
+
+RewriteRule ^messages$ messages.php
+RewriteRule ^messages/(.*)$ messages.php?uid=$1
+RewriteRule ^message/(.*)/delete$ messages.php?action=delete&id=$1
+
+RewriteRule ^user/(.*)$ user.php?id=$1
+
+RewriteRule ^user/(.*)/preferences$ pref.php?id=$1
+
+RewriteRule ^blog/$ blog/index.php
+RewriteRule ^user/(.*)/blog$ blog/index.php?uid=$1
+RewriteRule ^user/(.*)/blog/new$ blog/edit.php?uid=$1
+RewriteRule ^user/(.*)/blog/(.*)/edit$ blog/edit.php?id=$2&uid=$1
+
+RewriteRule ^upload$ upload.php
+
+RewriteRule ^about/(.*)$ info/$1.php
+RewriteRule ^about/$ info/index.php
 
 RewriteRule ^include/style.css$ templates/style.php
-
-
 
 ErrorDocument 404 /mediasite/errors/404.php
 ErrorDocument 403 /mediasite/errors/403.php

@@ -84,7 +84,7 @@ if (isset($_POST['rsubmit'])) {
 	if(!empty($_POST['gender'])) mysql_query("UPDATE users SET gender='".addslashes($_POST['gender'])."' WHERE id=$max[0]+1") or die(mysql_error());
 	if(!empty($_POST['location'])) mysql_query("UPDATE users SET location='".addslashes($_POST['location'])."' WHERE id=$max[0]+1") or die(mysql_error());
 	
-	$result = mysql_query("SELECT * FROM users WHERE username='".$_POST['user']".'") or die(mysql_error());
+	$result = mysql_query("SELECT * FROM users WHERE username='".$_POST['user']."'") or die(mysql_error());
 	if (mysql_num_rows($result) != 1){
 		die("<br/>An error occured. Please try again.");
 	}
