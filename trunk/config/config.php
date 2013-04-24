@@ -15,6 +15,7 @@ define("STAFF_SYMBOL","*",true);
 define("ADMIN_FLAGS",10,true);
 //Base URL of the site without trailing slash
 define("BASE_URL","http://localhost/mediasite",true);
+define("BASE_FOLDER","mediasite",true);
 //Base directory of the site's folder on the server including trailing slash
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
 
@@ -47,4 +48,5 @@ require_once('functions.php');
 //commented while debugging
 //ini_set("display_errors", 0);
 require_once('include/nbbc.php');
+echo $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'];
 ?>

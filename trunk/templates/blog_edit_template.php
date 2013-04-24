@@ -10,7 +10,7 @@
 				}?> | <?php echo SITE_NAME; ?>
 			
 		</title>
-		<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="<?php echo BASE_DIRECTORY; ?>/include/style.css" media="screen" />
 	</head>
 	
 	<body>
