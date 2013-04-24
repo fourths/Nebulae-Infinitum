@@ -22,16 +22,9 @@ RewriteRule ^creations/(.*)$ creations/$1/1 [R]
 
 RewriteRule ^creation/(.*)$ creation.php?id=$1
 
-RewriteRule ^creation/(.*)/viewer$ viewer.php?id=$1
-RewriteRule ^creation/(.*)/viewer?download$ viewer.php?id=$1&flash=download
-
-RewriteRule ^creation/(.*)/delete$ delete.php?id=$1
-
-RewriteRule ^creation/(.*)/edit$ edit.php?id=$1
-RewriteRule ^creation/(.*)/versions$ edit.php?id=$1&mode=version
+RewriteRule ^versions.php?id=(.*)$ edit.php?id=$1&mode=version
+RewriteRule ^creation/a/(.*)/(.*)$ $2.php?id=$1
 RewriteRule ^creation/(.*)/version/(.*)/(.*)$ edit.php?id=$1&mode=version&action=$3&aid=$2
-
-RewriteRule ^creation/(.*)/license$ license.php?id=$1
 
 RewriteRule ^(.*)/(.*)/flag$ flag.php?type=$1&id=$2
 RewriteRule ^creation/(.*)/a/(.*)$ flag.php?action=$3&type=creation&id=$2
@@ -45,15 +38,14 @@ RewriteRule ^user/(.*)$ user.php?id=$1
 
 RewriteRule ^user/(.*)/preferences$ pref.php?id=$1
 
-RewriteRule ^blog/$ blog/index.php
-RewriteRule ^user/(.*)/blog$ blog/index.php?uid=$1
-RewriteRule ^user/(.*)/blog/new$ blog/edit.php?uid=$1
-RewriteRule ^user/(.*)/blog/(.*)/edit$ blog/edit.php?id=$2&uid=$1
+
+
+RewriteRule ^user/(.*)/ddd$ index.php
 
 RewriteRule ^upload$ upload.php
 
-RewriteRule ^about/(.*)$ info/$1.php
 RewriteRule ^about/$ info/index.php
+RewriteRule ^about/(.*)$ info/$1.php
 
 RewriteRule ^include/style.css$ templates/style.php
 
