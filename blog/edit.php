@@ -1,5 +1,4 @@
 <?php
-die($_SERVER["REQUEST_URI"]);
 //Include config
 require_once("../config/config.php");
 error_reporting(E_ALL ^ E_NOTICE); 
