@@ -20,7 +20,8 @@ define("BASE_FOLDER","mediasite",true);
 define("BASE_DIRECTORY",str_replace("\config","",dirname(__FILE__)),true);
 
 //Database server
-define("MYSQL_SERVER","localhost",true);
+//Note: use 127.0.0.1 instead of localhost
+define("MYSQL_SERVER","127.0.0.1",true);
 //Database name
 define("MYSQL_DATABASE","mediasite",true);
 //Database username
@@ -48,5 +49,5 @@ require_once('functions.php');
 //commented while debugging
 //ini_set("display_errors", 0);
 require_once('include/nbbc.php');
-echo $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'];
+//secho $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'];
 ?>
