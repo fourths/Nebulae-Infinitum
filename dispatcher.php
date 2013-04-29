@@ -24,6 +24,16 @@ if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ){
 	unset($cur_user_query);
 }
 
+if ($cur_user['banstatus'] == "banned") {
+	include_once("errors/ban.php");
+	exit();
+}
+
+else if ($cur_user['banstatus'] == "deleted") {
+	include_once("errors/delete.php");
+	exit();
+}
+
 //Get URL
 $url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] );
 $url_array = explode( "/", $url );
@@ -74,6 +84,9 @@ if ( $url != "/"){
 					case "encrypt":
 						require_once( "encrypt.php" );
 					break;
+					
+					default:
+						require_once( "errors/404.php" );
 				}
 			}
 			else{
@@ -90,7 +103,7 @@ if ( $url != "/"){
 		break;
 		
 		case "login":
-		
+			require_once( "login.php" );
 		break;
 		
 		case "logout":
@@ -101,12 +114,104 @@ if ( $url != "/"){
 		
 		break;
 		
+		case "include":
+			if( isset( $url_array[2] ) ){
+				switch( $url_array[2] ){
+					case "style.css":
+						require_once( "templates/style.php" );
+					break;
+					
+					default:
+						require_once( "errors/403.php" );
+				}
+			}
+			else{
+				require_once( "errors/403.php" );
+			}
+		break;
+		
+		case "data":
+			if( isset( $url_array[2] ) ){
+				if( $url_array[2] == "errors" ){
+					$extension = explode( ".", addslashes( $url_array[3] ) );
+					if( file_exists( "errors/" . addslashes( $url_array[3] ) ) && $extension[1] == "png" ){
+						header( "Content-type: image/png" );
+						echo file_get_contents( "errors/" .  $url_array[3] );
+					}
+				}
+				else{
+					$data_path = "";
+					for ( $i = 2; $i < count( $url_array ); $i++ ){
+						$data_path .= "/".$url_array[$i];
+						
+					}
+					//echo $data_path;
+					$extension = explode( ".", addslashes( $data_path ) );
+					if( file_exists( "data" . addslashes( $data_path ) ) ){
+						$go = true;
+						switch( $extension[1] ){
+							case "png":
+								header( "Content-type: image/gif" );
+							break;
+							
+							case "gif":
+								header( "Content-type: image/gif" );
+							break;
+							
+							case "jpg":
+								header( "Content-type: image/jpeg" );
+							break;
+							
+							case "swf":
+								header( "Content-type: application/x-shockwave-flash" );
+							break;
+							
+							case "zip":
+							case "sb":
+							case "sb2":
+								header( "Content-type: application/octet-stream" );
+							break;
+							
+							case "mp3":
+								header( "Content-type: audio/mpeg" );
+							break;
+							
+							case "txt":
+								header( "Content-type: text/plain" );
+							break;
+							
+							case "ttf":
+								header( "Content-type: application/x-font-ttf" );
+							break;
+							
+							case "js":
+								header( "Content-type: application/javascript" );
+							break;
+							
+							default:
+								$go = false;
+						}
+						if ( $go == true ){
+							echo file_get_contents( "data" .  $data_path );
+						}
+					}
+					
+					else{
+						require_once( "errors/404.php" );
+					}
+				}
+			}
+			else{
+				require_once( "errors/404.php" );
+			}
+		break;
+		
 		default:
-			require_once("errors/404.php");
+			require_once( "errors/404.php" );
 	}
 }
 else {
-	require_once("index.php");
+	require_once( "index.php" );
 }
 
 ?>

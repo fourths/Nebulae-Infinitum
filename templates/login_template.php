@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<? require_once("config/config.php"); ?>
 <html>
 <head>
-<title>Login | <? echo SITE_NAME ?></title>
-<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+<title>Login | <?php echo SITE_NAME; ?></title>
+<link rel="stylesheet" type="text/css" href="include/style.css" media="screen" />
 </head>
 
 <body>
-<? require_once("header.php"); ?>
+<?php
+require_once("header.php");
+?>
 <div class="container">
 <h1>Login</h1>
 <div>Enter your username and password to log in. <a href="?action=register&returnto=<?php echo $_GET['returnto']; ?>">But I don't have an account!</a></div><br/>

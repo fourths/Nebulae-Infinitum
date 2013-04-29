@@ -1,5 +1,4 @@
 <?php 
-require_once("../config/config.php");
 header("Content-type: text/css"); 
 ?>
 @font-face{
