@@ -1,15 +1,4 @@
 <?php
-//Include config
-require_once("config/config.php");
-error_reporting(E_ALL ^ E_NOTICE);
-
-//Connect to database specified in config
-$connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: ".mysql_error());}
-mysql_select_db(MYSQL_DATABASE, $connection);
-
-session_start();
-
 if (isset($_GET['returnto'])){
 	$return_to = $_GET['returnto'];
 }
@@ -24,7 +13,7 @@ if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '
 		else header("location: .");
 		exit();
 	}
-	header("location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
+	header( "Location: user/".get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ) );
 	exit();
 }
 
@@ -33,8 +22,10 @@ if (isset($_GET['action']) && $_GET['action'] == "register") {
 }
 
 //Display login/register page
-if ($lr == "login") require_once("templates/login_template.php");
-if ($lr == "register") require_once("templates/register_template.php");
+if ($lr == "login" || $lr == "register"){
+	require_once("templates/" . $lr . "_template.php");
+}
+
 
 //Get information from login form when submitted
 if (isset($_POST['submit'])) {
