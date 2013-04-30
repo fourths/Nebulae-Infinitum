@@ -34,7 +34,7 @@ else if ($cur_user['banstatus'] == "deleted") {
 	exit();
 }
 
-//Get URL
+//Get URL and explode into pieces for determination of desired page
 $url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] );
 $url_array = explode( "/", $url );
 
@@ -95,23 +95,62 @@ if ( $url != "/"){
 		break;
 		
 		case "upload":
-		
+			require_once( "upload.php" );
 		break;
 		
 		case "about":
-		
+			if ( isset ( $url_array[2] ) && $url_array[2] != "" ){
+				$extension = explode( ".", addslashes( $url_array[2] ) );
+				if( file_exists( "info/" . addslashes( $url_array[2] ) ) && $extension[1] == "php" ){
+					require_once( "info/" .  $url_array[2] );
+				}
+			}
+			else{
+				require_once( "info/index.php" );
+			}
 		break;
 		
 		case "login":
 			require_once( "login.php" );
 		break;
 		
-		case "logout":
+		case "login?returnto=":
+			$return_to = "";
+			for ( $i = 2; $i < count( $url_array ); $i++ ){
+				$return_to .= "/".$url_array[$i];
+			}
+			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
+			require_once( "login.php" );
+		break;
 		
+		case "logout":
+			$_GET['action'] = "logout";
+			require_once( "login.php" );
+		break;
+		
+		case "logout?returnto=":
+			$return_to = "";
+			for ( $i = 2; $i < count( $url_array ); $i++ ){
+				$return_to .= "/".$url_array[$i];
+			}
+			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
+			$_GET['action'] = "logout";
+			require_once( "login.php" );
 		break;
 		
 		case "register":
+			$_GET['action'] = "register";
+			require_once( "login.php" );
+		break;
 		
+		case "register?returnto=":
+			$return_to = "";
+			for ( $i = 2; $i < count( $url_array ); $i++ ){
+				$return_to .= "/".$url_array[$i];
+			}
+			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
+			$_GET['action'] = "register";
+			require_once( "login.php" );
 		break;
 		
 		case "include":
@@ -143,9 +182,7 @@ if ( $url != "/"){
 					$data_path = "";
 					for ( $i = 2; $i < count( $url_array ); $i++ ){
 						$data_path .= "/".$url_array[$i];
-						
 					}
-					//echo $data_path;
 					$extension = explode( ".", addslashes( $data_path ) );
 					if( file_exists( "data" . addslashes( $data_path ) ) ){
 						$go = true;
