@@ -6,11 +6,15 @@ if (isset($_GET['returnto'])){
 //Initialise login/register page variable
 $lr = "login";
 
-if(isset($_SESSION['SESS_MEMBER_ID']) || (trim($_SESSION['SESS_MEMBER_ID']) != '')) {
-	if (isset($_GET['action']) && $_GET['action'] == "logout") {
+if( isset( $_SESSION['SESS_MEMBER_ID'] ) || ( trim( $_SESSION['SESS_MEMBER_ID'] ) != '') ) {
+	if ( isset( $_GET['action'] ) && $_GET['action'] == "logout") {
 		session_destroy();
-		if(isset($return_to)) header("location: ".$return_to);
-		else header("location: .");
+		if( isset( $return_to ) ){
+			header("Location: ".$return_to);
+		}
+		else{
+			header("Location: .");
+		}
 		exit();
 	}
 	header( "Location: user/".get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ) );
@@ -22,10 +26,9 @@ if (isset($_GET['action']) && $_GET['action'] == "register") {
 }
 
 //Display login/register page
-if ($lr == "login" || $lr == "register"){
-	require_once("templates/" . $lr . "_template.php");
+if ( $lr == "login" || $lr == "register" ){
+	require_once( "templates/" . $lr . "_template.php" );
 }
-
 
 //Get information from login form when submitted
 if (isset($_POST['submit'])) {
@@ -37,8 +40,8 @@ if (isset($_POST['submit'])) {
     $user_info=mysql_fetch_assoc($result);
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
-	if(isset($return_to)) header("location: ".$return_to);
-    else header("location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
+	if(isset($return_to)) header("Location: " . $return_to);
+    else header("Location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
     exit();
 }
 
