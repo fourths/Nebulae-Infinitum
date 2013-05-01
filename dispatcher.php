@@ -42,7 +42,28 @@ $url_array = explode( "/", $url );
 if ( $url != "/"){
 	switch( $url_array[1] ){
 		case "user":
-		
+			$escaped_url_chunk[0] = addslashes( $url_array[2] );
+			if( isset( $escaped_url_chunk[0] ) && $escaped_url_chunk[0] != ""){
+				$_GET['id'] = get_id_from_username( $escaped_url_chunk[0], $mysqli );
+				$escaped_url_chunk[1] = addslashes( $url_array[3] );
+				if( isset( $escaped_url_chunk[1] ) && $escaped_url_chunk[1] != ""){
+					switch( $url_array[3] ){
+						case "preferences":
+							require_once( "pref.php" );
+						break;
+						
+						default:
+							require_once( "errors/404.php" );
+					}
+				}
+				else{
+					require_once( "user.php" );
+				}
+			}
+			else{
+				//in future, userlist?
+				require_once( "errors/404.php" );
+			}
 		break;
 		
 		case "creation":

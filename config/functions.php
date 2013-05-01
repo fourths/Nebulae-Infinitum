@@ -1,26 +1,26 @@
 <?php
 //Hash function for passwords
-function nebulae_hash($input){
-	return hash("sha256",sha1(md5($input)).md5(sha1($input)));
+function nebulae_hash( $input ){
+	return hash( "sha256", sha1( md5( $input ) ) . md5( sha1( $input ) ) );
 }
 
-function get_id_from_username($username){
+function get_id_from_username( $username, $mysqli ){
 	//Get user info from database
-	$result = mysql_query("SELECT * FROM users WHERE username = '$username'") or die(mysql_error());
+	$result = $mysqli->query("SELECT * FROM users WHERE username = '$username'") or die( $mysqli->error );
 	if (!$result) {
 		return "invalidUser";
 	}
-	$user = mysql_fetch_assoc($result);
+	$user = $result->fetch_array();
 	return $user['id'];
 }
 
-function get_username_from_id($id){
+function get_username_from_id( $id, $mysqli ){
 	//Get user info from database
-	$result = mysql_query("SELECT * FROM users WHERE id = '$id'") or die(mysql_error());
+	$result = $mysqli->query("SELECT * FROM users WHERE id = '$id'") or die( $mysqli->error );
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_assoc($result);
+	$user = $result->fetch_array();
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
@@ -28,13 +28,13 @@ function get_username_from_id($id){
 	return $user['username'];
 }
 
-function get_rank_from_id($id){
+function get_rank_from_id( $id, $mysqli ){
 	//Get user info from database
-	$result = mysql_query("SELECT * FROM users WHERE id = '$id'") or die(mysql_error());
+	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error);
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_assoc($result);
+	$user = $result->fetch_array();
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
@@ -42,31 +42,31 @@ function get_rank_from_id($id){
 	return $user['rank'];
 }
 
-function get_creation_from_comment($cid){
-	$result = mysql_query("SELECT creationid FROM comments WHERE id = '$cid'") or die(mysql_error());
+function get_creation_from_comment( $cid, $mysqli ){
+	$result = $mysqli->query( "SELECT creationid FROM comments WHERE id = '$cid'" ) or die( $mysqli->error);
 	if (!$result) {
 		return "invalidComment";
 	}
-	$creation=mysql_fetch_assoc($result);
+	$creation = $result->fetch_array();
 	return $creation['id'];
 }
 
-function get_id_from_creation($cid){
-	$result = mysql_query("SELECT userid FROM creations WHERE id = '$cid'") or die(mysql_error());
+function get_id_from_creation( $cid, $mysqli ){
+	$result = $mysqli->query( "SELECT userid FROM creations WHERE id = '$cid'" ) or die( $mysqli->error);
 	if (!$result) {
 		return "invalidCreation";
 	}
-	$user=mysql_fetch_assoc($result);
+	$user = $result->fetch_array();
 	return $user['id'];
 }
 
-function get_notification_setting_from_id($id){
+function get_notification_setting_from_id( $id, $mysqli ){
 	//Get user info from database
-	$result = mysql_query("SELECT * FROM users WHERE id = '$id'") or die(mysql_error());
+	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error);
 	if (!$result) {
 		return "mysqlError";
 	}
-	$user = mysql_fetch_assoc($result);
+	$user = $result->fetch_array();
 	//If user ID is not a valid user, die
 	if (!$user){
 		return "invalidUser";
@@ -74,12 +74,12 @@ function get_notification_setting_from_id($id){
 	return $user['notifications'];
 }
 
-function get_sender_from_message($mid){
-	$result = mysql_query("SELECT senderid FROM messages WHERE id='$mid'") or die(mysql_error());
+function get_sender_from_message( $mid, $mysqli ){
+	$result = $mysqli->query( "SELECT senderid FROM messages WHERE id='$mid'" ) or die( $mysqli->error);
 	if (!$result) {
 		return "invalidMessage";
 	}
-	$message=mysql_fetch_assoc($result);
+	$message = $result->fetch_array();
 	return $message['senderid'];
 }
 
