@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<?php
-error_reporting(E_ALL ^ E_NOTICE);
-?>
 <html>
 	<head>
 		<title>
@@ -76,7 +73,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 	<body>
 		<?php
-		require_once("header.php");
+		require_once( "header.php" );
 		?>
 		<div class="container">
 			<div class="left">
@@ -161,7 +158,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 					$i=0;
 					foreach($creations as $creation){
 						if ($creation_types[$i] == "favourites") {
-							for($page=0;$page<ceil(mysql_num_rows($creation)/16);$page++){
+							for($page=0;$page<ceil($creation->num_rows/16);$page++){
 					?>
 						<div data-page="<?php echo $page; ?>" name="overview" class="tab_content">
 							<?php
@@ -174,12 +171,12 @@ error_reporting(E_ALL ^ E_NOTICE);
 							<h2>Favourites</h2>
 							<div>
 							<?php
-							show_creations($creation,$cur_user,$user,$page,true);
+							show_creations( $mysqli, $creation, $cur_user, $user, $page, true );
 							echo '<div><br/>';
-							if(ceil(mysql_num_rows($creation)/16)>1 && $page!=ceil(mysql_num_rows($creation)/16)-1){
+							if(ceil($creation->num_rows/16)>1 && $page!=ceil($creation->num_rows/16)-1){
 									echo '<a style="float:right;margin:0px;" href="#overview-'.($page+1).'">next &gt;&gt;</a>';
 								}
-							if(ceil(mysql_num_rows($creation)/16)>1 && $page!=0){
+							if(ceil($creation->num_rows/16)>1 && $page!=0){
 									echo '<a style="float:left;margin:0px;" href="#overview-'.($page-1).'">&lt;&lt; previous</a>';
 							}
 							echo '</div>';
@@ -192,14 +189,14 @@ error_reporting(E_ALL ^ E_NOTICE);
 							}
 						}
 						else {
-							for($page=0;$page<ceil(mysql_num_rows($creation)/16);$page++){
+							for($page=0;$page<ceil($creation->num_rows/16);$page++){
 								echo '<div data-page="'.$page.'" name="'.$creation_types[$i].'" class="tab_content">';
-								show_creations($creation,$cur_user,$user,$page);
+								show_creations( $mysqli, $creation, $cur_user, $user, $page );
 								echo '<div>';
-								if(ceil(mysql_num_rows($creation)/16)>1 && $page!=ceil(mysql_num_rows($creation)/16)-1){
+								if(ceil($creation->num_rows/16)>1 && $page!=ceil($creation->num_rows/16)-1){
 									echo '<a style="float:right;margin:0px;" href="#'.$creation_types[$i].'-'.($page+1).'">next &gt;&gt;</a>';
 								}
-								if(ceil(mysql_num_rows($creation)/16)>1 && $page!=0){
+								if(ceil($creation->num_rows/16)>1 && $page!=0){
 									echo '<a style="float:left;margin:0px;" href="#'.$creation_types[$i].'-'.($page-1).'">&lt;&lt; previous</a>';
 								}
 								echo '</div>';
