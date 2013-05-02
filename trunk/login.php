@@ -17,7 +17,7 @@ if( isset( $_SESSION['SESS_MEMBER_ID'] ) || ( trim( $_SESSION['SESS_MEMBER_ID'] 
 		}
 		exit();
 	}
-	header( "Location: user/".get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ) );
+	header( "Location: user/".get_username_from_id( $_SESSION['SESS_MEMBER_ID'], $mysqli ) );
 	exit();
 }
 
@@ -40,8 +40,12 @@ if (isset($_POST['submit'])) {
     $user_info=mysql_fetch_assoc($result);
     $_SESSION['SESS_MEMBER_ID'] = $user_info['id'];
     session_write_close();
-	if(isset($return_to)) header("Location: " . $return_to);
-    else header("Location: user/".get_username_from_id($_SESSION['SESS_MEMBER_ID']));
+	if( isset( $return_to ) ){
+		header( "Location: " . $return_to );
+	}
+    else{
+		header( "Location: user/". get_username_from_id( $_SESSION['SESS_MEMBER_ID'], $mysqli ) );
+	}
     exit();
 }
 

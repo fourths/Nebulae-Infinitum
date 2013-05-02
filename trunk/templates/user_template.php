@@ -155,9 +155,19 @@
 				
 				<div style="display:none;" id="tabs_content_data">
 					<?php
-					$i=0;
+					$i = 0;
+					foreach($creation_types as $creation_type){
+						$result_test = $creations[$creation_type]->fetch_array();
+						if( empty( $result_test ) ){
+							echo "ok";
+						}
+					}
+					print_r(count($creations));
+					
 					foreach($creations as $creation){
+						print_r($creation);
 						if ($creation_types[$i] == "favourites") {
+							//TEST FOR NUMROWS EXISTENCE
 							for($page=0;$page<ceil($creation->num_rows/16);$page++){
 					?>
 						<div data-page="<?php echo $page; ?>" name="overview" class="tab_content">

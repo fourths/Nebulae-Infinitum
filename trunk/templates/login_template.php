@@ -18,7 +18,7 @@
 				Enter your username and password to log in. 
 				<?php
 				if( isset( $_GET['returnto'] ) ){
-					echo '<a href="register?returnto='.$_GET['returnto'].'">';
+					echo '<a href="register?returnto=' . $_GET['returnto'] . '">';
 				}
 				else{
 					echo '<a href="register">';
