@@ -57,7 +57,13 @@ if ( $url != "/"){
 					}
 				}
 				else{
-					require_once( "user.php" );
+					//echo substr( $_SERVER['REQUEST_URI'], 0, 1 );
+					if( substr( $_SERVER['REQUEST_URI'], strlen( $escaped_url_chunk[1] ) - 1, 1 ) == "/"){
+						header( "Location: ../" . $escaped_url_chunk[0] );
+					}
+					else{
+						require_once( "user.php" );
+					}
 				}
 			}
 			else{

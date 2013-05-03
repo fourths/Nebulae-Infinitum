@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<?php
-require_once("config/config.php");
-?>
 <html>
 	<head>
 		<title>
@@ -9,9 +6,9 @@ require_once("config/config.php");
 		
 		</title>
 		
-		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../../include/style.css" media="screen" />
 		
-		<script src="data/jquery.js" type="text/javascript"></script>
+		<script src="../../data/jquery.js" type="text/javascript"></script>
 		
 		<script type="text/javascript">
 			$(document).ready(function(){
@@ -67,7 +64,7 @@ require_once("config/config.php");
 						echo '<li id="admin_tab"><a href="#admin">Admin</a></li>';
 					}
 					?>
-					<li><a href="user.php?id=<?php echo $user['id']; ?>">Back</a></li>
+					<li><a href=".">Back</a></li>
 				</ul>
 			</div>
 			<div id="tabs_content_container" style="width:778px;min-height:355px;">
@@ -105,8 +102,8 @@ require_once("config/config.php");
 					<div style="text-decoration:underline;">Change icon</div>
 					<div class="prefsicon">Current icon:<br/>
 					<?php
-					if (!empty($user['icon'])) echo '<img class="prefsicon" src="data/usericons/'.$user['icon'].'"/>';
-					else echo '<img class="prefsicon" src="data/usericons/default.png"/>';
+					if (!empty($user['icon'])) echo '<img class="prefsicon" src="../../data/usericons/'.$user['icon'].'"/>';
+					else echo '<img class="prefsicon" src="../../data/usericons/default.png"/>';
 					?>
 					</div>
 					<div style="position:relative; left:10px;">
