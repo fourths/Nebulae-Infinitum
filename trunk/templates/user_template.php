@@ -94,7 +94,7 @@
 					echo '<div style="color:red;">Banned</div>';
 				}
 				if ($_SESSION['SESS_MEMBER_ID'] == $user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
-					echo '<div><a href="pref.php?id='.$user['id'].'">User preferences</a></div>';
+					echo '<div><a href="../user/'.$user['username'].'/preferences">User preferences</a></div>';
 				}
 				?>
 				
@@ -142,7 +142,7 @@
 			<div id="tabs_wrapper">
 				<div id="tabs_container">
 					<ul id="tabs">
-						<li id="overview_tab" class="active"><a href="#overview">Overview</a></li>
+						<li id="overview_tab"><a href="#overview">Overview</a></li>
 						<li id="writing_tab"><a href="#writing">Writing</a></li>
 						<li id="artwork_tab"><a href="#artwork">Artwork</a></li>
 						<li id="audio_tab"><a href="#audio">Audio</a></li>
@@ -167,8 +167,11 @@
 					foreach($creations as $creation){
 						print_r($creation);
 						if ($creation_types[$i] == "favourites") {
-							//TEST FOR NUMROWS EXISTENCE
-							for($page=0;$page<ceil($creation->num_rows/16);$page++){
+							$pages = ceil($creation->num_rows/16);
+							if( $pages < 1){
+								$pages = 1;
+							}
+							for($page=0;$page<$pages;$page++){
 					?>
 						<div data-page="<?php echo $page; ?>" name="overview" class="tab_content">
 							<?php
@@ -199,7 +202,7 @@
 							}
 						}
 						else {
-							for($page=0;$page<ceil($creation->num_rows/16);$page++){
+							for($page=0;$page<$pages;$page++){
 								echo '<div data-page="'.$page.'" name="'.$creation_types[$i].'" class="tab_content">';
 								show_creations( $mysqli, $creation, $cur_user, $user, $page );
 								echo '<div>';
