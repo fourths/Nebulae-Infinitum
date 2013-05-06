@@ -26,7 +26,7 @@ if (!empty($_SESSION['SESS_MEMBER_ID'])){
 	<div class="headlinks">
 		<a class="head" href="<?php echo BASE_URL ?>/">home</a> &bull; 
 		<a class="head" href="<?php echo BASE_URL ?>/creations">creations</a> &bull; 
-		<a class="head" href="<? echo BASE_URL ?>/info/">about</a> &bull; 
+		<a class="head" href="<? echo BASE_URL ?>/about/">about</a> &bull; 
 		<a class="head" href="<? echo BASE_URL ?>/forums/">forums</a> 
 		<?php
 		if ($cur_user['rank']=="admin" || $cur_user['rank']=="mod"){

@@ -93,7 +93,13 @@ if ( $url != "/"){
 		break;
 		
 		case "messages":
-		
+			if( isset( $url_array[2] ) ){
+			
+			
+			}
+			else{
+				require_once( "messages.php" );
+			}
 		break;
 		
 		case "tools":
@@ -127,9 +133,9 @@ if ( $url != "/"){
 		
 		case "about":
 			if ( isset ( $url_array[2] ) && $url_array[2] != "" ){
-				$extension = explode( ".", addslashes( $url_array[2] ) );
-				if( file_exists( "info/" . addslashes( $url_array[2] ) ) && $extension[1] == "php" ){
-					require_once( "info/" .  $url_array[2] );
+				//$extension = explode( ".", addslashes( $url_array[2] ) );
+				if( file_exists( "info/" . addslashes( $url_array[2] ) . ".php" ) ){
+					require_once( "info/" . addslashes( $url_array[2] ) . ".php" );
 				}
 			}
 			else{
