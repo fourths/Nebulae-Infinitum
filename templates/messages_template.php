@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<?php require_once("config/config.php"); ?>
 <html>
 	<head>
 		<title>
 			Messages | <?php echo SITE_NAME ?>
 		
 		</title>
-		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="include/style.css" media="screen" />
 		<script src="data/jquery.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			//create an array to hold the booleans which determine whether a reply box is being shown
@@ -62,10 +61,10 @@
 			
 			<h1 style="margin-bottom:0px;">Administrator messages</h1>
 			<?php
-			if(!empty($admin) && mysql_num_rows($admin)>0){
-				mysql_data_seek($admin,0);
-				for ($i=0;$i<mysql_num_rows($admin);$i++){
-					$message=mysql_fetch_array($admin);
+			if(!empty($admin) && $admin->num_rows>0){
+				$admin->data_seek(0);
+				for ($i=0;$i<$admin->num_rows;$i++){
+					$message= $admin->fetch_array();
 					if($message['viewed']==2&&($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 						if (file_exists("data/usericons/".$message['senderid'].".png")) $micon=$message['admintype']=="specific"?"data/usericons/".$message['senderid'].".png":"data/usericons/admin.png";
 						else $micon=$message['admintype']=="specific"?"data/usericons/default.png":"data/usericons/admin.png";
@@ -88,10 +87,10 @@
 			
 			<h1 style="margin-bottom:0px;">Activity notifications</h1>
 			<?php
-			if(!empty($notifications) && mysql_num_rows($notifications)>0){
-				mysql_data_seek($notifications,0);
-				for ($i=0;$i<mysql_num_rows($notifications);$i++){
-					$message=mysql_fetch_array($notifications);
+			if(!empty($notifications) && $notifications->num_rows>0){
+				$notifications->data_seek(0);
+				for ($i=0;$i<$notifications->num_rows;$i++){
+					$message= $notifications->fetch_array();
 					if ($message['viewed']==2&&($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 						echo '<pre class="pm"><div class="pmusername"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><strong style="font-size:12px;">'.date("M d, Y G:i T", strtotime($message['timestamp'])).'</strong> <span style="color:red;font-weight:bold">(deleted)</span></div><div class="pmtext">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 						$note++;
@@ -109,22 +108,22 @@
 			
 			<h1 style="margin-bottom:0px;">Private messages</h1>
 			<?php
-			if(!empty($private) && mysql_num_rows($private)>0){
-				mysql_data_seek($private,0);
-				for ($i=0;$i<mysql_num_rows($private);$i++){
-					$message=mysql_fetch_array($private);
-					$user_rank = get_rank_from_id($message['senderid']);
+			if(!empty($private) && $private->num_rows>0){
+				$private->data_seek(0);
+				for ($i=0;$i<$private->num_rows;$i++){
+					$message= $private->fetch_array();
+					$user_rank = get_rank_from_id($message['senderid'],$mysqli);
 					if ($message['viewed']==2&&($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 						$micon=file_exists("data/usericons/".$message['senderid'].".png")?"data/usericons/".$message['senderid'].".png":"data/usericons/default.png";
 						if($user_rank=="mod"||$user_rank=="admin") $rank_text = '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-						echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a> - <a href="flag.php?id='.$message['id'].'&type=message">flag</a>) <span style="color:red;font-weight:bold">(deleted)</span></span></div><div id="pmtext'.$message['id'].'>'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
+						echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid'],$mysqli).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a> - <a href="flag.php?id='.$message['id'].'&type=message">flag</a>) <span style="color:red;font-weight:bold">(deleted)</span></span></div><div id="pmtext'.$message['id'].'>'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 						$pm++;
 					}
 					else if ($message['viewed']<2||($cur_user['rank']=="admin"&&$message['viewed']==2&&isset($visitinguser)&&$visitinguser!=$cur_user['id'])){
 						if($message['viewed']==2) $deleted='<span style="color:red;font-weight:bold">(deleted)</span>';
 						$micon=file_exists("data/usericons/".$message['senderid'].".png")?"data/usericons/".$message['senderid'].".png":"data/usericons/default.png";
 						if($user_rank=="mod"||$user_rank=="admin") $rank_text = '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-						echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid']).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a> - <a href="flag.php?id='.$message['id'].'&type=message">flag</a>) '.$deleted.'</span></div><div id="pmtext'.$message['id'].'">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
+						echo '<pre class="pm" id="'.$message['id'].'"><a class="deletebutton" href="messages.php?action=delete&id='.$message['id'].'"></a><img class="pmimg" src="'.$micon.'"/><div class="pmusername"><a href="user.php?id='.$message['senderid'].'">'.get_username_from_id($message['senderid'],$mysqli).$rank_text.'</a> <span style="font-size:11px;">('.date("M d, Y G:i T", strtotime($message['timestamp'])).') (<a id="replylink" href="javascript:reply('.$message['id'].')">reply</a> - <a href="flag.php?id='.$message['id'].'&type=message">flag</a>) '.$deleted.'</span></div><div id="pmtext'.$message['id'].'">'.bbcode_parse(stripslashes($message['message'])).'</div><div style="clear:both;width:100%;height:0px;"></div></pre>';
 						$pm++;
 					}
 				}

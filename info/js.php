@@ -1,42 +1,15 @@
 <?php
-//Include config
-require_once("../config/config.php");
-error_reporting(E_ALL ^ E_NOTICE); 
-session_start();
-
-//Connect to database
-$connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: " . mysql_error());}
-mysql_select_db(MYSQL_DATABASE, $connection);
-
-//Get current user info from database
-if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
-	if (!$lresult) {
-		echo "Could not run query: " . mysql_error() and die;
-	}
-	$cur_user = mysql_fetch_array($lresult);
-	if ($cur_user['banstatus'] == "banned") {
-	include_once("errors/ban.php");
-	exit();
-	}
-	else if ($cur_user['banstatus'] == "deleted") {
-	include_once("errors/delete.php");
-	exit();
-	}
-}
-
 //Change player if specified
 if (isset($_GET["player"])) {
 	if (empty($_SESSION['SESS_MEMBER_ID'])){
-		header("location: js.php");
+		header("Location: js");
 		exit();
 	}
 	if ($_GET["player"]!="js" && $_GET["player"]!="flash"){
-		header("location: js.php");
+		header("Location: js");
 		exit();
 	}
-	mysql_query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='".$cur_user['id']."'") or die(mysql_error());
+	$mysqli->query( "UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='".$cur_user['id']."'" ) or die( $mysqli->error );
 	header("location: js.php");
 	exit();
 }
@@ -48,17 +21,24 @@ if (isset($_GET["player"])) {
 			sb2.js | <?php echo SITE_NAME; ?>
 		
 		</title>
-		<link rel="stylesheet" type="text/css" href="../templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
 	</head>
 	<body>
-		<?php include_once("../templates/header.php");  ?>
+		<?php include_once( BASE_DIRECTORY . "/templates/header.php"); ?>
 
 		<div class="container" style="padding-bottom:20px;">
 			<img src="../data/info/sb2js.png" style="background-color:white;padding:10px;border-radius:15px;margin:auto;display:block;margin-top:15px;width:350px;"/>
 			<div style="padding-top:20px;font-size:16px;padding-left:20px;padding-right:20px;">
 				sb2.js is a brand new player for Scratch projects, created by RHY3756547. It compiles projects made with the Scratch 2.0 editor to Javascript, and then runs them. In general, it is much faster than the Flash player currently in use on Scratch, but it's still in development and may have bugs and features yet to be added. Despite this, we're allowing users to choose whether they'd like to use it to view Scratch 2.0 projects.
 				<?php
-				if (!empty($_SESSION['SESS_MEMBER_ID'])) {echo '<br/><br/><div>You are currently using '; if ($cur_user['sb2player'] == "js") echo 'sb2.js. If you would like to switch back to the Flash player, click <a href="js.php?player=flash">here</a>.</div><br/>'; else echo 'the Flash player. If you would like to switch to sb2.js, click <a href="js.php?player=js">here</a>.</div><br/>';
+				if (!empty($_SESSION['SESS_MEMBER_ID'])) {
+					echo '<br/><br/><div>You are currently using '; 
+					if ($cur_user['sb2player'] == "js"){
+						echo 'sb2.js. If you would like to switch back to the Flash player, click <a href="js.php?player=flash">here</a>.</div><br/>'; 
+					}
+					else{
+						echo 'the Flash player. If you would like to switch to sb2.js, click <a href="js.php?player=js">here</a>.</div><br/>';
+					}
 				}
 				?>
 
