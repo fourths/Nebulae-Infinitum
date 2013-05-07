@@ -57,7 +57,6 @@ if ( $url != "/"){
 					}
 				}
 				else{
-					//echo substr( $_SERVER['REQUEST_URI'], 0, 1 );
 					if( substr( $_SERVER['REQUEST_URI'], strlen( $escaped_url_chunk[1] ) - 1, 1 ) == "/"){
 						header( "Location: ../" . $escaped_url_chunk[0] );
 					}
@@ -89,13 +88,47 @@ if ( $url != "/"){
 		break;
 		
 		case "message":
-		
+			if( isset( $url_array[3] ) ){
+				switch( $url_array[3] ){
+					case "delete":
+						if( isset( $url_array[2] ) ){
+							$_GET['id'] = $url_array[2];
+							$_GET['action'] = "delete";
+							require_once( "messages.php" );
+						}
+						else{
+							require_once( "errors/404.php" );
+						}
+					break;
+					
+					case "flag":
+						if( isset( $url_array[2] ) ){
+							$_GET['id'] = $url_array[2];
+							$_GET['type'] = "message";
+							require_once( "flag.php" );
+						}
+						else{
+							require_once( "errors/404.php" );
+						}
+					break;
+					
+					default:
+						require_once( "errors/404.php" );
+				}
+			}
+			else{
+				require_once( "errors/404.php");
+			}
 		break;
 		
 		case "messages":
-			if( isset( $url_array[2] ) ){
-			
-			
+			if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/" || isset( $url_array[2] ) ){
+				if( BASE_FOLDER != ""){
+					header( "Location: ../" . str_replace( "/" . BASE_FOLDER . "/", "", substr( $_SERVER['REQUEST_URI'], 0, strlen( $_SERVER['REQUEST_URI'] ) - 1 ) ) );
+				}
+				else{
+					header( "Location: /" . substr( $_SERVER['REQUEST_URI'], 0, strlen( $_SERVER['REQUEST_URI'] ) - 1 ) );
+				}
 			}
 			else{
 				require_once( "messages.php" );
@@ -133,7 +166,6 @@ if ( $url != "/"){
 		
 		case "about":
 			if ( isset ( $url_array[2] ) && $url_array[2] != "" ){
-				//$extension = explode( ".", addslashes( $url_array[2] ) );
 				if( file_exists( "info/" . addslashes( $url_array[2] ) . ".php" ) ){
 					require_once( "info/" . addslashes( $url_array[2] ) . ".php" );
 				}
