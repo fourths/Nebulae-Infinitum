@@ -1,28 +1,8 @@
 <?php
-//Include config
-require_once("config/config.php");
-error_reporting(E_ALL ^ E_NOTICE);
-
-//Connect to database specified in config
-$connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: ".mysql_error());}
-mysql_select_db(MYSQL_DATABASE, $connection);
-
-session_start();
-
-//If user isn't logged in, don't bother with fetching data; 403 'em
+//If user isn't logged in, 403 'em
 if (empty($_SESSION['SESS_MEMBER_ID'])){
 	require_once("errors/403.php");
 	exit();
-}
-
-//Get current user info from database
-if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
-	if (!$lresult) {
-		die(mysql_error());
-	}
-	$cur_user = mysql_fetch_array($lresult);
 }
 
 //Test whether current user is admin and, if not, reject them brutally (403 'em)
