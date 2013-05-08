@@ -84,6 +84,29 @@ if ( $url != "/"){
 		break;
 		
 		case "admin":
+			if( isset( $url_array[2] ) ){
+				switch( $url_array[2] ){
+					case "flags":
+						$_GET['mode'] = "flags";
+						if( isset( $url_array[4] ) ){
+							switch( $url_array[4] ){
+								case "delete":
+								
+								break;
+								
+								default:
+									require_once( "errors/404.php" );
+							}
+						}
+					break;
+					
+					default:
+						header( "Location: .." );
+				}
+			}
+			else{
+				require_once( "admin.php" );
+			}
 		
 		break;
 		
@@ -122,7 +145,7 @@ if ( $url != "/"){
 		break;
 		
 		case "messages":
-			if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/" || isset( $url_array[2] ) ){
+			if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/" ){
 				if( BASE_FOLDER != ""){
 					header( "Location: ../" . str_replace( "/" . BASE_FOLDER . "/", "", substr( $_SERVER['REQUEST_URI'], 0, strlen( $_SERVER['REQUEST_URI'] ) - 1 ) ) );
 				}
@@ -131,6 +154,9 @@ if ( $url != "/"){
 				}
 			}
 			else{
+				if( isset( $url_array[2] ) ){
+					$_GET['uid'] = $url_array[2];
+				}
 				require_once( "messages.php" );
 			}
 		break;
@@ -139,7 +165,7 @@ if ( $url != "/"){
 			if( isset( $url_array[2] ) ){
 				switch( $url_array[2] ){
 					case "api":
-						if( file_exists( "api/" . $url_array[3] . ".php" ) ){
+						if(  file_exists( "api/" . $url_array[3] . ".php" ) ){
 							require_once( "api/" . $url_array[3] . ".php" );
 						}
 						else {

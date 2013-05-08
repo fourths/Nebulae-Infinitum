@@ -1,7 +1,4 @@
 <?php
-//Initialise variable
-$userid = null;
-
 //Get user ID from URL
 //If user ID not found or is NaN, die
 if ( isset( $_GET["id"] ) ){
@@ -12,31 +9,19 @@ if ( !$userid || strcspn( $userid, "0123456789" ) > 0 ){
 }
 
 //Get user info from database
-if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ){
-	$user_query = $mysqli->query( "SELECT * FROM users WHERE id=" . $userid );
-	if ( $mysqli->errno ) {
-		die( "Could not read user data from database: " . $mysqli->error );
-	}
-	$user = $user_query->fetch_array();
-	unset($user_query);
+$user_query = $mysqli->query( "SELECT * FROM users WHERE id=" . $userid );
+if ( $mysqli->errno ) {
+	die( "Could not read user data from database: " . $mysqli->error );
 }
+$user = $user_query->fetch_array();
+unset($user_query);
+
 
 //If user ID is not a valid user, die
-if (!$user){
+if ( !isset( $user ) ){
 	include_once("errors/404.php");
 	exit();
 }
-
-//Get current user info from database
-if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ){
-	$cur_user_query = $mysqli->query( "SELECT * FROM users WHERE id=" . $_SESSION['SESS_MEMBER_ID'] );
-	if ( $mysqli->errno ) {
-		die( "Could not read user data from database: " . $mysqli->error );
-	}
-	$cur_user = $cur_user_query->fetch_array();
-	unset($cur_user_query);
-}
-
 
 $amounts = array();
 $creations=array(

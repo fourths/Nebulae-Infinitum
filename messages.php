@@ -1,6 +1,4 @@
 <?php
-
-
 if( !isset( $cur_user ) ){
 	die("<meta http-equiv='Refresh' content='0; URL=login.php'>");
 }
@@ -12,7 +10,7 @@ if ( isset($_GET['uid'] ) && ( !strcspn( $_GET['uid'], "0123456789" ) ) && $cur_
 	}
 	$cur_user = $lresult->fetch_array();
 	if( !$cur_user ){
-		require( "../errors/404.php" );
+		require( BASE_DIRECTORY . "/errors/404.php" );
 		die();
 	}
 	$visitinguser = $cur_user['username'];
