@@ -80,7 +80,29 @@ if ( $url != "/"){
 		break;
 		
 		case "comment":
-		
+			if( isset( $url_array[2] ) ){
+				if( $url_array[2] == "" ){
+					require_once( "errors/404.php" );
+					break;
+				}
+				$comment_data = $mysqli->query("SELECT * FROM comments WHERE id = " . addslashes($url_array[2]) );
+				if( isset( $comment_data ) ){
+					if( $comment["status"] == "censored" ){
+						if( $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
+							header( "Location: creation/" . $comment['creationid'] . "#". $comment['id'] );
+						}
+						else{
+							require_once( "errors/403.php" );
+						}
+					}
+				}
+				else{
+					require_once( "errors/404.php" );
+				}
+			}
+			else{
+				require_once( "errors/404.php" );
+			}
 		break;
 		
 		case "admin":
@@ -91,17 +113,20 @@ if ( $url != "/"){
 						if( isset( $url_array[4] ) ){
 							switch( $url_array[4] ){
 								case "delete":
-								
-								break;
+									$_GET['action'] = "delete";
+									$_GET['id'] = addslashes($url_array[3]);
 								
 								default:
-									require_once( "errors/404.php" );
+									require_once( "admin.php");
 							}
+						}
+						else{
+							require_once( "admin.php");
 						}
 					break;
 					
 					default:
-						header( "Location: .." );
+						header( "Location: ../admin" );
 				}
 			}
 			else{

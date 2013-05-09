@@ -30,7 +30,7 @@ function get_username_from_id( $id, $mysqli ){
 
 function get_rank_from_id( $id, $mysqli ){
 	//Get user info from database
-	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error);
+	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error );
 	if (!$result) {
 		return "mysqlError";
 	}
@@ -43,16 +43,16 @@ function get_rank_from_id( $id, $mysqli ){
 }
 
 function get_creation_from_comment( $cid, $mysqli ){
-	$result = $mysqli->query( "SELECT creationid FROM comments WHERE id = '$cid'" ) or die( $mysqli->error);
+	$result = $mysqli->query( "SELECT creationid FROM comments WHERE id = '$cid'" ) or die( $mysqli->error );
 	if (!$result) {
 		return "invalidComment";
 	}
 	$creation = $result->fetch_array();
-	return $creation['id'];
+	return $creation['creationid'];
 }
 
 function get_id_from_creation( $cid, $mysqli ){
-	$result = $mysqli->query( "SELECT userid FROM creations WHERE id = '$cid'" ) or die( $mysqli->error);
+	$result = $mysqli->query( "SELECT userid FROM creations WHERE id = '$cid'" ) or die( $mysqli->error );
 	if (!$result) {
 		return "invalidCreation";
 	}
@@ -62,7 +62,7 @@ function get_id_from_creation( $cid, $mysqli ){
 
 function get_notification_setting_from_id( $id, $mysqli ){
 	//Get user info from database
-	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error);
+	$result = $mysqli->query( "SELECT * FROM users WHERE id = '$id'" ) or die( $mysqli->error );
 	if (!$result) {
 		return "mysqlError";
 	}
@@ -75,7 +75,7 @@ function get_notification_setting_from_id( $id, $mysqli ){
 }
 
 function get_sender_from_message( $mid, $mysqli ){
-	$result = $mysqli->query( "SELECT senderid FROM messages WHERE id='$mid'" ) or die( $mysqli->error);
+	$result = $mysqli->query( "SELECT senderid FROM messages WHERE id='$mid'" ) or die( $mysqli->error );
 	if (!$result) {
 		return "invalidMessage";
 	}
