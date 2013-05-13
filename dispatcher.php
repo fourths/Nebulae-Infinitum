@@ -41,32 +41,45 @@ $url_array = explode( "/", $url );
 //Determine which page to load based on the URL
 if ( $url != "/"){
 	switch( $url_array[1] ){
+		// If the URL starts with user (e.g. example.com/user/username), do this
 		case "user":
+			// Escape the URL for added security
 			$escaped_url_chunk[0] = addslashes( $url_array[2] );
+			// If there's something after the user part of the URL (e.g. username in the URL above)
 			if( isset( $escaped_url_chunk[0] ) && $escaped_url_chunk[0] != ""){
+				// Set the ID of the user the page should display information from based on the username in the URL
 				$_GET['id'] = get_id_from_username( $escaped_url_chunk[0], $mysqli );
+				// Escape the URL for added security
 				$escaped_url_chunk[1] = addslashes( $url_array[3] );
+				// If there's something after the username part (e.g. example.com/user/username/action)...
 				if( isset( $escaped_url_chunk[1] ) && $escaped_url_chunk[1] != ""){
 					switch( $url_array[3] ){
+						// If the URL is of the format (e.g. example.com/user/username/preferences), display their preferences page rather than the userpage
+						// This is done to keep URLs organised & structured
 						case "preferences":
 							require_once( "pref.php" );
 						break;
 						
+						// If there's something besides "preferences" there (or other actions I may add), spit out a 404 error
 						default:
 							require_once( "errors/404.php" );
 					}
 				}
+				// Otherwise, if the URL is simply like example.com/user/username...
 				else{
+					// If the page ends in a / (e.g. example.com/user/username/), redirect them to the page w/out the slash so it doesn't mess up the CSS
 					if( substr( $_SERVER['REQUEST_URI'], strlen( $escaped_url_chunk[1] ) - 1, 1 ) == "/"){
 						header( "Location: ../" . $escaped_url_chunk[0] );
 					}
+					// Otherwise, just output the regular userpage
 					else{
 						require_once( "user.php" );
 					}
 				}
 			}
+			// If there's nothing after the user part (e.g. example.com/user/), give a 404 error
+			// There may in the future be a userlist here
 			else{
-				//in future, userlist?
 				require_once( "errors/404.php" );
 			}
 		break;
@@ -76,7 +89,24 @@ if ( $url != "/"){
 		break;
 		
 		case "creations":
-		
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
+				if ( !isset( $url_array[3] ) || $url_array[3] == "" ){
+					$url_array[3] = 1;
+				}
+				if ( isset ( $url_array[4] ) ){
+					$_GET['id'] = $url_array[3];
+					$_GET['action'] = $url_array[4];
+					$_GET['mode'] = "action";
+				}
+				else{
+					$_GET['page'] = $url_array[3];
+					$_GET['mode'] = $url_array[2];
+				}
+				require_once( "creations.php" );
+			}
+			else{
+				header( "Location: " . BASE_URL . "/creations/newest/1");
+			}
 		break;
 		
 		case "comment":
