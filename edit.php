@@ -1,30 +1,5 @@
 <?php
-//Include config
-require_once("config/config.php");
-error_reporting(E_ALL ^ E_NOTICE); 
-session_start();
-
-//Connect to database
-$connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: " . mysql_error());}
-mysql_select_db(MYSQL_DATABASE, $connection);
-
-//If user isn't logged in, redirect to login
-if (empty($_SESSION['SESS_MEMBER_ID'])){
-	header("location: login.php");
-	exit();
-}
-
 $mode = "edit";
-
-//Get current user info from database
-if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
-	if (!$lresult) {
-		die(mysql_error());
-	}
-	$cur_user = mysql_fetch_array($lresult);
-}
 
 //Get creation ID from URL
 //If creation ID not found or is NaN, die
@@ -35,11 +10,11 @@ if (!$creationid || strcspn($creationid,"0123456789")>0){
 }
 
 //Get creation info from database
-$result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
+$result = $mysqli->query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
-    die(mysql_error());
+    die( $mysqli->error );
 }
-$creation = mysql_fetch_array($result);
+$creation = $result->fetch_array();
 
 //If creation ID is not a valid creation, die
 if (!$creation){
@@ -75,14 +50,14 @@ else if ($cur_user['banstatus'] == "deleted") {
 }
 
 //Get current version number
-$cur_version_arr = mysql_fetch_row(mysql_query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id']));
+$cur_version_arr = $mysqli->query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id'])->fetch_array();
 $cur_version = $cur_version_arr[0];
 unset($cur_version_arr);
 if (empty($cur_version)){
 	$cur_version = 1;
 }
 $new_version = $cur_version+1;
-$version_name_arr = mysql_fetch_row(mysql_query("SELECT name FROM versions WHERE creationid=".$creation['id']." AND number=".$cur_version));
+$version_name_arr = $mysqli->query("SELECT name FROM versions WHERE creationid=".$creation['id']." AND number=".$cur_version)->fetch_array();
 $version_name = $version_name_arr[0];
 unset($version_name_arr);
 if (empty($cur_version)){
@@ -95,10 +70,10 @@ if (isset($_GET['mode'])&&$_GET['mode']=="version"){
 }	
 
 if($mode == "version"){
-	$version_query = mysql_query("SELECT * FROM versions WHERE creationid=".$creation['id']." ORDER BY number DESC") or die(mysql_error());
+	$version_query = $mysqli->query("SELECT * FROM versions WHERE creationid=".$creation['id']." ORDER BY number DESC") or die( $mysqli->error );
 	$versions = array();
 	$j=0;
-	while($version_i = mysql_fetch_array($version_query)){
+	while ( $version_i = $version_query->fetch_array() ){
 		$versions[$j] = $version_i;
 		$j++;
 	}
@@ -119,7 +94,7 @@ if($mode == "version"){
 		$action = $_GET['action'];
 		$id = floatval($_GET['aid']);
 		if($action=="revert"){
-			mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".floatval($version_name+1).".0"."',".$new_version.",1)") or die(mysql_error());
+			$mysqli->query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".floatval($version_name+1).".0"."',".$new_version.",1)") or die( $mysqli->error );
 			$ext = strtolower(substr(strrchr($filenames[$id], '.'), 1));
 			copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
 			unlink("data/creations/".$creation['filename']);
@@ -158,12 +133,12 @@ if($mode == "version"){
 				break;
 			}
 			
-			mysql_query("UPDATE creations SET filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',type='".$type."' WHERE id=".$creation['id']) or die(mysql_error());
+			$mysqli->query("UPDATE creations SET filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',type='".$type."' WHERE id=".$creation['id']) or die( $mysqli->error );
 			copy("data/creations/old/".$filenames[$id],"data/creations/".$creation['id'].'.'.$ext);
 			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 		}
 		else if($action=="delete"){
-			mysql_query("UPDATE versions SET saved=0 WHERE number=".$id) or die(mysql_error());
+			$mysqli->query("UPDATE versions SET saved=0 WHERE number=".$id) or die( $mysqli->error );
 			unlink("data/creations/old/".$filenames[$id]);
 			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 		}
@@ -176,36 +151,36 @@ else {
 
 //Update database values upon form submission
 if (isset($_POST['update'])) {
-	$result = mysql_query("SELECT * FROM creations WHERE id='$creationid'");
-	if (mysql_num_rows($result) != 1){
-		die("An error occurred, please try again.");
+	$result = $mysqli->query("SELECT * FROM creations WHERE id='$creationid'");
+	if ( $result->num_rows() != 1 ){
+		die("An error occurred; please try again.");
 	}
-	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") mysql_query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$creationid'") or die(mysql_error());
-	else mysql_query("UPDATE creations SET license='copyright' WHERE id='$creationid'") or die(mysql_error());
-	mysql_query("UPDATE creations SET name='".addslashes(htmlspecialchars($_POST['title']))."' WHERE id='$creationid'") or die(mysql_error());
-	mysql_query("UPDATE versions SET name='".addslashes(htmlspecialchars($_POST['version']))."' WHERE creationid='$creationid' AND number=".$cur_version) or die(mysql_error());
-	mysql_query("UPDATE creations SET descr='".addslashes(htmlspecialchars($_POST['description']))."' WHERE id='$creationid'") or die(mysql_error());
-	mysql_query("UPDATE creations SET advisory='".addslashes(htmlspecialchars($_POST['advisory']))."' WHERE id='$creationid'") or die(mysql_error());
+	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") $mysqli->query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$creationid'") or die( $mysqli->error );
+	else $mysqli->query("UPDATE creations SET license='copyright' WHERE id='$creationid'") or die( $mysqli->error );
+	$mysqli->query("UPDATE creations SET name='".addslashes(htmlspecialchars($_POST['title']))."' WHERE id='$creationid'") or die( $mysqli->error );
+	$mysqli->query("UPDATE versions SET name='".addslashes(htmlspecialchars($_POST['version']))."' WHERE creationid='$creationid' AND number=".$cur_version) or die( $mysqli->error );
+	$mysqli->query("UPDATE creations SET descr='".addslashes(htmlspecialchars($_POST['description']))."' WHERE id='$creationid'") or die( $mysqli->error );
+	$mysqli->query("UPDATE creations SET advisory='".addslashes(htmlspecialchars($_POST['advisory']))."' WHERE id='$creationid'") or die( $mysqli->error );
 	if (addslashes($_POST['hidden']) != "no" && addslashes(htmlspecialchars($_POST['hidden'])) != "byowner" && addslashes($_POST['hidden']) != "censored" && addslashes($_POST['hidden']) != "deleted") $hidden = "no";
 	else $hidden = addslashes($_POST['hidden']);
-	$curhid = mysql_fetch_array(mysql_query("SELECT hidden FROM creations WHERE id='$creationid'"));
+	$curhid = $mysqli->query("SELECT hidden FROM creations WHERE id='$creationid'")->fetch_array();
 	if ($cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" && $hidden == "censored") $hidden = "byowner";
 	if ($hidden=="flagged") $hidden = "byowner";
 	if ($hidden=="no"&&($curhid[0]=="flagged"||$curhid[0]=="approved")) $hidden="approved";
-	mysql_query("UPDATE creations SET hidden='".$hidden."' WHERE id='$creationid'") or die(mysql_error());
-	if ($hidden=="censored") mysql_query("DELETE FROM flags WHERE creationid=".$creation['id']." AND type='creation'");
+	$mysqli->query("UPDATE creations SET hidden='".$hidden."' WHERE id='$creationid'") or die( $mysqli->error );
+	if ($hidden=="censored") $mysqli->query("DELETE FROM flags WHERE creationid=".$creation['id']." AND type='creation'");
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 //Creation deletion/undeletion
 if (isset($_POST['delete'])) {
 	if ($cur_user['id'] != $creation['ownerid'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") die("Insufficient permissions.");
-	mysql_query("UPDATE creations SET hidden='deleted' WHERE id='$creationid'") or die(mysql_error());
+	$mysqli->query("UPDATE creations SET hidden='deleted' WHERE id='$creationid'") or die( $mysqli->error );
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 
 if (isset($_POST['undelete'])) {
 	if ($cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") die("Insufficient permissions.");
-	mysql_query("UPDATE creations SET hidden='no' WHERE id='$creationid'") or die(mysql_error());
+	$mysqli->query("UPDATE creations SET hidden='no' WHERE id='$creationid'") or die( $mysqli->error );
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
 }
 
@@ -216,7 +191,7 @@ if (isset($_POST['upload'])) {
 		$backup = true;
 	}
 	$ext = strtolower(substr(strrchr($_FILES['creationfile']['name'], '.'), 1));
-	$timestamp = mysql_fetch_array(mysql_query("SELECT NOW()"));
+	$timestamp = $mysqli->query("SELECT NOW()")->fetch_array();
 	if (empty($_FILES['creationfile']) || !file_exists($_FILES['creationfile']['tmp_name'])) {
 		die("Please select a file for your creation.");
 	}
@@ -265,11 +240,11 @@ if (isset($_POST['upload'])) {
 				if (fread($svg,11) != "<svg xmlns=") die("Your SVG file appears to be corrupted.");
 			break;
 		}
-		mysql_query("UPDATE creations SET type='artwork',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
+		$mysqli->query("UPDATE creations SET type='artwork',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die( $mysqli->error );
 	}
 	else if ($ext == "mp3"){
 		if ($_FILES['creationfile']['type'] != "audio/mp3" && $_FILES['creationfile']['type'] != "audio/mpeg") die("Your MP3 file appears to be corrupted. Its MIME type is ".$_FILES['creationfile']['type']);
-		mysql_query("UPDATE creations SET type='audio',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
+		$mysqli->query("UPDATE creations SET type='audio',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die( $mysqli->error );
 	}
 	else if ($ext == "sb" || $ext == "scratch" || $ext == "sb2"){
 		if ($ext == "scratch" || $ext == "sb"){
@@ -281,21 +256,21 @@ if (isset($_POST['upload'])) {
 			if (is_string($sb2zip)) die("Your Scratch 2.x project appears to be corrupted.");
 			if (str_replace("\n","",str_replace("\t", " ", zip_entry_read(zip_read($sb2zip),22))) != '{ "objName": "Stage",') die("Your Scratch 2.x project appears to be corrupted.");
 		}
-		mysql_query("UPDATE creations SET type='scratch',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
+		$mysqli->query("UPDATE creations SET type='scratch',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."")  or die( $mysqli->error );
 	}
 	else if ($ext == "swf"){
 		if ($_FILES['creationfile']['type'] != "application/x-shockwave-flash") die("Your SWF file appears to be corrupted.");
 		$swf = fopen($_FILES['creationfile']['tmp_name'],"r");
 		if (fread($swf,3) != "CWS") die("Your SWF file appears to be corrupted.");
-		mysql_query("UPDATE creations SET type='flash',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
+		$mysqli->query("UPDATE creations SET type='flash',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die( $mysqli->error );
 	}
 	else if ($ext == "txt"){
 		if (($_FILES['creationfile']['type'] != "text/plain" && $ext=="txt")) die("Your text file appears to be corrupted.");
-		mysql_query("UPDATE creations SET type='writing',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die(mysql_error());
+		$mysqli->query("UPDATE creations SET type='writing',filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',modified='".$timestamp."' WHERE id=".$creation['id']."") or die( $mysqli->error );
 	}
 	else die("Unsupported file type.");
 	
-	mysql_query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die(mysql_error());
+	$mysqli->query("INSERT INTO versions (creationid,name,number,saved) VALUES(".$creation['id'].",'".addslashes(htmlspecialchars($_POST['newversion']))."',".$new_version.",1)") or die( $mysqli->error );
 	//if user said to save file, back it up
 	if($backup==true){
 		copy("data/creations/".$creation['filename'],"data/creations/old/".$creation['id']."-v".$cur_version.".".$creation['filetype']);
@@ -306,7 +281,7 @@ if (isset($_POST['upload'])) {
 	else{
 		unlink("data/creations/".$creation['filename']);
 		move_uploaded_file($_FILES['creationfile']['tmp_name'], "data/creations/" .$creation['id'].".".$ext);
-		mysql_query("UPDATE versions SET saved=0 WHERE number=".$cur_version) or die(mysql_error());
+		$mysqli->query("UPDATE versions SET saved=0 WHERE number=".$cur_version) or die( $mysqli->error );
 	}
 	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
 	exit();

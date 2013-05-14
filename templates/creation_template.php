@@ -12,11 +12,11 @@ if ($creation['type']=="artwork"||$creation['type']=="flash"){
 ?>
 <html>
 <head>
-<title><?php echo stripslashes($creation['name']) ?> | <?php echo SITE_NAME ?></title>
+<title><?php echo stripslashes($creation['name']); ?> | <?php echo SITE_NAME ?></title>
 <link rel="stylesheet" type="text/css" href="../include/style.css" media="screen" />
+<script src="../include/creation.js" type="text/javascript"></script>
 <script src="../data/jquery.js" type="text/javascript"></script>
-<script src="../templates/creation.js" type="text/javascript"></script>
-<?php 
+<?php
 if ($creation['type']=="audio"){
 	echo '<script type="text/javascript" src="../data/audio-player.js"></script>';
 }
@@ -320,27 +320,27 @@ echo '<form method="post">
 <input type="submit" style="margin-left:10px;" name="newcomment" value="Submit" /><br/>
 </form>';
 echo '<div class="comments">';
-while($comment = mysql_fetch_array($comments)){
+while( $comment = $comments->fetch_array() ){
 	//Test if the comment has enough flags to be auto-censored and censor it if it does
 	//If comment is marked as alright even after three flags, the comment still shows
 	$i=0;
 	$hidden=false;
-	$fresult = mysql_query("SELECT * FROM flags WHERE parentid=".$comment['id']." AND type='comment'") or die(mysql_error());
-	while($row = mysql_fetch_array($fresult)){
+	$fresult = $mysqli->query("SELECT * FROM flags WHERE parentid=".$comment['id']." AND type='comment'") or die( $mysqli->error );
+	while( $row = $fresult->fetch_array() ){
 		$cflags[$i] = $row[2];
 		$i++;
 	}
 	if (!empty($cflags)){
-		$farray=mysql_fetch_array(mysql_query("SELECT status FROM comments WHERE id = ".$comment['id']));
+		$farray = $mysqli->query("SELECT status FROM comments WHERE id = ".$comment['id'])->fetch_array();
 		if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
-			mysql_query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die(mysql_error());
-			mysql_query("DELETE FROM flags WHERE parentid=".$comment['id']." AND type='comment'");
+			$mysqli->query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die( $mysqli->error );
+			$mysqli->query("DELETE FROM flags WHERE parentid=".$comment['id']." AND type='comment'");
 			$hidden=true;
 		}
 	}
 	$cflags=array();
 	if (!$hidden&&$comment['status']!='censored'||($comment['status']=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
-		$com_user = mysql_fetch_array(mysql_query("SELECT * FROM users WHERE id=".$comment['userid']));
+		$com_user = $mysqli->query("SELECT * FROM users WHERE id=".$comment['userid'])->fetch_array();
 		if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/'.$com_user['icon'].'"/>';
 		else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/default.png"/>';
 		echo '
@@ -389,7 +389,7 @@ while($comment = mysql_fetch_array($comments)){
 		echo stripslashes($creation['name']); 
 		echo '<span style="font-size:11px;"> v'.$cur_version;
 		if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
-			echo ' (<a href="edit.php?id='.$creation['id'].'">edit</a>)'; 
+			echo ' (<a href="'.$creation['id'].'/edit">edit</a>)'; 
 		}
 		echo '</span>';
 		?>
@@ -519,7 +519,7 @@ while($comment = mysql_fetch_array($comments)){
 		<div class="relatedcreationscontainer" style="background-color:white;margin:auto;padding:1px;margin-top:10px;width:280px;">
 			<?php
 			$related_amount = 4;
-			$related_creations = getRelatedCreations($creation,$related_amount);
+			$related_creations = getRelatedCreations($creation,$related_amount,$mysqli);
 			foreach($related_creations as $related_creation){
 				if(file_exists("data/thumbs/".$related_creation['id'].".png")){
 					$image_thumb = $related_creation['id'];
@@ -548,7 +548,7 @@ while($comment = mysql_fetch_array($comments)){
 					<div class="relatedleft" style="float:left;">
 						<strong style="font-size:18px;"><a href="creation.php?id='.$related_creation['id'].'">'.$related_creation['name'].'</a></strong>
 						<div class="relatedbyline" style="">
-							by <a href="user.php?id='.$related_creation['ownerid'].'">'.get_username_from_id($related_creation['ownerid']).'</a>
+							by <a href="user.php?id='.$related_creation['ownerid'].'">'.get_username_from_id($related_creation['ownerid'],$mysqli).'</a>
 						</div>
 						<div class="relateddesc" style="width:230px;height:45px;overflow:hidden;">
 							'.$creation_description.'

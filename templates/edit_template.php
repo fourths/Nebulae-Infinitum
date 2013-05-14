@@ -48,7 +48,7 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 			Edit creation | <?php echo SITE_NAME; ?>
 			
 		</title>
-		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
+		<link rel="stylesheet" type="text/css" href="../../include/style.css" media="screen" />
 		<script type="text/javascript">
 			document.onkeypress = processKey;
 
@@ -72,7 +72,7 @@ else if ($creation['hidden'] == "censored" || $creation['hidden'] == "flagged") 
 				<?php 
 				if ($cur_version>1){
 				?>
-					<span>(<a href="edit.php?id=<?php echo $creation['id'];?>&mode=version">see versions</a>)</span>
+					<span>(<a href="versions">see versions</a>)</span>
 				<?php
 				}
 				?>

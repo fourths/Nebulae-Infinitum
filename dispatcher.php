@@ -85,7 +85,32 @@ if ( $url != "/"){
 		break;
 		
 		case "creation":
-		
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
+				$_GET['id'] = $url_array[2];
+				if ( isset ( $url_array[3] ) && $url_array[3] != "" ){
+					switch ( $url_array[3] ){
+						case "versions":
+							$_GET['mode'] = "version";
+						case "edit":
+							require_once( "edit.php" );
+						break;
+						
+						
+						case "license":
+						
+						break;
+						
+						default:
+							require_once( "errors/404.php" );
+					}
+				}
+				else{
+					require_once( "creation.php" );
+				}
+			}
+			else{
+				header( "Location: " . BASE_URL . "/creations/newest/1");
+			}
 		break;
 		
 		case "creations":
@@ -304,6 +329,11 @@ if ( $url != "/"){
 				switch( $url_array[2] ){
 					case "style.css":
 						require_once( "templates/style.php" );
+					break;
+					
+					case "creation.js":
+						header( "Content-Type: text/plain" );
+						echo file_get_contents( "templates/creation.js" );
 					break;
 					
 					default:
