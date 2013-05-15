@@ -85,7 +85,7 @@ if ( $url != "/"){
 		break;
 		
 		case "creation":
-			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
+			if ( isset( $url_array[2] ) ){
 				$_GET['id'] = $url_array[2];
 				if ( isset ( $url_array[3] ) && $url_array[3] != "" ){
 					switch ( $url_array[3] ){
@@ -95,9 +95,29 @@ if ( $url != "/"){
 							require_once( "edit.php" );
 						break;
 						
+						case "version":
+							if ( isset( $url_array[5] ) && $url_array[5] != "" ){
+								$_GET['mode'] = "version";
+								switch ( $url_array[5] ){
+									case "revert":
+									case "delete":
+										$_GET['action'] = $url_array[5];
+										$_GET['aid'] = $url_array[4];
+										require_once( "edit.php" );
+									break;
+									
+									default:
+										require_once( "errors/404.php" );
+								}
+							}
+							else{
+								require_once( "errors/404.php" );
+							}
+						break;
 						
 						case "license":
-						
+							$_GET['id'] = $url_array[2];
+							require_once( "license.php" );
 						break;
 						
 						default:
@@ -105,7 +125,12 @@ if ( $url != "/"){
 					}
 				}
 				else{
-					require_once( "creation.php" );
+					if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/"){
+						header( "Location: " . BASE_URL . "/creation/" . $url_array[2] );
+					}
+					else{
+						require_once( "creation.php" );
+					}
 				}
 			}
 			else{
@@ -417,6 +442,11 @@ if ( $url != "/"){
 			else{
 				require_once( "errors/404.php" );
 			}
+		break;
+		
+		case "robots.txt":
+			header( "Content-Type: text/plain" );
+			echo file_get_contents( "data/robots.txt" );
 		break;
 		
 		default:

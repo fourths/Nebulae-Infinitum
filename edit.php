@@ -38,17 +38,6 @@ if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_use
 	include_once("errors/404.php");
 	exit();
 }
-
-//Check if user is banned or deleted
-if ($cur_user['banstatus'] == "banned") {
-	include_once("errors/ban.php");
-	exit();
-}
-else if ($cur_user['banstatus'] == "deleted") {
-	include_once("errors/delete.php");
-	exit();
-}
-
 //Get current version number
 $cur_version_arr = $mysqli->query("SELECT MAX(number) FROM versions WHERE creationid=".$creation['id'])->fetch_array();
 $cur_version = $cur_version_arr[0];
@@ -135,12 +124,12 @@ if($mode == "version"){
 			
 			$mysqli->query("UPDATE creations SET filetype='".$ext."',filename='".$creation['id'].'.'.$ext."',type='".$type."' WHERE id=".$creation['id']) or die( $mysqli->error );
 			copy("data/creations/old/".$filenames[$id],"data/creations/".$creation['id'].'.'.$ext);
-			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
+			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creation/".$creation['id']."'>" );
 		}
 		else if($action=="delete"){
 			$mysqli->query("UPDATE versions SET saved=0 WHERE number=".$id) or die( $mysqli->error );
 			unlink("data/creations/old/".$filenames[$id]);
-			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=".$creation['id']."'>";
+			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creation/".$creation['id']."'>" );
 		}
 	}
 	include_once("templates/version_template.php");
@@ -152,7 +141,7 @@ else {
 //Update database values upon form submission
 if (isset($_POST['update'])) {
 	$result = $mysqli->query("SELECT * FROM creations WHERE id='$creationid'");
-	if ( $result->num_rows() != 1 ){
+	if ( $result->num_rows != 1 ){
 		die("An error occurred; please try again.");
 	}
 	if($_POST['license']=="copyright"||$_POST['license']=="cc-0"||$_POST['license']=="cc-by"||$_POST['license']=="cc-by-sa"||$_POST['license']=="cc-by-nc"||$_POST['license']=="cc-by-nd"||$_POST['license']=="cc-by-nc-sa"||$_POST['license']=="cc-by-nc-nd"||$_POST['license']=="mit"||$_POST['license']=="gpl"||$_POST['license']=="bsd") $mysqli->query("UPDATE creations SET license='".$_POST['license']."' WHERE id='$creationid'") or die( $mysqli->error );

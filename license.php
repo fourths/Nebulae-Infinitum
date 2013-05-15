@@ -1,29 +1,4 @@
 <?php
-//Include config
-require_once("config/config.php");
-error_reporting(E_ALL ^ E_NOTICE); 
-session_start();
-
-//Connect to database
-$connection = mysql_connect(MYSQL_SERVER,MYSQL_USER,MYSQL_PASS);
-if (!$connection){die("Could not connect to database: " . mysql_error());}
-mysql_select_db(MYSQL_DATABASE, $connection);
-
-//If user isn't logged in, redirect to login
-if (empty($_SESSION['SESS_MEMBER_ID'])){
-	header("location: login.php");
-	exit();
-}
-
-//Get current user info from database
-if (!empty($_SESSION['SESS_MEMBER_ID'])){
-	$lresult = mysql_query("SELECT * FROM users WHERE id = ".$_SESSION['SESS_MEMBER_ID']);
-	if (!$lresult) {
-		die(mysql_error());
-	}
-	$cur_user = mysql_fetch_array($lresult);
-}
-
 //Get creation ID from URL
 //If creation ID not found or is NaN, die
 if (isset($_GET['id'])) $creationid = htmlspecialchars($_GET['id']);
@@ -33,21 +8,15 @@ if (!$creationid || strcspn($creationid,"0123456789")>0){
 }
 
 //Get creation info from database
-$result = mysql_query("SELECT * FROM creations WHERE id = $creationid");
+$result = $mysqli->query("SELECT * FROM creations WHERE id = $creationid");
 if (!$result) {
-    die(mysql_error());
+    die( $mysqli->error );
 }
-$creation = mysql_fetch_array($result);
+$creation = $result->fetch_array();
 
 //If creation ID is not a valid creation, die
 if (!$creation){
 	include_once("errors/404.php");
-	exit();
-}
-
-//If user doesn't own project & isn't admin or mod, die
-if ($cur_user['id'] != $creation['ownerid'] && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod"){
-	include_once("errors/403.php");
 	exit();
 }
 
@@ -59,16 +28,6 @@ if ($creation['hidden'] == "censored" && $cur_user['rank'] != "admin" && $cur_us
 //If creation is deleted and user isn't admin or mod, die
 if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod") {
 	include_once("errors/404.php");
-	exit();
-}
-
-//Check if user is banned or deleted
-if ($cur_user['banstatus'] == "banned") {
-	include_once("errors/ban.php");
-	exit();
-}
-else if ($cur_user['banstatus'] == "deleted") {
-	include_once("errors/delete.php");
 	exit();
 }
 
