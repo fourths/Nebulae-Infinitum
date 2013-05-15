@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /mediasite/data/creations/
+Disallow: /mediasite/tools/
+Disallow: /mediasite/
