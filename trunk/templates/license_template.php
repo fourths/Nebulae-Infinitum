@@ -66,6 +66,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 		break;
 	}
 	?>
-	<a href="..">back</a>
+	<a href=".">back</a>
 </body>
 </html>

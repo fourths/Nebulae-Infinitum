@@ -85,7 +85,7 @@ if ( $url != "/"){
 		break;
 		
 		case "creation":
-			if ( isset( $url_array[2] ) ){
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
 				$_GET['id'] = $url_array[2];
 				if ( isset ( $url_array[3] ) && $url_array[3] != "" ){
 					switch ( $url_array[3] ){
@@ -116,8 +116,39 @@ if ( $url != "/"){
 						break;
 						
 						case "license":
-							$_GET['id'] = $url_array[2];
 							require_once( "license.php" );
+						break;
+						
+						case "flag":
+							require_once( "flag.php" );
+						break;
+						
+						case "favourite":
+							$_GET['action'] = "favourite";
+							require_once( "creation.php" );
+						break;
+						
+						case "rate":
+							if ( isset( $url_array[4] ) && $url_array[4] > 0 && $url_array[4] < 6 ){
+								$_GET['action'] = "rate";
+								$_GET['rating'] = $url_array[4];
+								require_once( "creation.php" );
+							}
+							else{
+								require_once( "errors/404.php" );
+							}
+						break;
+						
+						case "viewer":
+							if ( isset( $url_array[4] ) && $url_array[4] == "play" ){
+								$_GET['flash'] = "play";
+							}
+							require_once( "viewer.php" );
+						break;
+						
+						case "player":
+							$_GET['action'] = "player";
+							require_once( "creation.php" );
 						break;
 						
 						default:
