@@ -34,14 +34,14 @@ else if ($creation['type']=="scratch"&&$creation['filetype']=="sb2"&&$cur_user['
 if ($creation['type']=="flash")
 	//to add: change size to size of flash or max in screen resolution keeping ratio
 	echo 'function expand(){
-	window.open(\'viewer.php?id='.$creation['id'].'&flash=play\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+	window.open(\'' . $creation['id'] . '/viewer/play\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }
 function download(){
-	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+	window.open(\'' . $creation['id'] . '/viewer\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 
 else echo 'function expand(){
-	window.open(\'viewer.php?id='.$creation['id'].'\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
+	window.open(\'' . $creation['id'] . '/viewer\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 ?>
 //globes aren't showing up by default
@@ -278,14 +278,14 @@ else if ($creation['type']=="writing"){
 					// Set initial style for each globe
 					// QUESTION: What does fl stand for?
 					for ($fl=0;$fl<5;$fl++){
-						if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'data/icons/antistar.png\');"';
-						else $style[$fl] = 'style="background-image:url(\'data/icons/prostar.png\');"';
+						if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
+						else $style[$fl] = 'style="background-image:url(\'../data/icons/prostar.png\');"';
 					}
-					echo '<a href="creation.php?id='.$creation['id'].'&action=rate&rating=1" id="rating1" '.$style[0].' class="imgrating"></a>
-				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=2" id="rating2" '.$style[1].' class="imgrating"></a>
-				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=3" id="rating3" '.$style[2].' class="imgrating"></a>
-				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=4" id="rating4" '.$style[3].' class="imgrating"></a>
-				<a href="creation.php?id='.$creation['id'].'&action=rate&rating=5" id="rating5" '.$style[4].' class="imgrating"></a>';
+					echo '<a href="'.$creation['id'].'/rate/1" id="rating1" '.$style[0].' class="imgrating"></a>
+				<a href="'.$creation['id'].'/rate/2" id="rating2" '.$style[1].' class="imgrating"></a>
+				<a href="'.$creation['id'].'/rate/3" id="rating3" '.$style[2].' class="imgrating"></a>
+				<a href="'.$creation['id'].'/rate/4" id="rating4" '.$style[3].' class="imgrating"></a>
+				<a href="'.$creation['id'].'/rate/5"" id="rating5" '.$style[4].' class="imgrating"></a>';
 				}
 				?>
 				
@@ -482,13 +482,13 @@ while( $comment = $comments->fetch_array() ){
 				<img src="../data/icons/licenses/cc-sa.png"/>';
 						break;
 					case 'mit':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/mit.png"/></a>';
+						echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/mit.png"/></a>';
 						break;
 					case 'gpl':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/gpl.png"/></a>';
+						echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/gpl.png"/></a>';
 						break;
 					case 'bsd':
-						echo '<a href="license.php?id='.$creation['id'].'"><img src="../data/icons/licenses/bsd.png"/></a>';
+						echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/bsd.png"/></a>';
 						break;
 					default:
 						echo "An error occurred";

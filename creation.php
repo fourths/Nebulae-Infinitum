@@ -83,19 +83,19 @@ $user = $result->fetch_array();
 //Get if the action is favouriting
 if (isset($_GET["action"])) if ($_GET["action"] == "favourite") {
 	if (empty($_SESSION['SESS_MEMBER_ID'])){
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	if (!$favourited){
 		$mysqli->query("INSERT INTO favourites (creationid, userid) VALUES (".$creation['id'].", ".$cur_user['id'].")");
 		$favourited = true;
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	else if ($favourited){
 		$mysqli->query("DELETE FROM favourites WHERE creationid=".$creation['id']." AND userid=".$cur_user['id']);
 		$favourited = false;
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 }
@@ -103,38 +103,38 @@ if (isset($_GET["action"])) if ($_GET["action"] == "favourite") {
 //Get if the action is rating
 if (isset($_GET["action"])) if ($_GET["action"] == "rate") {
 	if (empty($_SESSION['SESS_MEMBER_ID'])){
-		header("location: creation.php?id=$creationid");
+		header("Location: ..");
 		exit();
 	}
 	else if (empty($_GET["rating"])){
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	else if ($_GET["rating"]<1 || $_GET["rating"]>5){
-		header("location: creation.php?id=$creationid");
+		header("Location: ..");
 		exit();
 	}
 	else if ( $mysqli->query( "SELECT * FROM ratings WHERE userid='" . $cur_user['id'] . "' AND creationid='" . $creation['id'] . "'" )->num_rows == 0 ){
 		$mysqli->query("INSERT INTO ratings (creationid, userid, rating) VALUES (".$creation['id'].", ".$cur_user['id'].", ".$_GET['rating'].")") or die( $mysqli->error );
-		header("location: creation.php?id=$creationid");
+		header("Location: ..");
 	}
 	$mysqli->query("UPDATE ratings SET rating='".$_GET["rating"]."' WHERE userid='".$cur_user['id']."' AND creationid='".$creation['id']."'") or die( $mysqli->error );
-	header("location: creation.php?id=$creationid");
+	header("Location: ..");
 	exit();
 }
 
 //Get if the action is changing the player
 if (isset($_GET["action"])) if ($_GET["action"] == "player"){
 	if (empty($_SESSION['SESS_MEMBER_ID'])){
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	else if (empty($_GET["player"])){
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	elseif ($_GET["player"]!="js" && $_GET["player"]!="flash"){
-		header("location: creation.php?id=$creationid");
+		header("Location: .");
 		exit();
 	}
 	$mysqli->query("UPDATE users SET sb2player='".$_GET["player"]."' WHERE id='".$cur_user['id']."'") or die( $mysqli->error );
@@ -180,7 +180,7 @@ if (isset($_POST['newcomment'])) {
 					$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
 				}
 			}
-			echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
+			echo "<meta http-equiv='Refresh' content='0; URL=.'>";
 			exit();
 		}
 	}
@@ -207,7 +207,7 @@ if (isset($_POST['reply'])){
 						$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$com_user['id'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
 					}
 				}
-				echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
+				echo "<meta http-equiv='Refresh' content='0; URL=.'>";
 				exit();
 			}
 		}

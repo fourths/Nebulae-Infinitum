@@ -8,7 +8,7 @@ if (!$creationid || strcspn($creationid,"0123456789")>0){
 }
 
 //Get creation info from database
-$result = $mysqli->query("SELECT * FROM creations WHERE id = $creationid");
+$result = $mysqli->query( "SELECT * FROM creations WHERE id = " . $creationid );
 if (!$result) {
     die( $mysqli->error );
 }
@@ -32,7 +32,7 @@ if ($creation['hidden'] == "deleted" && $cur_user['rank'] != "admin" && $cur_use
 }
 
 if($creation['license']!="mit"&&$creation['license']!="gpl"&&$creation['license']!="bsd"){
-	die("<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>");
+	die("<meta http-equiv='Refresh' content='0; URL=.'>");
 }
 
 include_once("templates/license_template.php");
