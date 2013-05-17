@@ -180,7 +180,7 @@ if (isset($_POST['newcomment'])) {
 					$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
 				}
 			}
-			echo "<meta http-equiv='Refresh' content='0; URL=.'>";
+			echo "<meta http-equiv='Refresh' content='0'>";
 			exit();
 		}
 	}
@@ -207,7 +207,7 @@ if (isset($_POST['reply'])){
 						$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$com_user['id'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
 					}
 				}
-				echo "<meta http-equiv='Refresh' content='0; URL=.'>";
+				echo "<meta http-equiv='Refresh' content='0'>";
 				exit();
 			}
 		}

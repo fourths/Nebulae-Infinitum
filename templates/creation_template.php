@@ -44,8 +44,6 @@ else echo 'function expand(){
 	window.open(\'' . $creation['id'] . '/viewer\', \'Image\', \'location=yes,resizable=yes,scrollbars=yes,height=600,width=600\', false);
 }';
 ?>
-//globes aren't showing up by default
-
 
 //lighting up the planets
 $(document).ready(function(){
@@ -347,7 +345,7 @@ while( $comment = $comments->fetch_array() ){
 		<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id='.$com_user['id'].'">'.$com_user['username'].'</a>';
 		if ($com_user['rank'] == "admin" || $com_user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
 		echo ' <span style="font-size:12px;">('.date("m/d/Y", strtotime($comment['timestamp']))." at ".date("g:ia", strtotime($comment['timestamp']));
-		echo ') (<a id="replylink" href="javascript:reply('.$comment['id'].')">reply</a> - <a href="flag.php?id='.$comment['id'].'&type=comment">flag</a>) ';
+		echo ') (<a id="replylink" href="javascript:reply('.$comment['id'].')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
 		//show the censored/approved/shown comment status for admins and mods
 		if ($cur_user['rank'] == "admin"||$cur_user['rank']== "mod"){
 			$parenthesis="";
