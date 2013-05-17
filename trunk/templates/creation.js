@@ -27,7 +27,7 @@ function reply(id){
 		replybox[id].innerHTML='\
 <form method="post" style="position:relative;top:10px;left:-5px;">\
 	<input type="hidden" name="reply" />\
-	<textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:100px;width:95%;max-height:200px;max-width:95%;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="creation.php?id='+getQueryVariable('id')+'#'+id+'"]\r\n'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'\r\n[/quote]\r\n</textarea>\
+	<textarea name="msgbody'+id+'" placeholder="Enter your reply..." style="height:100px;width:95%;max-height:200px;max-width:95%;margin-left:10px;">[quote name="'+quotedusername+'" date="'+quoteddate+'" url="#'+id+'"]\r\n'+$.trim(quotetext.innerHTML).replace(/<br>/gi,"")+'\r\n[/quote]\r\n</textarea>\
 	<br/>\
 	<input type="submit" style="margin-bottom:10px;margin-left:10px;" name="msgsubmit'+id+'" value="Submit"/>\
 </form>';
