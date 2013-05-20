@@ -15,22 +15,22 @@ if ( $mysqli->connect_errno ) {
 }
 
 //Get current user info from database
-if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ){
+if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 	$cur_user_query = $mysqli->query( "SELECT * FROM users WHERE id=" . $_SESSION['SESS_MEMBER_ID'] );
 	if ( $mysqli->errno ) {
 		die( "Could not read user data from database: " . $mysqli->error );
 	}
 	$cur_user = $cur_user_query->fetch_array();
-	unset($cur_user_query);
+	unset( $cur_user_query );
 }
 
-if ($cur_user['banstatus'] == "banned") {
-	include_once("errors/ban.php");
+if ( $cur_user['banstatus'] == "banned" ) {
+	include_once( "errors/ban.php" );
 	exit();
 }
 
-else if ($cur_user['banstatus'] == "deleted") {
-	include_once("errors/delete.php");
+else if ( $cur_user['banstatus'] == "deleted" ) {
+	include_once( "errors/delete.php" );
 	exit();
 }
 
@@ -39,21 +39,21 @@ $url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] );
 $url_array = explode( "/", $url );
 
 //Determine which page to load based on the URL
-if ( $url != "/"){
-	switch( $url_array[1] ){
+if ( $url != "/") {
+	switch( $url_array[1] ) {
 		// If the URL starts with user (e.g. example.com/user/username), do this
 		case "user":
 			// Escape the URL for added security
 			$escaped_url_chunk[0] = addslashes( $url_array[2] );
 			// If there's something after the user part of the URL (e.g. username in the URL above)
-			if( isset( $escaped_url_chunk[0] ) && $escaped_url_chunk[0] != ""){
+			if ( isset( $escaped_url_chunk[0] ) && $escaped_url_chunk[0] != "") {
 				// Set the ID of the user the page should display information from based on the username in the URL
 				$_GET['id'] = get_id_from_username( $escaped_url_chunk[0], $mysqli );
 				// Escape the URL for added security
 				$escaped_url_chunk[1] = addslashes( $url_array[3] );
 				// If there's something after the username part (e.g. example.com/user/username/action)...
-				if( isset( $escaped_url_chunk[1] ) && $escaped_url_chunk[1] != ""){
-					switch( $url_array[3] ){
+				if ( isset( $escaped_url_chunk[1] ) && $escaped_url_chunk[1] != "") {
+					switch ( $url_array[3] ) {
 						// If the URL is of the format (e.g. example.com/user/username/preferences), display their preferences page rather than the userpage
 						// This is done to keep URLs organised & structured
 						case "preferences":
@@ -66,29 +66,29 @@ if ( $url != "/"){
 					}
 				}
 				// Otherwise, if the URL is simply like example.com/user/username...
-				else{
+				else {
 					// If the page ends in a / (e.g. example.com/user/username/), redirect them to the page w/out the slash so it doesn't mess up the CSS
-					if( substr( $_SERVER['REQUEST_URI'], strlen( $escaped_url_chunk[1] ) - 1, 1 ) == "/"){
+					if ( substr( $_SERVER['REQUEST_URI'], strlen( $escaped_url_chunk[1] ) - 1, 1 ) == "/") {
 						header( "Location: ../" . $escaped_url_chunk[0] );
 					}
 					// Otherwise, just output the regular userpage
-					else{
+					else {
 						require_once( "user.php" );
 					}
 				}
 			}
 			// If there's nothing after the user part (e.g. example.com/user/), give a 404 error
 			// There may in the future be a userlist here
-			else{
+			else {
 				require_once( "errors/404.php" );
 			}
 		break;
 		
 		case "creation":
-			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ) {
 				$_GET['id'] = $url_array[2];
-				if ( isset ( $url_array[3] ) && $url_array[3] != "" ){
-					switch ( $url_array[3] ){
+				if ( isset ( $url_array[3] ) && $url_array[3] != "" ) {
+					switch ( $url_array[3] ) {
 						case "versions":
 							$_GET['mode'] = "version";
 						case "edit":
@@ -96,9 +96,9 @@ if ( $url != "/"){
 						break;
 						
 						case "version":
-							if ( isset( $url_array[5] ) && $url_array[5] != "" ){
+							if ( isset( $url_array[5] ) && $url_array[5] != "" ) {
 								$_GET['mode'] = "version";
-								switch ( $url_array[5] ){
+								switch ( $url_array[5] ) {
 									case "revert":
 									case "delete":
 										$_GET['action'] = $url_array[5];
@@ -129,7 +129,7 @@ if ( $url != "/"){
 						break;
 						
 						case "rate":
-							if ( isset( $url_array[4] ) && $url_array[4] > 0 && $url_array[4] < 6 ){
+							if ( isset( $url_array[4] ) && $url_array[4] > 0 && $url_array[4] < 6 ) {
 								$_GET['action'] = "rate";
 								$_GET['rating'] = $url_array[4];
 								require_once( "creation.php" );
@@ -140,7 +140,7 @@ if ( $url != "/"){
 						break;
 						
 						case "viewer":
-							if ( isset( $url_array[4] ) && $url_array[4] == "play" ){
+							if ( isset( $url_array[4] ) && $url_array[4] == "play" ) {
 								$_GET['flash'] = "play";
 							}
 							require_once( "viewer.php" );
@@ -155,11 +155,11 @@ if ( $url != "/"){
 							require_once( "errors/404.php" );
 					}
 				}
-				else{
-					if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/"){
+				else {
+					if ( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/") {
 						header( "Location: " . BASE_URL . "/creation/" . $url_array[2] );
 					}
-					else{
+					else {
 						require_once( "creation.php" );
 					}
 				}
@@ -170,16 +170,16 @@ if ( $url != "/"){
 		break;
 		
 		case "creations":
-			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
-				if ( !isset( $url_array[3] ) || $url_array[3] == "" ){
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ) {
+				if ( !isset( $url_array[3] ) || $url_array[3] == "" ) {
 					$url_array[3] = 1;
 				}
-				if ( isset ( $url_array[4] ) ){
+				if ( isset ( $url_array[4] ) ) {
 					$_GET['id'] = $url_array[3];
 					$_GET['action'] = $url_array[4];
 					$_GET['mode'] = "action";
 				}
-				else{
+				else {
 					$_GET['page'] = $url_array[3];
 					$_GET['mode'] = $url_array[2];
 				}
@@ -191,27 +191,34 @@ if ( $url != "/"){
 		break;
 		
 		case "comment":
-			if( isset( $url_array[2] ) && $url_array[2] != "" ){
-				if( isset ( $url_array[4] ) ){
-					switch( $url_array[4] ){
+			if ( isset( $url_array[2] ) && $url_array[2] != "" ){
+				if ( isset( $url_array[3] ) ){
+					switch( $url_array[3] ){
 						case "flag":
-							//get ID (#3)
+							$_GET['id'] = $url_array[2];
+							require_once( "flag.php" );
 						break;
 					}
 				}
 				else{
-					$comment_data = $mysqli->query("SELECT * FROM comments WHERE id = " . addslashes($url_array[2]) );
-					if( isset( $comment_data ) ){
-						if( $comment["status"] == "censored" ){
-							if( $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
+					$comment = $mysqli->query("SELECT * FROM comments WHERE id = " . addslashes($url_array[2]) )->fetch_array();
+					if ( isset( $comment ) ) {
+						if ( $comment['status'] == "censored" ) {
+							if ( $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod") {
 								header( "Location: creation/" . $comment['creationid'] . "#". $comment['id'] );
 							}
-							else{
+							else {
 								require_once( "errors/403.php" );
 							}
 						}
+						else if ( $comment['status'] == "shown" || $comment['status'] == "approved" ) {
+							header( "Location: ../creation/" . $comment['creationid'] . "#". $comment['id'] );
+						}
+						else {
+							require_once( "errors/404.php" );
+						}
 					}
-					else{
+					else {
 						require_once( "errors/404.php" );
 					}
 				}
@@ -222,12 +229,12 @@ if ( $url != "/"){
 		break;
 		
 		case "admin":
-			if( isset( $url_array[2] ) ){
-				switch( $url_array[2] ){
+			if ( isset( $url_array[2] ) ) {
+				switch ( $url_array[2] ) {
 					case "flags":
 						$_GET['mode'] = "flags";
-						if( isset( $url_array[4] ) ){
-							switch( $url_array[4] ){
+						if ( isset( $url_array[4] ) ) {
+							switch ( $url_array[4] ) {
 								case "delete":
 									$_GET['action'] = "delete";
 									$_GET['id'] = addslashes($url_array[3]);
@@ -236,7 +243,7 @@ if ( $url != "/"){
 									require_once( "admin.php");
 							}
 						}
-						else{
+						else {
 							require_once( "admin.php");
 						}
 					break;
@@ -245,33 +252,33 @@ if ( $url != "/"){
 						header( "Location: ../admin" );
 				}
 			}
-			else{
+			else {
 				require_once( "admin.php" );
 			}
 		
 		break;
 		
 		case "message":
-			if( isset( $url_array[3] ) ){
-				switch( $url_array[3] ){
+			if ( isset( $url_array[3] ) ) {
+				switch ( $url_array[3] ) {
 					case "delete":
-						if( isset( $url_array[2] ) ){
+						if ( isset( $url_array[2] ) ) {
 							$_GET['id'] = $url_array[2];
 							$_GET['action'] = "delete";
 							require_once( "messages.php" );
 						}
-						else{
+						else {
 							require_once( "errors/404.php" );
 						}
 					break;
 					
 					case "flag":
-						if( isset( $url_array[2] ) ){
+						if ( isset( $url_array[2] ) ) {
 							$_GET['id'] = $url_array[2];
 							$_GET['type'] = "message";
 							require_once( "flag.php" );
 						}
-						else{
+						else {
 							require_once( "errors/404.php" );
 						}
 					break;
@@ -280,22 +287,22 @@ if ( $url != "/"){
 						require_once( "errors/404.php" );
 				}
 			}
-			else{
+			else {
 				require_once( "errors/404.php");
 			}
 		break;
 		
 		case "messages":
-			if( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/" ){
-				if( BASE_FOLDER != ""){
+			if ( substr( $_SERVER['REQUEST_URI'], strlen( $_SERVER['REQUEST_URI'] ) - 1, 1 ) == "/" ) {
+				if ( BASE_FOLDER != "") {
 					header( "Location: ../" . str_replace( "/" . BASE_FOLDER . "/", "", substr( $_SERVER['REQUEST_URI'], 0, strlen( $_SERVER['REQUEST_URI'] ) - 1 ) ) );
 				}
-				else{
+				else {
 					header( "Location: /" . substr( $_SERVER['REQUEST_URI'], 0, strlen( $_SERVER['REQUEST_URI'] ) - 1 ) );
 				}
 			}
-			else{
-				if( isset( $url_array[2] ) ){
+			else {
+				if ( isset( $url_array[2] ) ) {
 					$_GET['uid'] = $url_array[2];
 				}
 				require_once( "messages.php" );
@@ -303,10 +310,10 @@ if ( $url != "/"){
 		break;
 		
 		case "tools":
-			if( isset( $url_array[2] ) ){
-				switch( $url_array[2] ){
+			if ( isset( $url_array[2] ) ) {
+				switch ( $url_array[2] ) {
 					case "api":
-						if(  file_exists( "api/" . $url_array[3] . ".php" ) ){
+						if (  file_exists( "api/" . $url_array[3] . ".php" ) ) {
 							require_once( "api/" . $url_array[3] . ".php" );
 						}
 						else {
@@ -332,12 +339,12 @@ if ( $url != "/"){
 		break;
 		
 		case "about":
-			if ( isset ( $url_array[2] ) && $url_array[2] != "" ){
-				if( file_exists( "info/" . addslashes( $url_array[2] ) . ".php" ) ){
+			if ( isset ( $url_array[2] ) && $url_array[2] != "" ) {
+				if ( file_exists( "info/" . addslashes( $url_array[2] ) . ".php" ) ) {
 					require_once( "info/" . addslashes( $url_array[2] ) . ".php" );
 				}
 			}
-			else{
+			else {
 				require_once( "info/index.php" );
 			}
 		break;
@@ -348,7 +355,7 @@ if ( $url != "/"){
 		
 		case "login?returnto=":
 			$return_to = "";
-			for ( $i = 2; $i < count( $url_array ); $i++ ){
+			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
 			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
@@ -362,7 +369,7 @@ if ( $url != "/"){
 		
 		case "logout?returnto=":
 			$return_to = "";
-			for ( $i = 2; $i < count( $url_array ); $i++ ){
+			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
 			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
@@ -377,7 +384,7 @@ if ( $url != "/"){
 		
 		case "register?returnto=":
 			$return_to = "";
-			for ( $i = 2; $i < count( $url_array ); $i++ ){
+			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
 			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
@@ -386,8 +393,8 @@ if ( $url != "/"){
 		break;
 		
 		case "include":
-			if( isset( $url_array[2] ) ){
-				switch( $url_array[2] ){
+			if ( isset( $url_array[2] ) ) {
+				switch ( $url_array[2] ) {
 					case "style.css":
 						require_once( "templates/style.php" );
 					break;
@@ -401,29 +408,29 @@ if ( $url != "/"){
 						require_once( "errors/403.php" );
 				}
 			}
-			else{
+			else {
 				require_once( "errors/403.php" );
 			}
 		break;
 		
 		case "data":
-			if( isset( $url_array[2] ) ){
-				if( $url_array[2] == "errors" ){
+			if ( isset( $url_array[2] ) ) {
+				if ( $url_array[2] == "errors" ) {
 					$extension = explode( ".", addslashes( $url_array[3] ) );
-					if( file_exists( "errors/" . addslashes( $url_array[3] ) ) && $extension[1] == "png" ){
+					if ( file_exists( "errors/" . addslashes( $url_array[3] ) ) && $extension[1] == "png" ) {
 						header( "Content-type: image/png" );
 						echo file_get_contents( "errors/" .  $url_array[3] );
 					}
 				}
-				else{
+				else {
 					$data_path = "";
-					for ( $i = 2; $i < count( $url_array ); $i++ ){
+					for ( $i = 2; $i < count( $url_array ); $i++ ) {
 						$data_path .= "/".$url_array[$i];
 					}
 					$extension = explode( ".", addslashes( $data_path ) );
-					if( file_exists( "data" . addslashes( $data_path ) ) ){
+					if ( file_exists( "data" . addslashes( $data_path ) ) ) {
 						$go = true;
-						switch( $extension[1] ){
+						switch ( $extension[1] ) {
 							case "png":
 								header( "Content-type: image/gif" );
 							break;
@@ -470,12 +477,12 @@ if ( $url != "/"){
 						}
 					}
 					
-					else{
+					else {
 						require_once( "errors/404.php" );
 					}
 				}
 			}
-			else{
+			else {
 				require_once( "errors/404.php" );
 			}
 		break;
