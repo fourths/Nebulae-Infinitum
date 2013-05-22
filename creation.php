@@ -320,7 +320,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				<div class="ccontainer" <?php if ( $creation['type'] == "scratch" ) { echo 'style="width:486px;margin:auto;margin-top:5px;"'; } ?>>
 					<div class="creation">
 						<?php
-						switch( $creation['type'] ){
+						switch ( $creation['type'] ) {
 							case "artwork":
 								if( $creation['filetype'] == "svg" ) {
 									// QUESTION: What does this do?
@@ -365,24 +365,18 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 						</div>';
 							break;
 							case "scratch":
-								if($creation['filetype']=="sb2"){
-									if(!empty($_SESSION['SESS_MEMBER_ID'])&&$cur_user['sb2player']=="js"){
+								if ( $creation['filetype'] == "sb2" ) {
+									if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) && $cur_user['sb2player'] == "js" ) {
 										echo '
 						<canvas id="scratch" width="486" height="391" tabindex="1">
 							<div style="padding:10px;">Your browser doesn\'t support sb2.js.</div>
 						</canvas>';
 									}
-									else{
-										echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="../data/PlayerOnly.swf">
-							<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
-							<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
-						</object>';
-									}
 								}
-								else{
+								else {
 									echo '<object style="width:482px;height:387px;position:relative;left:0px;top:0px;margin-left:3px;margin-top:2px;" type="application/x-shockwave-flash" data="../data/PlayerOnly.swf">
 							<param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true">
-							<param name="flashvars" value="project=data/creations/'.$creation['filename'].'">
+							<param name="flashvars" value="project=data/creations/' . $creation['filename'] . '">
 						</object>';
 								}
 							break;
@@ -393,7 +387,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 									<a href="javascript:resize(-2);" class="minus"></a>
 								</div>
 								<div class="wtext">
-									'.bbcode_parse(mb_convert_encoding(stripslashes(file_get_contents("../data/creations/".$creation['filename'])),"HTML-ENTITIES",WRITING_ENCODING),true).'
+									' . bbcode_parse( mb_convert_encoding( stripslashes( file_get_contents( "../data/creations/" . $creation['filename'] ) ),"HTML-ENTITIES", WRITING_ENCODING ), true ) . '
 								</div>
 							</div>';
 							break;
@@ -407,84 +401,88 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							// Display view number
 							echo $views;
 							// If there's only one view, just say "view". Otherwise, say views.
-							if ($view ==1){
+							if ( $view == 1 ) {
 								echo " view";
 							}
-							else{
+							else {
 								echo " views"; 
 							}
 							// Display rating
 							// If the mean of all the ratings is 0, say there's no rating
 							// Since users can't rate something 0, this is only possible if there aren't any ratings as the length of the ratings array will be 0.
-							if (number_format(array_sum($ratings)/count($ratings),1)==0.0){
+							if ( number_format( array_sum( $ratings ) / count( $ratings ), 1 ) == 0.0 ) {
 								echo ", no rating";
 							}
 							// Otherwise, spit out the mean rating
-							else{
-								echo ", rated ".number_format(array_sum($ratings)/count($ratings),1);
+							else {
+								echo ", rated " . number_format( array_sum( $ratings ) / count( $ratings ), 1 );
 							}
 							// Update the rating field on creation in DB (value used in creations.php)
 							// TODO: change to an if that senses if the rating is different
-							mysql_query("UPDATE creations SET rating=".number_format(array_sum($ratings)/count($ratings),1)." WHERE id=".$creation['id']);
+							$mysli->query( "UPDATE creations SET rating=" . number_format( array_sum( $ratings ) / count( $ratings ), 1 ) . " WHERE id=" . $creation['id'] );
 							// Display current user's rating if there's a logged in user and they've rated the creation
-							if (!empty($_SESSION['SESS_MEMBER_ID'])&&(number_format($lrating[0],1)!=0.0)){
-								echo " (you voted ".number_format($lrating[0],1).")";
+							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) && ( number_format( $lrating[0], 1 ) != 0.0 ) ) {
+								echo " (you voted " . number_format( $lrating[0], 1 ) . ")";
 							}
 							// Display favourites -- if favourite is equal to one, say the appropriate thing.
 							echo ", ".$favourites;
-							if ($favourites == 1){
+							if ( $favourites == 1 ) {
 								echo " favourite"; 
 							}
-							else{
+							else {
 								echo " favourites";
 							}
 							//Display whether the current user favourited this and give a link to change their choice
-							if ($favourited == true){
+							if ( $favourited == true) {
 								$favtext = "unfavourite";
 							}
-							else{
+							else {
 								$favtext = "favourite";
 							}
-							if (!empty($_SESSION['SESS_MEMBER_ID'])){
-								echo ' (<a href="creation.php?id='.$creation['id'].'&action=favourite">'.$favtext.'</a>)';
+							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
+								echo ' (<a href="creation.php?id=' . $creation['id'] . '&action=favourite">' . $favtext . '</a>)';
 							}
 							?>
 							
 						</div>
 						<div class="ratingglobes">
 							<?php
-							if (!empty($_SESSION['SESS_MEMBER_ID'])){
+							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 								// Set initial style for each globe
 								// QUESTION: What does fl stand for?
-								for ($fl=0;$fl<5;$fl++){
-									if ($fl>$lrating[0]-1) $style[$fl] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
-									else $style[$fl] = 'style="background-image:url(\'../data/icons/prostar.png\');"';
+								for ( $fl = 0; $fl < 5; $fl++ ) {
+									if ( $fl > $lrating[0] - 1 ) {
+										$style[$fl] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
+									}
+									else {
+										$style[$fl] = 'style="background-image:url(\'../data/icons/prostar.png\');"';
+									}
 								}
-								echo '<a href="'.$creation['id'].'/rate/1" id="rating1" '.$style[0].' class="imgrating"></a>
-							<a href="'.$creation['id'].'/rate/2" id="rating2" '.$style[1].' class="imgrating"></a>
-							<a href="'.$creation['id'].'/rate/3" id="rating3" '.$style[2].' class="imgrating"></a>
-							<a href="'.$creation['id'].'/rate/4" id="rating4" '.$style[3].' class="imgrating"></a>
-							<a href="'.$creation['id'].'/rate/5"" id="rating5" '.$style[4].' class="imgrating"></a>';
+								echo '<a href="'.$creation['id'].'/rate/1" id="rating1" ' . $style[0] . ' class="imgrating"></a>
+							<a href="'.$creation['id'].'/rate/2" id="rating2" ' . $style[1] . ' class="imgrating"></a>
+							<a href="'.$creation['id'].'/rate/3" id="rating3" ' . $style[2] . ' class="imgrating"></a>
+							<a href="'.$creation['id'].'/rate/4" id="rating4" ' . $style[3] . ' class="imgrating"></a>
+							<a href="'.$creation['id'].'/rate/5"" id="rating5" ' . $style[4] . ' class="imgrating"></a>';
 							}
 							?>
 							
 						</div>
 					</div>
-					<div class="creationstatsright" style="float:right;padding:5px;">
+					<div class="creationstatsright" style="float:right; padding:5px;">
 						<div class="downloadboxes" style="text-align:right;">
 							<?php
 							// Display different buttons based on creation tpe
-							switch($creation['type']){
+							switch ( $creation['type'] ) {
 								case "artwork":
 									echo '<div><a href="javascript:expand();">Expand</a></div>';
-									break;
+								break;
 								case "flash":
 									echo '<div><a href="javascript:expand();">Expand</a></div>
 							<div><a href="javascript:download();">Download</a></div>';
-									break;
+								break;
 								default:
 									echo '<div><a href="javascript:expand();">Download</a></div>';
-								}
+							}
 							?>
 							
 						</div>
@@ -493,65 +491,79 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				</div>
 				<h2 style="padding-left:10px;">Comments</h2>
 			<?php
-			if (!empty($_SESSION['SESS_MEMBER_ID']))
-			echo '<form method="post">
+			if ( !empty( $cur_user ) ){
+				echo '<form method="post">
 			<textarea name="commenttext" style="margin-left:10px;margin-top:-10px;min-height:60px;max-height:200px;width:450px;resize:vertical;" placeholder="Enter comment here..."></textarea>
 			<input type="submit" style="margin-left:10px;" name="newcomment" value="Submit" /><br/>
 			</form>';
+			}
 			?>
 			</div class="comments">
 			<?php
 			while( $comment = $comments->fetch_array() ){
 				//Test if the comment has enough flags to be auto-censored and censor it if it does
 				//If comment is marked as alright even after three flags, the comment still shows
-				$i=0;
-				$hidden=false;
-				$fresult = $mysqli->query("SELECT * FROM flags WHERE parentid=".$comment['id']." AND type='comment'") or die( $mysqli->error );
+				$i = 0;
+				$hidden = false;
+				$fresult = $mysqli->query("SELECT * FROM flags WHERE parentid=" . $comment['id'] . " AND type='comment'") or die( $mysqli->error );
 				while( $row = $fresult->fetch_array() ){
 					$cflags[$i] = $row[2];
 					$i++;
 				}
-				if (!empty($cflags)){
-					$farray = $mysqli->query("SELECT status FROM comments WHERE id = ".$comment['id'])->fetch_array();
-					if (count(array_unique($cflags))>=FLAGS_REQUIRED&&$farray[0]=="shown") {
-						$mysqli->query("UPDATE comments SET status='censored' WHERE id=".$comment['id']) or die( $mysqli->error );
-						$mysqli->query("DELETE FROM flags WHERE parentid=".$comment['id']." AND type='comment'");
-						$hidden=true;
+				if ( !empty($cflags) ){
+					$farray = $mysqli->query("SELECT status FROM comments WHERE id = " . $comment['id'] )->fetch_array();
+					if ( count( array_unique( $cflags ) ) >= FLAGS_REQUIRED && $farray[0] == "shown" ) {
+						$mysqli->query( "UPDATE comments SET status='censored' WHERE id=" . $comment['id'] ) or die( $mysqli->error );
+						$mysqli->query( "DELETE FROM flags WHERE parentid=" . $comment['id'] . " AND type='comment'" );
+						$hidden = true;
 					}
 				}
-				$cflags=array();
-				if (!$hidden&&$comment['status']!='censored'||($comment['status']=='censored'&&$cur_user['rank'] == "admin"||$cur_user['rank']== "mod")){
-					$com_user = $mysqli->query("SELECT * FROM users WHERE id=".$comment['userid'])->fetch_array();
-					if (!empty($com_user['icon'])) echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/'.$com_user['icon'].'"/>';
-					else echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="'.$comment['id'].'"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/default.png"/>';
-					echo '
-					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id='.$com_user['id'].'">'.$com_user['username'].'</a>';
-					if ($com_user['rank'] == "admin" || $com_user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
-					echo ' <span style="font-size:12px;">('.date("m/d/Y", strtotime($comment['timestamp']))." at ".date("g:ia", strtotime($comment['timestamp']));
-					echo ') (<a id="replylink" href="javascript:reply('.$comment['id'].')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
-					//show the censored/approved/shown comment status for admins and mods
-					if ($cur_user['rank'] == "admin"||$cur_user['rank']== "mod"){
-						$parenthesis="";
-						if ($comment['status']=='censored') echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:red;">censored</a>';
-						else if ($comment['status']=='approved') echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:green;">approved</a>';
-						else if ($comment['status']=='shown') {
-							echo '(<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
-							$parenthesis=")";
-						}
-						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>'.$parenthesis;
+				$cflags = array();
+				if ( !$hidden && $comment['status'] != 'censored' || ( $comment['status'] == 'censored' && $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod" ) ) {
+					$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['userid'] )->fetch_array();
+					if ( !empty( $com_user['icon'] ) ) {
+						echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="' . $comment['id'] . '"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/' . $com_user['icon'] . '"/>';
 					}
-					if (($cur_user['rank'] != "admin"&&$cur_user['rank']!= "mod")&&($cur_user['id']==$user['id']||$cur_user['id']==$com_user['id'])){
-						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id='.$comment['id'].'&type=comment&action=delete">&#8709;</a>';
+					else {
+						echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="' . $comment['id'] . '"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/default.png"/>';
+					}
+					
+					echo '
+					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id=' . $com_user['id'] . '">' . $com_user['username'] . '</a>';
+					if ( $com_user['rank'] == "admin" || $com_user['rank'] == "mod" ){
+						echo '<a href="info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
+					}
+					echo ' <span style="font-size:12px;">(' . date( "m/d/Y", strtotime($comment['timestamp'] ) ) . " at " . date( "g:ia", strtotime($comment['timestamp'] ) );
+					echo ') (<a id="replylink" href="javascript:reply(' . $comment['id'] . ')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
+					//show the censored/approved/shown comment status for admins and mods
+					if ( $cur_user['rank'] == "admin" || $cur_user['rank']== "mod" ){
+						$parenthesis = "";
+						switch ( $comment['status'] ) {
+							case "censored":
+								echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:red;">censored</a>';
+							break;
+							case "approved":
+								echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:green;">approved</a>';
+							break;
+							case "shown":
+								echo '(<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
+								$parenthesis=")";
+							break;
+						}
+						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id=' . $comment['id'] . '&type=comment&action=delete">&#8709;</a>' . $parenthesis;
+					}
+					if ( ( $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" ) && ( $cur_user['id'] == $user['id'] || $cur_user['id'] == $com_user['id'] ) ) {
+						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id=' . $comment['id'] . '&type=comment&action=delete">&#8709;</a>';
 					}
 					echo '</span></div>';
 					//Turn the @ into a link to the userpage
-					preg_match_all('/\@(.*?)\ /',$comment['comment'],$usernames);
-					$comment_with_links=$comment['comment'];
-					if (substr_count($comment['comment'],"@")>0){
-						for ($j=0;$j<count($usernames[0]);$j++){
-							$username_id = file_get_contents(BASE_URL."api/idfromusername.php?name=".substr($usernames[0][$j],1,strlen($usernames[0][$j])-2));
-							if (!empty($username_id)){
-								$comment_with_links = preg_replace('/\@'.stripslashes(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).'/','[url=user.php?id='.get_id_from_username(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).']@'.substr($usernames[0][$j],1,strlen($usernames[0][$j])-2).'[/url] ',$comment['comment']);
+					preg_match_all( '/\@(.*?)\ /', $comment['comment'], $usernames );
+					$comment_with_links = $comment['comment'];
+					if ( substr_count( $comment['comment'], "@" ) > 0 ) {
+						for ($j = 0;$j < count( $usernames[0] ); $j++ ) {
+							$username_id = file_get_contents( BASE_URL . "api/idfromusername.php?name=" . substr($usernames[0][$j], 1, strlen( $usernames[0][$j]) - 2 ) );
+							if ( !empty( $username_id ) ){
+								$comment_with_links = preg_replace( '/\@' . stripslashes( substr($usernames[0][$j], 1, strlen( $usernames[0][$j]) - 2 ) ) . '/','[url=user.php?id=' . get_id_from_username(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).']@'.substr($usernames[0][$j],1,strlen($usernames[0][$j])-2).'[/url] ',$comment['comment']);
 								$comment['comment']=$comment_with_links;
 							}
 						}
