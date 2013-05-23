@@ -296,7 +296,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 			basedir = "../data/sb2js/"';
 					}
 				break;
-				
+				// Function for changing a displayed text creation's font size
 				case "writing":
 					echo 'function resize(amount){
 				writing=document.getElementById("resizeable");
