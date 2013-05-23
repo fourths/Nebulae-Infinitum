@@ -39,6 +39,7 @@ if ( !empty( $flags ) ) {
 	}
 }
 
+// Display the proper error page in the case that the creation is hidden, censored, or deleted and the user is unauthorised
 if ( empty( $cur_user ) || ( $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" ) ) {
 	if ( $creation['hidden'] == "byowner" && $cur_user['id'] != $user['id'] ) {
 		include_once("errors/creation_hidden.php");
@@ -82,6 +83,8 @@ if ( isset( $_GET['action'] ) ){
 		header("Location: .");
 		exit();
 	}
+	
+	// Toggle the favourite value
 	switch ( $_GET['action'] ){
 		case "favourite":
 			if ( !$favourited ) {
@@ -93,6 +96,7 @@ if ( isset( $_GET['action'] ) ){
 			$favourited = !$favourited;
 		break;
 		
+		// Change the user's rating
 		case "rate":
 			if ( empty( $_GET["rating"] ) || $_GET["rating"] < 1 || $_GET["rating"] > 5 ) {
 				header( "Location: ." );
@@ -106,6 +110,7 @@ if ( isset( $_GET['action'] ) ){
 			$mysqli->query( "UPDATE ratings SET rating='" . $_GET["rating"] . "' WHERE userid='" . $cur_user['id'] . "' AND creationid='" . $creation['id'] . "'" ) or die( $mysqli->error );
 		break;
 		
+		// Change the player used to view Scratch 2.0 projects
 		case "player":
 			if ( empty($_GET["player"]) || ( $_GET["player"] != "js" && $_GET["player"] != "flash" ) ) {
 				header("Location: .");
@@ -134,9 +139,9 @@ while ( $row = $result->fetch_array() ){
 if ( empty($ratings[0] ) ){
 	$ratings[0] = 0;
 }
-// TODO: Change name of $lrating to $cur_user_rating or something of the sort
-if (isset($cur_user['id'])){
-	$lrating = $mysqli->query( "SELECT rating FROM ratings WHERE creationid=" . $creation['id'] . " AND userid=" . $cur_user['id'] )->fetch_array();
+// Update the rating value on the information stored with the creation (used on creations.php, etc.)
+if ( isset( $cur_user['id'] ) ) {
+	$cur_user_rating = $mysqli->query( "SELECT rating FROM ratings WHERE creationid=" . $creation['id'] . " AND userid=" . $cur_user['id'] )->fetch_array();
 }
 
 $comments = $mysqli->query( "SELECT * FROM comments WHERE creationid=" . $creation['id'] . " ORDER BY timestamp DESC,userid DESC" );
@@ -170,7 +175,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 <html>
 	<head>
 		<title>
-			<?php echo stripslashes( $creation['name'] ); ?> | <?php echo SITE_NAME ?>
+			<?php echo stripslashes( $creation['name'] ); ?> | <?php echo SITE_NAME; ?>
 			
 		</title>
 		
@@ -181,7 +186,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 		<script src="../data/jquery.js" type="text/javascript"></script>
 		
 		<?php
-		// Include specialised Javascript files for certain types
+		// Include specialised Javascript files for certain types of creations
 		if ( $creation['type']  == "audio" ) {
 			echo '<script type="text/javascript" src="../data/audio-player.js"></script>';
 		}
@@ -213,7 +218,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 			}
 			?>
 
-			//lighting up the planets
+			// Lighting up each of the planets based on where the user has their mouse
 			$(document).ready(function(){
 				$("#rating1").hover(function(){
 				  $("#rating1").css("background-image","url('../data/icons/prostar.png')");
@@ -222,7 +227,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
 				  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 				  },function(){
-				  <?php globesToCurrentRating($lrating[0]); ?>
+				  <?php globesToCurrentRating($cur_user_rating[0]); ?>
 				});
 			});
 			$(document).ready(function(){
@@ -233,7 +238,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
 				  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 				  },function(){
-				<?php globesToCurrentRating($lrating[0]); ?>
+				<?php globesToCurrentRating($cur_user_rating[0]); ?>
 				});
 			});
 			$(document).ready(function(){
@@ -244,7 +249,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				  $("#rating4").css("background-image","url('../data/icons/antistar.png')");
 				  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 				  },function(){
-				  <?php globesToCurrentRating($lrating[0]); ?>
+				  <?php globesToCurrentRating($cur_user_rating[0]); ?>
 				});
 			});
 			$(document).ready(function(){
@@ -255,7 +260,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				  $("#rating4").css("background-image","url('../data/icons/prostar.png')");
 				  $("#rating5").css("background-image","url('../data/icons/antistar.png')");
 				  },function(){
-				  <?php globesToCurrentRating($lrating[0]); ?>
+				  <?php globesToCurrentRating($cur_user_rating[0]); ?>
 				});
 			});
 			$(document).ready(function(){
@@ -266,7 +271,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				  $("#rating4").css("background-image","url('../data/icons/prostar.png')");
 				  $("#rating5").css("background-image","url('../data/icons/prostar.png')");
 				  },function(){
-				  <?php globesToCurrentRating($lrating[0]); ?>
+				  <?php globesToCurrentRating($cur_user_rating[0]); ?>
 				});
 			});
 
@@ -419,10 +424,10 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							}
 							// Update the rating field on creation in DB (value used in creations.php)
 							// TODO: change to an if that senses if the rating is different
-							$mysli->query( "UPDATE creations SET rating=" . number_format( array_sum( $ratings ) / count( $ratings ), 1 ) . " WHERE id=" . $creation['id'] );
+							$mysqli->query( "UPDATE creations SET rating=" . number_format( array_sum( $ratings ) / count( $ratings ), 1 ) . " WHERE id=" . $creation['id'] );
 							// Display current user's rating if there's a logged in user and they've rated the creation
-							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) && ( number_format( $lrating[0], 1 ) != 0.0 ) ) {
-								echo " (you voted " . number_format( $lrating[0], 1 ) . ")";
+							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) && ( number_format( $cur_user_rating[0], 1 ) != 0.0 ) ) {
+								echo " (you voted " . number_format( $cur_user_rating[0], 1 ) . ")";
 							}
 							// Display favourites -- if favourite is equal to one, say the appropriate thing.
 							echo ", ".$favourites;
@@ -451,7 +456,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 								// Set initial style for each globe
 								// QUESTION: What does fl stand for?
 								for ( $fl = 0; $fl < 5; $fl++ ) {
-									if ( $fl > $lrating[0] - 1 ) {
+									if ( $fl > $cur_user_rating[0] - 1 ) {
 										$style[$fl] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
 									}
 									else {
@@ -498,7 +503,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 			</form>';
 			}
 			?>
-			</div class="comments">
+			<div class="comments">
 			<?php
 			while( $comment = $comments->fetch_array() ){
 				//Test if the comment has enough flags to be auto-censored and censor it if it does
@@ -560,16 +565,15 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					preg_match_all( '/\@(.*?)\ /', $comment['comment'], $usernames );
 					$comment_with_links = $comment['comment'];
 					if ( substr_count( $comment['comment'], "@" ) > 0 ) {
-						for ($j = 0;$j < count( $usernames[0] ); $j++ ) {
-							$username_id = file_get_contents( BASE_URL . "api/idfromusername.php?name=" . substr($usernames[0][$j], 1, strlen( $usernames[0][$j]) - 2 ) );
+						for ( $j = 0;$j < count( $usernames[0] ); $j++ ) {
+							$username_id = file_get_contents( BASE_URL . "api/idfromusername.php?name=" . substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) );
 							if ( !empty( $username_id ) ){
-								$comment_with_links = preg_replace( '/\@' . stripslashes( substr($usernames[0][$j], 1, strlen( $usernames[0][$j]) - 2 ) ) . '/','[url=user.php?id=' . get_id_from_username(substr($usernames[0][$j],1,strlen($usernames[0][$j])-2)).']@'.substr($usernames[0][$j],1,strlen($usernames[0][$j])-2).'[/url] ',$comment['comment']);
-								$comment['comment']=$comment_with_links;
+								$comment_with_links = preg_replace( '/\@' . stripslashes( substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) ) . '/','[url=user.php?id=' . get_id_from_username( substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) ) . ']@' . substr($usernames[0][$j], 1, strlen($usernames[0][$j])-2) . '[/url] ', $comment['comment'] );
+								$comment['comment'] = $comment_with_links;
 							}
 						}
 					}
-					echo '<div style="padding-top:10px;font-size:13px;margin-left:10px;width:430px;">'.stripslashes(bbcode_parse($comment_with_links)).'</div>';
-					echo '</div>';
+					echo '<div style="padding-top:10px;font-size:13px;margin-left:10px;width:430px;">' . stripslashes( bbcode_parse( $comment_with_links ) ) . '</div></div>';
 				}
 			}
 			?>
@@ -579,10 +583,10 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 			<div class="cright">
 				<div class="ctitle">
 					<?php 
-					echo stripslashes($creation['name']); 
-					echo '<span style="font-size:11px;"> v'.$cur_version;
-					if ($creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod"){
-						echo ' (<a href="'.$creation['id'].'/edit">edit</a>)'; 
+					echo stripslashes( $creation['name'] ); 
+					echo '<span style="font-size:11px;"> v' . $cur_version;
+					if ( $creation['ownerid'] ==  $cur_user['id'] || $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod" ) {
+						echo ' (<a href="' . $creation['id'] . '/edit">edit</a>)'; 
 					}
 					echo '</span>';
 					?>
@@ -591,34 +595,45 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				<div class="cinfo">
 					<div class="creationownericon">
 						<?php
-						if (!empty($user['icon'])) echo '<img class="cicon" src="../data/usericons/'.$user['icon'].'"/>';
-						else echo '<img class="cicon" src="../data/usericons/default.png"/>';
+						if ( !empty( $user['icon'] ) ) {
+							echo '<img class="cicon" src="../data/usericons/' . $user['icon'] . '"/>';
+						}
+						else {
+							echo '<img class="cicon" src="../data/usericons/default.png"/>';
+						}
 						?>
 						
 					</div>
 					<div class="cusertext">
 						<div class="cuserlink">
 							<?php
-							echo '<a href="user.php?id='.$user['id'].'">'.$user['username'].'</a>';if ($user['rank'] == "admin" || $user['rank'] == "mod") echo '<a href="info/staff.php" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+							echo '<a href="user.php?id=' . $user['id'] . '">' . $user['username'] . '</a>';
+							if ( $user['rank'] == "admin" || $user['rank'] == "mod") {
+								echo '<a href="info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
+							}
 							?>
 							
 						</div>
 						<?php
-						if ($creation['hidden'] != "no"){
+						if ( $creation['hidden'] != "no" ) {
 							echo '<div style="color:red;" class="creationstatus">';
-							switch($creation['hidden']){
+							switch ( $creation['hidden'] ) {
 								case "byowner":
 									echo "Hidden";
 								break;
+								
 								case "censored":
 									echo "Censored";
 								break;
+								
 								case "deleted":
 									echo "Deleted";
 								break;
+								
 								case "flagged":
 									echo "Flagged by community";
 								break;
+								
 								default:
 									echo "An error occurred";
 							}
@@ -628,61 +643,72 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 						
 						<div class="creationtime">
 							<?php
-							echo date("F jS, Y", strtotime($creation['created']));
+							echo date( "F jS, Y", strtotime( $creation['created'] ) );
 							?>
 							
 						</div>
 						<div class="creationlicense">
 							<?php
-							switch($creation['license']){
+							switch ( $creation['license'] ) {
 								case 'copyright':
 									echo '<img src="../data/icons/licenses/copyright.png"/>';
-									break;
+								break;
+								
 								case 'cc-0':
 									echo '<img src="../data/icons/licenses/publicdomain.png"/>
 							<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-zero.png"/>';
-									break;
+								break;
+								
 								case 'cc-by':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>';
-									break;
+								break;
+								
 								case 'cc-by-nd':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>
 							<img src="../data/icons/licenses/cc-nd.png"/>';
-									break;
+								break;
+								
 								case 'cc-by-sa':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>
 							<img src="../data/icons/licenses/cc-sa.png"/>';
-									break;
+								break;
+								
 								case 'cc-by-nc':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>
 							<img src="../data/icons/licenses/cc-nc.png"/>';
-									break;
+								break;
+								
 								case 'cc-by-nc-nd':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>
 							<img src="../data/icons/licenses/cc-nc.png"/>
 							<img src="../data/icons/licenses/cc-nd.png"/>';
-									break;
+								break;
+								
 								case 'cc-by-nc-sa':
 									echo '<img src="../data/icons/licenses/cc.png"/>
 							<img src="../data/icons/licenses/cc-by.png"/>
 							<img src="../data/icons/licenses/cc-nc.png"/>
 							<img src="../data/icons/licenses/cc-sa.png"/>';
-									break;
+								break;
+								
 								case 'mit':
 									echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/mit.png"/></a>';
-									break;
+								break;
+								
 								case 'gpl':
 									echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/gpl.png"/></a>';
-									break;
+								break;
+								
 								case 'bsd':
 									echo '<a href="' . $creation['id'] . '/license"><img src="../data/icons/licenses/bsd.png"/></a>';
-									break;
+								break;
+								
 								default:
 									echo "An error occurred";
 							}
@@ -693,17 +719,17 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					<div style="clear:both"></div>
 				</div>
 				<?php 
-				if (!empty($creation['descr'])){
+				if ( !empty( $creation['descr'] ) ) {
 					echo '<div class="ccontent desc" style="margin:5px;">
 					<strong style="display:block;">Description</strong>
-					'.bbcode_parse_description(stripslashes($creation['descr'])).'
+					' . bbcode_parse_description( stripslashes( $creation['descr'] ) ) . '
 				</div>';
 				}
-				if (!empty($creation['advisory'])){
+				if ( !empty($creation['advisory'] ) ) {
 					echo '
 				<div class="ccontent" style="margin:5px;">
 					<strong style="display:block;">Content advisory</strong>
-					This project includes '.stripslashes($creation['advisory']).'. (<a href="flag.php?id='.$creation['id'].'">flag creation</a>)
+					This project includes ' . stripslashes( $creation['advisory'] ) . '. (<a href="flag.php?id=' . $creation['id'] . '">flag creation</a>)
 				</div>'; 
 				}
 				?>
@@ -712,39 +738,42 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					<div class="relatedcreationscontainer" style="background-color:white;margin:auto;padding:1px;margin-top:10px;width:280px;">
 						<?php
 						$related_amount = 4;
-						$related_creations = getRelatedCreations($creation,$related_amount,$mysqli);
-						foreach($related_creations as $related_creation){
-							if(file_exists("data/thumbs/".$related_creation['id'].".png")){
+						$related_creations = getRelatedCreations( $creation, $related_amount, $mysqli );
+						foreach ( $related_creations as $related_creation ){
+							if ( file_exists( "data/thumbs/" . $related_creation['id'] . ".png" ) ) {
 								$image_thumb = $related_creation['id'];
 							}
-							else{
+							else {
 								$image_thumb = "default";
 							}
-							if(file_exists("data/usericons/".$related_creation['ownerid'].".png")){
+							
+							if ( file_exists( "data/usericons/" . $related_creation['ownerid'] . ".png" ) ) {
 								$user_thumb = $related_creation['ownerid'];
 							}
-							else{
+							else {
 								$user_thumb = "default";
 							}
-							if(strlen(stripslashes($related_creation['descr']))>500){
-								$creation_description = substr(str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($related_creation['descr']))),0,500);
+							
+							if ( strlen( stripslashes( $related_creation['descr'] ) ) > 500 ) {
+								$creation_description = substr( str_replace( "<br />\n<br />\n", " ", bbcode_parse_description( stripslashes( $related_creation['descr'] ) ) ), 0, 500 );
 							}
-							else{
-								$creation_description = str_replace("<br />\n<br />\n"," ",bbcode_parse_description(stripslashes($related_creation['descr'])));
+							else {
+								$creation_description = str_replace( "<br />\n<br />\n", " ", bbcode_parse_description( stripslashes( $related_creation['descr'] ) ) );
 							}
+							
 							echo '
 						<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
 							<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
-								<a href="creation.php?id='.$related_creation['id'].'"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="../data/thumbs/'.$image_thumb.'.png" /></a><a href="user.php?id='.$related_creation['ownerid'].'"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="../data/usericons/'.$user_thumb.'.png" /></a>
+								<a href="creation.php?id=' . $related_creation['id'] . '"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="../data/thumbs/' . $image_thumb . '.png" /></a><a href="user.php?id=' . $related_creation['ownerid'] . '"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="../data/usericons/' . $user_thumb . '.png" /></a>
 							</div>
 							<div class="relatedtext" style="margin:5px;">
 								<div class="relatedleft" style="float:left;">
-									<strong style="font-size:18px;"><a href="creation.php?id='.$related_creation['id'].'">'.$related_creation['name'].'</a></strong>
+									<strong style="font-size:18px;"><a href="creation.php?id=' . $related_creation['id'] . '">' . $related_creation['name'] . '</a></strong>
 									<div class="relatedbyline" style="">
-										by <a href="user.php?id='.$related_creation['ownerid'].'">'.get_username_from_id($related_creation['ownerid'],$mysqli).'</a>
+										by <a href="user.php?id=' . $related_creation['ownerid'] . '">' . get_username_from_id( $related_creation['ownerid'], $mysqli ) . '</a>
 									</div>
 									<div class="relateddesc" style="width:230px;height:45px;overflow:hidden;">
-										'.$creation_description.'
+										' . $creation_description . '
 									</div>
 								</div>
 							</div>
@@ -764,17 +793,17 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 
 <?php
 
-if (isset($_POST['newcomment'])) {
-	if (!empty($_POST['commenttext']) && strlen(trim($_POST['commenttext']))>0) {
-		if (!empty($_SESSION['SESS_MEMBER_ID'])){
-			$mysqli->query("INSERT INTO comments (creationid, userid, comment) VALUES (".$creation['id'].", ".$cur_user['id'].", '".strip_tags(trim(addslashes($_POST[commenttext]))." "."')")) or die( $mysqli->error );
+if ( isset( $_POST['newcomment'] ) ) {
+	if ( !empty( $_POST['commenttext'] ) && strlen( trim( $_POST['commenttext'] ) ) > 0 ) {
+		if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
+			$mysqli->query( "INSERT INTO comments (creationid, userid, comment) VALUES (" . $creation['id'] . ", " . $cur_user['id'] . ", '" . strip_tags( trim( addslashes( $_POST['commenttext'] ) ) . " " . "')" ) ) or die( $mysqli->error );
 			$commentid = $mysqli->insert_id;
 			//send notification about the comment
-			if($cur_user['id']!=$user['id']){
-				$setting=get_notification_setting_from_id($creation['ownerid']);
-				if($setting!="none"&&$setting!="nocomments"){
-					$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.$creation['name'].'[/url]!';
-					$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
+			if ( $cur_user['id'] != $user['id'] ) {
+				$setting = get_notification_setting_from_id( $creation['ownerid'] );
+				if( $setting != "none" && $setting != "nocomments" ) {
+					$notificationmessage = 'You have received a new comment by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url] on your creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
+					$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
 				}
 			}
 			echo "<meta http-equiv='Refresh' content='0'>";
@@ -782,26 +811,26 @@ if (isset($_POST['newcomment'])) {
 		}
 	}
 }
-if (isset($_POST['reply'])){
+if ( isset( $_POST['reply'] ) ) {
 	$comments->data_seek( 0 );
-	while ($comment = $comments->fetch_array() ){
-		if (isset($_POST['msgsubmit'.$comment['id']])&&strlen(trim($_POST['msgsubmit'.$comment['id']]))>0){
-			if (!empty($_SESSION['SESS_MEMBER_ID'])){
-				$mysqli->query("INSERT INTO comments (creationid, userid, comment) VALUES (".$creation['id'].", ".$cur_user['id'].", '".trim(addslashes($_POST["msgbody".$comment['id']]))." "."')") or die( $mysqli->error );
+	while ( $comment = $comments->fetch_array() ) {
+		if ( isset( $_POST['msgsubmit' . $comment['id']] ) && strlen( trim( $_POST['msgsubmit' . $comment['id']] ) ) > 0 ) {
+			if ( !empty($_SESSION['SESS_MEMBER_ID'] ) ) {
+				$mysqli->query( "INSERT INTO comments (creationid, userid, comment) VALUES (" . $creation['id'] . ", " . $cur_user['id'] . ", '" . trim( addslashes( $_POST["msgbody" . $comment['id']] ) ) . " " . "')" ) or die( $mysqli->error );
 				$commentid = $mysqli->insert_id;
 				//send notification about the comment
-				if($cur_user['id']!=$user['id']){
+				if( $cur_user['id'] != $user['id'] ){
 					$setting = get_notification_setting_from_id( $creation['ownerid'], $mysqli );
-					if($setting!="none"&&$setting!="nocomments"){
-						$notificationmessage='You have received a new comment by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url] on your creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.$creation['name'].'[/url]!';
-						$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$creation['ownerid'].",".$cur_user['id'].",'".addslashes($notificationmessage)."','notification')");
+					if( $setting != "none" && $setting != "nocomments" ){
+						$notificationmessage = 'You have received a new comment by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url] on your creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
+						$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
 					}
 				}
-				$com_user = $mysqli->query("SELECT * FROM users WHERE id=".$comment['id'])->fetch_array();
-				if($com_user['id']!=$user['id']){
-					if($com_user['notifications']!="none"&&$com_user['notifications']!="noreplies"){
-						$notificationmessage='Your comment on the creation [url=creation.php?id='.$creation['id'].'#'.$commentid.']'.addslashes($creation['name']).'[/url] has been replied to by [url=user.php?id='.$cur_user['id'].']'.$cur_user['username'].'[/url]!';
-						$mysqli->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$com_user['id'].",".$cur_user['id'].",'".$notificationmessage."','notification')");
+				$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['id'] )->fetch_array();
+				if ( $com_user['id'] != $user['id'] ) {
+					if ( $com_user['notifications'] != "none" && $com_user['notifications'] != "noreplies" ) {
+						$notificationmessage = 'Your comment on the creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . addslashes( $creation['name'] ) . '[/url] has been replied to by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url]!';
+						$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $com_user['id'] . "," . $cur_user['id'] . ",'" . $notificationmessage . "','notification')");
 					}
 				}
 				echo "<meta http-equiv='Refresh' content='0'>";
@@ -813,51 +842,50 @@ if (isset($_POST['reply'])){
 
 //function used to set the light-up rating globes to their default
 function globesToCurrentRating($crating_arr){
-	$crating=$crating_arr[0];
-	if ($crating>=1) echo '$("#rating1").css("background-image","url(\'../data/icons/prostar.png\')");';
-	else echo '$("#rating1").css("background-image","url(\'../data/icons/antistar.png\')");';
-	if ($crating>=2) echo '$("#rating2").css("background-image","url(\'../data/icons/prostar.png\')");';
-	else echo '$("#rating2").css("background-image","url(\'../data/icons/antistar.png\')");';
-	if ($crating>=3) echo '$("#rating3").css("background-image","url(\'../data/icons/prostar.png\')");';
-	else echo '$("#rating3").css("background-image","url(\'../data/icons/antistar.png\')");';
-	if ($crating>=4) echo '$("#rating4").css("background-image","url(\'../data/icons/prostar.png\')");';
-	else echo '$("#rating4").css("background-image","url(\'../data/icons/antistar.png\')");';
-	if ($crating>=5) echo '$("#rating5").css("background-image","url(\'../data/icons/prostar.png\')");';
-	else echo '$("#rating5").css("background-image","url(\'../data/icons/antistar.png\')");';
+	$crating = $crating_arr[0];
+	
+	for ( $i = 1; $i <= 5; $i++ ) {
+		if ( $crating >= $i ) {
+			echo '$("#rating' . $i .'").css("background-image","url(\'../data/icons/prostar.png\')");';
+		}
+		else {
+			echo '$("#rating' . $i .'").css("background-image","url(\'../data/icons/antistar.png\')");';
+		}
+	}
 }
 
 // Get info for related creations
-function getRelatedCreations( $creation, $amount, $mysqli ){
+function getRelatedCreations( $creation, $amount, $mysqli ) {
 	//Set the amount to the number below it so it can be used for arrays
 	$amount--;
 	//Initialise array
-	for($i=0;$i<$amount;$i++){
+	for ( $i = 0; $i < $amount; $i++ ) {
 		$related_creations[$i] = '';
 	}
-	$user_amount = ceil(0.50*$amount);	
-	$favourites_amount = ceil(0.25*$amount);
-	$similar_amount = ceil(0.25*$amount);
+	$user_amount = ceil( 0.50 * $amount );	
+	$favourites_amount = ceil( 0.25 * $amount );
+	$similar_amount = ceil( 0.25 * $amount );
 	
 	//Get IDs of all creations by this user that aren't this one
-	$user_creations_query=$mysqli->query("SELECT id FROM creations WHERE ownerid=".$creation['ownerid']." AND hidden='no' AND NOT id=".$creation['id']);
-	if ( $user_creations_query->num_rows >= $user_amount ){
+	$user_creations_query = $mysqli->query( "SELECT id FROM creations WHERE ownerid=" . $creation['ownerid'] . " AND hidden='no' AND NOT id=" . $creation['id'] );
+	if ( $user_creations_query->num_rows >= $user_amount ) {
 		//Put all those IDs in an array
 		$i=0;
-		while( $user_creation=$user_creations_query->fetch_array() ){
-			$user_creations[$i]=$user_creation[0];
+		while ( $user_creation = $user_creations_query->fetch_array() ) {
+			$user_creations[$i] = $user_creation[0];
 			$i++;
 		}
 
 		//Randomly choose creations from the same user's to display, putting them in random slots
-		for ($i=0;$i<$user_amount;$i++){
-			$random_pos = rand(0,$amount);
-			if(empty($related_creations[$random_pos])){
-				$random_id = rand(min($user_creations),max($user_creations));
-				if (in_array($random_id, $related_creations)){
+		for ( $i = 0; $i < $user_amount; $i++ ) {
+			$random_pos = rand( 0, $amount );
+			if ( empty( $related_creations[$random_pos] ) ) {
+				$random_id = rand( min( $user_creations ), max( $user_creations ) );
+				if ( in_array( $random_id, $related_creations ) ){
 					$i--;
 				}
 				else {
-					$related_creations[$random_pos] = rand(min($user_creations),max($user_creations));
+					$related_creations[$random_pos] = rand( min( $user_creations ),max( $user_creations ) );
 				}
 			}
 			//If position is already taken, rewind and try that index again
@@ -869,8 +897,8 @@ function getRelatedCreations( $creation, $amount, $mysqli ){
 	}
 	
 	//Get IDs of all creations in this user's favourites
-	$user_favourites_query=$mysqli->query("SELECT creationid FROM favourites WHERE userid=".$creation['ownerid']." AND NOT creationid=".$creation['id']);
-	if ( $user_favourites_query->num_rows >= $favourites_amount ){
+	$user_favourites_query = $mysqli->query( "SELECT creationid FROM favourites WHERE userid=" . $creation['ownerid'] . " AND NOT creationid=" . $creation['id'] );
+	if ( $user_favourites_query->num_rows >= $favourites_amount ) {
 		//Put all those IDs in an array
 		$i=0;
 		while ( $user_favourite = $user_favourites_query->fetch_array() ) {
@@ -879,63 +907,67 @@ function getRelatedCreations( $creation, $amount, $mysqli ){
 		}
 		$user_favourites = array();
 		//Construct a new array excluding creations by the creation owner and discard the old one
-		for($i=0;$i<count($user_favourites_temp);$i++){
-			$user_check_query = $mysqli->query("SELECT ownerid FROM creations WHERE id=".$i)->fetch_row();
-			if($user_check_query=$creation['ownerid']){
-				array_push($user_favourites,$user_favourites_temp[$i]);
+		for ( $i = 0; $i < count( $user_favourites_temp ); $i++ ) {
+			$user_check_query = $mysqli->query( "SELECT ownerid FROM creations WHERE id=" . $i )->fetch_row();
+			if ( $user_check_query = $creation['ownerid'] ) {
+				array_push( $user_favourites, $user_favourites_temp[$i] );
 			}
 		}
-		unset($user_favourites_temp);
+		unset( $user_favourites_temp );
 
 		//Randomly choose creations from the user's favourites's to display, putting them in random slots
-		for ($i=0;$i<$favourites_amount;$i++){
-			$random_pos = rand(0,$amount);
-			if(empty($related_creations[$random_pos])){
-				$random_id = rand(min($user_favourites),max($user_favourites));
-				if (in_array($random_id, $related_creations)){
+		for ( $i = 0; $i < $favourites_amount; $i++) {
+			$random_pos = rand( 0, $amount );
+			if ( empty( $related_creations[$random_pos] ) ) {
+				$random_id = rand( min( $user_favourites ), max( $user_favourites ) );
+				if ( in_array( $random_id, $related_creations ) ) {
 					$i--;
 				}
 				else {
-					$related_creations[$random_pos] = rand(min($user_favourites),max($user_favourites));
+					$related_creations[$random_pos] = rand( min ( $user_favourites ), max( $user_favourites ) );
 				}
 			}
 			//If position is already taken, rewind and try that index again
-			else $i--;
+			else {
+				$i--;
+			}
 		}
 	}
 	else {
-		$similar_amount+=$favourites_amount;
+		$similar_amount += $favourites_amount;
 	}
 	
 	//For now, find a random creation for the remaining 25%
 	//Once the search is made, find items with similar titles
 	
 	//Get IDs of all creations
-	$similar_query=$mysqli->query("SELECT id FROM creations WHERE NOT id=".$creation['id']." AND hidden='no' AND NOT ownerid=".$creation['ownerid']);
+	$similar_query = $mysqli->query( "SELECT id FROM creations WHERE NOT id=" . $creation['id'] . " AND hidden='no' AND NOT ownerid=" . $creation['ownerid'] );
 	//Put all those IDs in an array
-	$i=0;
-	while( $similar_iterator = $similar_query->fetch_array() ){
-		$similar[$i]=$similar_iterator[0];
+	$i = 0;
+	while ( $similar_iterator = $similar_query->fetch_array() ) {
+		$similar[$i] = $similar_iterator[0];
 		$i++;
 	}
 	//Randomly choose creations from the same user's to display, putting them in random slots
-	for ($i=0;$i<$similar_amount;$i++){
-		$random_pos = rand(0,$amount);
-		if(empty($related_creations[$random_pos])){
-			$random_id = rand(min($similar),max($similar));
-			if (in_array($random_id, $related_creations)){
+	for ( $i = 0; $i < $similar_amount; $i++ ) {
+		$random_pos = rand( 0, $amount );
+		if ( empty( $related_creations[$random_pos] ) ) {
+			$random_id = rand( min( $similar ), max( $similar ) );
+			if ( in_array( $random_id, $related_creations ) ) {
 				$i--;
 			}
 			else {
-				$related_creations[$random_pos] = rand(min($similar),max($similar));
+				$related_creations[$random_pos] = rand( min( $similar ), max( $similar ) );
 			}
 		}
 		//If position is already taken, rewind and try that index again
-		else $i--;
+		else {
+			$i--;
+		}
 	}
 	//Return IDs for now
 	//TODO: Return all creation data in 2D array
-	for( $i=0; $i <= $amount; $i++ ){
+	for( $i = 0; $i <= $amount; $i++ ){
 		$related_creations[$i] =  $mysqli->query( "SELECT * FROM creations WHERE id=" . $related_creations[$i] )->fetch_array();
 	}
 	return $related_creations;
