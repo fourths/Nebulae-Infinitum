@@ -161,7 +161,7 @@ if ( empty( $cur_version ) ){
 
 <!DOCTYPE html>
 <?php
-// If the creation is an image or a Flash, get its dimensions
+// If the creation is an image or a Flash file, get its dimensions
 if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 	$imgsize = getimagesize( 'data/creations/' . $creation['filename'] );
 	if ( $creation['filetype'] == "svg" ) {
@@ -319,21 +319,19 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 	</head>
 
 	<body onload="javascript:illuminate();">
-		<?php require_once( "templates/header.php" ); ?>
+		<?php
+		require_once( "templates/header.php" );
+		?>
 		<div class="container" style="min-height:700px;">
 			<div class="cleft">
 				<div class="ccontainer" <?php if ( $creation['type'] == "scratch" ) { echo 'style="width:486px;margin:auto;margin-top:5px;"'; } ?>>
 					<div class="creation">
 						<?php
+						
+						// Display the creation (method depends on type
 						switch ( $creation['type'] ) {
 							case "artwork":
-								if( $creation['filetype'] == "svg" ) {
-									// QUESTION: What does this do?
-									if ( $imgwidth > 473 ){
-										$svgwidth = 'style="width:500px;"';
-									}
-								}
-								echo '<img src="../data/creations/' . $creation['filename'] . '" class="cimg" ' . $svgwidth . '/>';
+								echo '<img src="../data/creations/' . $creation['filename'] . '" class="cimg" />';
 							break;
 							
 							case "audio":

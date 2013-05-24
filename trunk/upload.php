@@ -62,7 +62,7 @@ if (isset($_POST['submit'])) {
 			case "svg":
 				if ($_FILES['creationfile']['type'] != "image/svg+xml") die("Your SVG file appears to be corrupted.");
 				$svg = fopen($_FILES['creationfile']['tmp_name'],"r");
-				if (fread($svg,11) != "<svg xmlns=") die("Your SVG file appears to be corrupted.");
+				//if (fread($svg,11) != "<svg xmlns=" && fread($svg,14) != "<?xml version=") die("Your SVG file appears to be corrupted.");
 			break;
 		}
 		mysql_query("INSERT INTO creations (name,type,ownerid,created,filetype) VALUES ('".addslashes($_POST['title'])."','artwork',".$_SESSION['SESS_MEMBER_ID'].",'$timestamp[0]','$ext')") or die(mysql_error());

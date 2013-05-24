@@ -439,7 +439,12 @@ if ( $url != "/") {
 								header( "Content-type: image/gif" );
 							break;
 							
+							case "svg":
+								header( "Content-type: image/svg+xml" );
+							break;
+							
 							case "jpg":
+							case "jpeg":
 								header( "Content-type: image/jpeg" );
 							break;
 							
@@ -476,7 +481,6 @@ if ( $url != "/") {
 							echo file_get_contents( "data" .  $data_path );
 						}
 					}
-					
 					else {
 						require_once( "errors/404.php" );
 					}
