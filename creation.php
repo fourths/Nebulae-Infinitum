@@ -384,6 +384,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 								}
 							break;
 							case "writing":
+								// The writing parser gets the content from the saved txt, strips slashes added to make it safe, converts special characters to their HTML entities, and parses the BBCode
 								echo '<div class="wcontent" style="font-size:13px;" id="resizeable">
 								<div class="resizebuttons">
 									<a href="javascript:resize(2);" class="plus"></a>
@@ -403,7 +404,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							<?php
 							// Display view number
 							echo $views;
-							// If there's only one view, just say "view". Otherwise, say views.
+							// If there's only one view, just say "view"; otherwise, say views
 							if ( $view == 1 ) {
 								echo " view";
 							}
@@ -421,13 +422,13 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 								echo ", rated " . number_format( array_sum( $ratings ) / count( $ratings ), 1 );
 							}
 							// Update the rating field on creation in DB (value used in creations.php)
-							// TODO: change to an if that senses if the rating is different
 							$mysqli->query( "UPDATE creations SET rating=" . number_format( array_sum( $ratings ) / count( $ratings ), 1 ) . " WHERE id=" . $creation['id'] );
+								
 							// Display current user's rating if there's a logged in user and they've rated the creation
 							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) && ( number_format( $cur_user_rating[0], 1 ) != 0.0 ) ) {
 								echo " (you voted " . number_format( $cur_user_rating[0], 1 ) . ")";
 							}
-							// Display favourites -- if favourite is equal to one, say the appropriate thing.
+							// Display favourites; if favourite is equal to one, say the appropriate thing
 							echo ", ".$favourites;
 							if ( $favourites == 1 ) {
 								echo " favourite"; 
@@ -435,13 +436,14 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							else {
 								echo " favourites";
 							}
-							//Display whether the current user favourited this and give a link to change their choice
+							// Display whether the current user favourited this and give a link to change their choice
 							if ( $favourited == true) {
 								$favtext = "unfavourite";
 							}
 							else {
 								$favtext = "favourite";
 							}
+							
 							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 								echo ' (<a href="creation.php?id=' . $creation['id'] . '&action=favourite">' . $favtext . '</a>)';
 							}
@@ -452,13 +454,12 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							<?php
 							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 								// Set initial style for each globe
-								// QUESTION: What does fl stand for?
-								for ( $fl = 0; $fl < 5; $fl++ ) {
-									if ( $fl > $cur_user_rating[0] - 1 ) {
-										$style[$fl] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
+								for ( $rating_i = 0; $rating_i < 5; $rating_i++ ) {
+									if ( $rating_i > $cur_user_rating[0] - 1 ) {
+										$style[$rating_i] = 'style="background-image:url(\'../data/icons/antistar.png\');"';
 									}
 									else {
-										$style[$fl] = 'style="background-image:url(\'../data/icons/prostar.png\');"';
+										$style[$rating_i] = 'style="background-image:url(\'../data/icons/prostar.png\');"';
 									}
 								}
 								echo '<a href="'.$creation['id'].'/rate/1" id="rating1" ' . $style[0] . ' class="imgrating"></a>
@@ -494,6 +495,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				</div>
 				<h2 style="padding-left:10px;">Comments</h2>
 			<?php
+			// If the user is logged-in, give them a comment writing box
 			if ( !empty( $cur_user ) ){
 				echo '<form method="post">
 			<textarea name="commenttext" style="margin-left:10px;margin-top:-10px;min-height:60px;max-height:200px;width:450px;resize:vertical;" placeholder="Enter comment here..."></textarea>
@@ -508,22 +510,26 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 				//If comment is marked as alright even after three flags, the comment still shows
 				$i = 0;
 				$hidden = false;
-				$fresult = $mysqli->query("SELECT * FROM flags WHERE parentid=" . $comment['id'] . " AND type='comment'") or die( $mysqli->error );
+				$fresult = $mysqli->query( "SELECT * FROM flags WHERE parentid=" . $comment['id'] . " AND type='comment'" ) or die( $mysqli->error );
 				while( $row = $fresult->fetch_array() ){
 					$cflags[$i] = $row[2];
 					$i++;
 				}
 				if ( !empty($cflags) ){
-					$farray = $mysqli->query("SELECT status FROM comments WHERE id = " . $comment['id'] )->fetch_array();
+					$farray = $mysqli->query( "SELECT status FROM comments WHERE id = " . $comment['id'] )->fetch_array();
 					if ( count( array_unique( $cflags ) ) >= FLAGS_REQUIRED && $farray[0] == "shown" ) {
 						$mysqli->query( "UPDATE comments SET status='censored' WHERE id=" . $comment['id'] ) or die( $mysqli->error );
 						$mysqli->query( "DELETE FROM flags WHERE parentid=" . $comment['id'] . " AND type='comment'" );
 						$hidden = true;
 					}
 				}
-				$cflags = array();
+				unset( $cflags, $farray );
+				
+				// Display the comment if the user is permitted to see it
 				if ( !$hidden && $comment['status'] != 'censored' || ( $comment['status'] == 'censored' && $cur_user['rank'] == "admin" || $cur_user['rank'] == "mod" ) ) {
 					$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['userid'] )->fetch_array();
+					
+					// Spit out the commenter's icon; if they don't have one, use the default
 					if ( !empty( $com_user['icon'] ) ) {
 						echo '<br/><div style="background-color:gainsboro;width:450px;word-wrap:break-word;margin-left:10px;padding-top:5px;padding-bottom:10px;" id="' . $comment['id'] . '"><img class="cicon" style="width:35px;height:35px;" src="../data/usericons/' . $com_user['icon'] . '"/>';
 					}
@@ -532,46 +538,53 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					}
 					
 					echo '
-					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="user.php?id=' . $com_user['id'] . '">' . $com_user['username'] . '</a>';
+					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="../user/' . $com_user['id'] . '">' . $com_user['username'] . '</a>';
+					
 					if ( $com_user['rank'] == "admin" || $com_user['rank'] == "mod" ){
 						echo '<a href="info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
 					}
-					echo ' <span style="font-size:12px;">(' . date( "m/d/Y", strtotime($comment['timestamp'] ) ) . " at " . date( "g:ia", strtotime($comment['timestamp'] ) );
-					echo ') (<a id="replylink" href="javascript:reply(' . $comment['id'] . ')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
-					//show the censored/approved/shown comment status for admins and mods
+					
+					echo ' <span style="font-size:12px;">(' . date( "m/d/Y", strtotime($comment['timestamp'] ) ) . " at " . date( "g:ia", strtotime($comment['timestamp'] ) ) . ') (<a id="replylink" href="javascript:reply(' . $comment['id'] . ')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
+					
+					// Show the censored/approved/shown comment status for admins and mods (in technicolour!)
 					if ( $cur_user['rank'] == "admin" || $cur_user['rank']== "mod" ){
 						$parenthesis = "";
 						switch ( $comment['status'] ) {
 							case "censored":
-								echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:red;">censored</a>';
+								echo '<a href="../comment/'.$comment['id'].'/approve" style="color:red;">censored</a>';
 							break;
 							case "approved":
-								echo '<a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:green;">approved</a>';
+								echo '<a href="../comment/'.$comment['id'].'/censor" style="color:green;">approved</a>';
 							break;
 							case "shown":
-								echo '(<a href="flag.php?id='.$comment['id'].'&type=comment&action=approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="flag.php?id='.$comment['id'].'&type=comment&action=censor" style="color:red;text-decoration:none;">&#10007;</a>';
+								echo '(<a href="../comment/'.$comment['id'].'/approve" style="color:green;text-decoration:none;">&#10004;</a> <a href="../comment/'.$comment['id'].'/censor" style="color:red;text-decoration:none;">&#10007;</a>';
 								$parenthesis=")";
 							break;
 						}
-						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id=' . $comment['id'] . '&type=comment&action=delete">&#8709;</a>' . $parenthesis;
+						echo ' <a style="text-decoration:none;color:red;" href="../comment/' . $comment['id'] . '/delete">&#8709;</a>' . $parenthesis;
 					}
+					
+					
 					if ( ( $cur_user['rank'] != "admin" && $cur_user['rank'] != "mod" ) && ( $cur_user['id'] == $user['id'] || $cur_user['id'] == $com_user['id'] ) ) {
-						echo ' <a style="text-decoration:none;color:red;" href="flag.php?id=' . $comment['id'] . '&type=comment&action=delete">&#8709;</a>';
+						echo ' <a style="text-decoration:none;color:red;" href="../comment/' . $comment['id'] . '/delete">&#8709;</a>';
 					}
+					
 					echo '</span></div>';
-					//Turn the @ into a link to the userpage
+					
+					//Turn the @ in a comment into a link to the userpage
+					
 					preg_match_all( '/\@(.*?)\ /', $comment['comment'], $usernames );
 					$comment_with_links = $comment['comment'];
 					if ( substr_count( $comment['comment'], "@" ) > 0 ) {
 						for ( $j = 0;$j < count( $usernames[0] ); $j++ ) {
-							$username_id = file_get_contents( BASE_URL . "api/idfromusername.php?name=" . substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) );
-							if ( !empty( $username_id ) ){
-								$comment_with_links = preg_replace( '/\@' . stripslashes( substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) ) . '/','[url=user.php?id=' . get_id_from_username( substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) ) . ']@' . substr($usernames[0][$j], 1, strlen($usernames[0][$j])-2) . '[/url] ', $comment['comment'] );
+							$username = substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 );
+							if ( !empty( $username ) ){
+								$comment_with_links = preg_replace( '/\@' . stripslashes( substr( $usernames[0][$j], 1, strlen( $usernames[0][$j] ) - 2 ) ) . ' /','[url=../user/' . $username . ']@' . $username . '[/url] ', $comment['comment'] );
 								$comment['comment'] = $comment_with_links;
 							}
 						}
 					}
-					echo '<div style="padding-top:10px;font-size:13px;margin-left:10px;width:430px;">' . stripslashes( bbcode_parse( $comment_with_links ) ) . '</div></div>';
+					echo '<div style="padding-top:10px;font-size:13px;margin-left:10px;width:430px;">' . stripslashes( bbcode_parse( $comment['comment'] ) ) . '</div></div>';
 				}
 			}
 			?>
