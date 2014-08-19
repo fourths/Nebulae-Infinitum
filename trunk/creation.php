@@ -618,7 +618,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					<div class="cusertext">
 						<div class="cuserlink">
 							<?php
-							echo '<a href="' . BASE-URL . '/user/' . $user['name'] . '">' . $user['username'] . '</a>';
+							echo '<a href="' . BASE_URL . '/user/' . $user['username'] . '">' . $user['username'] . '</a>';
 							if ( $user['rank'] == "admin" || $user['rank'] == "mod") {
 								echo '<a href="about/admin" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
 							}

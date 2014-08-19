@@ -238,6 +238,7 @@ if ( $url != "/") {
 								case "delete":
 									$_GET['action'] = "delete";
 									$_GET['id'] = addslashes($url_array[3]);
+									require_once( "admin.php");
 								
 								default:
 									require_once( "admin.php");
