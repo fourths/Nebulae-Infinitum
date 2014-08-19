@@ -1,6 +1,6 @@
 RewriteEngine on 
 Options +FollowSymlinks
-RewriteBase /mediasite/
+RewriteBase /
 
 RewriteRule ^(.*)$ dispatcher.php
 

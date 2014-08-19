@@ -139,7 +139,7 @@ while ( $row = $result->fetch_array() ){
 if ( empty($ratings[0] ) ){
 	$ratings[0] = 0;
 }
-// Update the rating value on the information stored with the creation (used on creations.php, etc.)
+// Update the rating value on the information stored with the creation (used on the creations page, etc.)
 if ( isset( $cur_user['id'] ) ) {
 	$cur_user_rating = $mysqli->query( "SELECT rating FROM ratings WHERE creationid=" . $creation['id'] . " AND userid=" . $cur_user['id'] )->fetch_array();
 }
@@ -421,7 +421,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							else {
 								echo ", rated " . number_format( array_sum( $ratings ) / count( $ratings ), 1 );
 							}
-							// Update the rating field on creation in DB (value used in creations.php)
+							// Update the rating field on creation in DB (value used in creations page)
 							$mysqli->query( "UPDATE creations SET rating=" . number_format( array_sum( $ratings ) / count( $ratings ), 1 ) . " WHERE id=" . $creation['id'] );
 								
 							// Display current user's rating if there's a logged in user and they've rated the creation
@@ -445,7 +445,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							}
 							
 							if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
-								echo ' (<a href="creation.php?id=' . $creation['id'] . '&action=favourite">' . $favtext . '</a>)';
+								echo ' (<a href="' . $creation['id'] . '/favourite">' . $favtext . '</a>)';
 							}
 							?>
 							
@@ -538,10 +538,10 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					}
 					
 					echo '
-					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="../user/' . $com_user['id'] . '">' . $com_user['username'] . '</a>';
+					<div style="position:relative;left:5px;font-size:16px;font-weight:bold;padding-top:10px;"><a href="../user/' . $com_user['username'] . '">' . $com_user['username'] . '</a>';
 					
 					if ( $com_user['rank'] == "admin" || $com_user['rank'] == "mod" ){
-						echo '<a href="info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
+						echo '<a href="' . BASE_URL . 'about/admin" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
 					}
 					
 					echo ' <span style="font-size:12px;">(' . date( "m/d/Y", strtotime($comment['timestamp'] ) ) . " at " . date( "g:ia", strtotime($comment['timestamp'] ) ) . ') (<a id="replylink" href="javascript:reply(' . $comment['id'] . ')">reply</a> - <a href="' . BASE_URL . "/comment/" . $comment['id'] . '/flag">flag</a>) ';
@@ -618,9 +618,9 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					<div class="cusertext">
 						<div class="cuserlink">
 							<?php
-							echo '<a href="user.php?id=' . $user['id'] . '">' . $user['username'] . '</a>';
+							echo '<a href="' . BASE-URL . '/user/' . $user['name'] . '">' . $user['username'] . '</a>';
 							if ( $user['rank'] == "admin" || $user['rank'] == "mod") {
-								echo '<a href="info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
+								echo '<a href="about/admin" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
 							}
 							?>
 							
@@ -740,7 +740,7 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 					echo '
 				<div class="ccontent" style="margin:5px;">
 					<strong style="display:block;">Content advisory</strong>
-					This project includes ' . stripslashes( $creation['advisory'] ) . '. (<a href="flag.php?id=' . $creation['id'] . '">flag creation</a>)
+					This project includes ' . stripslashes( $creation['advisory'] ) . '. (<a href="' . $creation['id'] . '/flag">flag creation</a>)
 				</div>'; 
 				}
 				?>
@@ -775,13 +775,13 @@ if ( $creation['type']=="artwork" || $creation['type'] == "flash" ) {
 							echo '
 						<div class="relatedcreation" style="height:180px;width:240px;margin:10px;padding:10px;padding-bottom:20px;background-color:grey;">
 							<div class="relatedimgs" style="margin:auto;width:233px;height:100px;background-color:white;border:1px solid black;">
-								<a href="creation.php?id=' . $related_creation['id'] . '"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="../data/thumbs/' . $image_thumb . '.png" /></a><a href="user.php?id=' . $related_creation['ownerid'] . '"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="../data/usericons/' . $user_thumb . '.png" /></a>
+								<a href="' . $related_creation['id'] . '"><img class="relatedthumb" style="height:100px;width:133px;display:inline;" src="../data/thumbs/' . $image_thumb . '.png" /></a><a href="../user/' . get_username_from_id( $related_creation['ownerid'], $mysqli ) . '"><img class="relateduser" style="height:100px;width:100px;display:inline;" src="../data/usericons/' . $user_thumb . '.png" /></a>
 							</div>
 							<div class="relatedtext" style="margin:5px;">
 								<div class="relatedleft" style="float:left;">
-									<strong style="font-size:18px;"><a href="creation.php?id=' . $related_creation['id'] . '">' . $related_creation['name'] . '</a></strong>
+									<strong style="font-size:18px;"><a href="' . $related_creation['id'] . '">' . $related_creation['name'] . '</a></strong>
 									<div class="relatedbyline" style="">
-										by <a href="user.php?id=' . $related_creation['ownerid'] . '">' . get_username_from_id( $related_creation['ownerid'], $mysqli ) . '</a>
+										by <a href="../user/' . get_username_from_id( $related_creation['ownerid'], $mysqli ) . '">' . get_username_from_id( $related_creation['ownerid'], $mysqli ) . '</a>
 									</div>
 									<div class="relateddesc" style="width:230px;height:45px;overflow:hidden;">
 										' . $creation_description . '
@@ -813,7 +813,7 @@ if ( isset( $_POST['newcomment'] ) ) {
 			if ( $cur_user['id'] != $user['id'] ) {
 				$setting = get_notification_setting_from_id( $creation['ownerid'] );
 				if( $setting != "none" && $setting != "nocomments" ) {
-					$notificationmessage = 'You have received a new comment by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url] on your creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
+					$notificationmessage = 'You have received a new comment by [url=' . BASE_URL . '/user/' . $cur_user['username'] . ']' . $cur_user['username'] . '[/url] on your creation [url=' . BASE_URL . '/creation/' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
 					$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
 				}
 			}
@@ -833,14 +833,14 @@ if ( isset( $_POST['reply'] ) ) {
 				if( $cur_user['id'] != $user['id'] ){
 					$setting = get_notification_setting_from_id( $creation['ownerid'], $mysqli );
 					if( $setting != "none" && $setting != "nocomments" ){
-						$notificationmessage = 'You have received a new comment by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url] on your creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
+						$notificationmessage = 'You have received a new comment by [url=' . BASE_URL . '/user/' . $cur_user['username'] . ']' . $cur_user['username'] . '[/url] on your creation [url=' . BASE_URL . '/creation/' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
 						$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
 					}
 				}
 				$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['id'] )->fetch_array();
 				if ( $com_user['id'] != $user['id'] ) {
 					if ( $com_user['notifications'] != "none" && $com_user['notifications'] != "noreplies" ) {
-						$notificationmessage = 'Your comment on the creation [url=creation.php?id=' . $creation['id'] . '#' . $commentid . ']' . addslashes( $creation['name'] ) . '[/url] has been replied to by [url=user.php?id=' . $cur_user['id'] . ']' . $cur_user['username'] . '[/url]!';
+						$notificationmessage = 'Your comment on the creation [url=' . BASE_URL . '/creation/' . $creation['id'] . '#' . $commentid . ']' . addslashes( $creation['name'] ) . '[/url] has been replied to by [url=' . BASE_URL . '/user/' . $cur_user['username'] . ']' . $cur_user['username'] . '[/url]!';
 						$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $com_user['id'] . "," . $cur_user['id'] . ",'" . $notificationmessage . "','notification')");
 					}
 				}
