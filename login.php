@@ -156,7 +156,7 @@ if ( isset( $_POST['rsubmit'] ) ) {
 	}
 	
 	//Otherwise, redirect them to their userpage
-    header( "location: user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ) );
+    header( "location: user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ), $mysqli );
     exit();
 }
 ?>

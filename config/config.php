@@ -6,6 +6,9 @@ Configuration file including global constants such as database information, etc.
 //Name of site
 define( "SITE_NAME", "Nebulae Infinitum", true );
 
+//Software version number
+define( "VERSION_NUMBER", "r97", true );
+
 //Path, from the directory with the CSS, to the header image
 define( "HEADER_IMG", "../data/header.png", true );
 

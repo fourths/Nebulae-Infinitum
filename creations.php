@@ -24,36 +24,38 @@ if( isset( $_GET['id'] ) ){
 	$id = $_GET['id'];
 }
 
-//load different types of creations based on mode (except for action, for performing actions which won't load the page at all)
+//Load different types of creations based on mode (except for action, for performing actions which won't load the page at all)
 switch ( $mode ){
+	//Perform the given action if the user is an admin and the creation exists
 	case "action":
 		if ( $admin ){
 			$id_test = $mysqli->query( "SELECT name FROM creations WHERE id='$id'" ) or die( $mysqli->error );
-			if ( !$idtest ){
+			if ( !empty( $id_test ) ){
 				switch ( $action ){
 					case "delete":
 						$mysqli->query( "UPDATE creations SET hidden='deleted' WHERE id='$id'" ) or die( $mysqli->error );
-						die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+						header( "Location: " . BASE_URL . "/creations/newest/1" );
 					case "hide":
 						$mysqli->query( "UPDATE creations SET hidden='byowner' WHERE id='$id'" ) or die( $mysqli->error );
-						die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+						header( "Location: " . BASE_URL . "/creations/newest/1" );
 					case "censor":
 						$mysqli->query( "UPDATE creations SET hidden='censored' WHERE id='$id'" ) or die( $mysqli->error );
-						die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+						header( "Location: " . BASE_URL . "/creations/newest/1" );
 					default:
-						die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+						header( "Location: " . BASE_URL . "/creations/newest/1" );
 				}
 			}
 		}
-		//intentional non-breaking; if invalid creation, go on to default
+		//Intentional non-breaking; if invalid creation, go on to default case
+	//Displays for top viewed, top rated, random, top favourited, or newest depending on mode
 	case "views":
 		$typetext = "Top viewed";
 		$creations = $mysqli->query( "SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY views DESC LIMIT " . ( $page * 10 - 10 ) . ",10" );
 		if ( empty( $creations ) ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		if ( (int) $creations->fetch_array() == 0 ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		$creations->data_seek( 0 );
 	break;
@@ -61,10 +63,10 @@ switch ( $mode ){
 		$typetext = "Top rated";
 		$creations = $mysqli->query( "SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY rating DESC LIMIT " . ( $page * 10 - 10 ) . ",10");
 		if ( empty( $creations ) ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		if( (int) $creations->fetch_array() == 0 ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		$creations->data_seek( 0 );
 	break;
@@ -72,10 +74,10 @@ switch ( $mode ){
 		$typetext = "Random";
 		$creations = $mysqli->query( "SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY RAND() DESC LIMIT " . ( $page * 10 - 10 ) . ",10");
 		if ( empty( $creations ) ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		if ( (int) $creations->fetch_array() == 0 ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		$creations->data_seek( 0 );
 	break;
@@ -83,10 +85,10 @@ switch ( $mode ){
 		$typetext = "Most favourited";
 		$creations = $mysqli->query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY favourites DESC LIMIT " . ( $page * 10 - 10 ) . ",10");
 		if ( empty( $creations ) ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		if ( (int) $creations->fetch_array() == 0 ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			header( "Location: " . BASE_URL . "/creations/newest/1" );
 		}
 		$creations->data_seek( 0 );
 	break;
@@ -95,26 +97,77 @@ switch ( $mode ){
 		$typetext = "Newest";
 		$creations = $mysqli->query("SELECT * FROM creations WHERE hidden='no' OR hidden='approved' ORDER BY created DESC LIMIT " . ( $page * 10 - 10 ) . ",10");
 		if ( empty( $creations ) ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			require_once( "errors/404.php" );
 		}
 		if ( (int) $creations->fetch_array() == 0 ){
-			die( "<meta http-equiv='Refresh' content='0; URL=" . BASE_URL . "/creations/newest/1'>" );
+			require_once( "errors/404.php" );
 		}
 		$creations->data_seek( 0 );
 }
+
+//If the current page number is greater than 1, show a previous button
 if ( $page > 1 ){
 	$previous = true;	
 }
 
+//If this page is full and there are still more creations in existence, show a next button
 if ( $creations->num_rows == 10 ){
 	if( $mysqli->query( "SELECT id FROM creations WHERE hidden='no' OR hidden='approved'" )->num_rows > ( $page * 10 ) ){
-		$next=true;
+		$next = true;
 	}
 }
 
-//display the page
-require_once( "templates/creations_template.php" );
+//Display the page
+?>
 
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			<?php echo $typetext; ?> creations | <?php echo SITE_NAME; ?>
+			
+		</title>
+		<link rel="stylesheet" type="text/css" href="<?php echo BASE_URL; ?>/include/style.css" media="screen" />
+	</head>
+
+	<body>
+		<?php require_once( "templates/header.php" ); ?>
+		<div class="container">
+			<?php //If the mode is "random", show a little reload button to the side ?>
+			<h1 style="margin:0px;"><?php echo $typetext; ?> creations<?php if ( $typetext == "Random" ) echo ' <a href="' . BASE_URL . '/creations/random/1" style="font-size:13px;">reload</a>'; //replace with cool arrow circle icon ?></h1>
+			<h3 style="margin:0px;"><?php 
+			//Show buttons for all of the modes except the currently selected one
+			if( $mode != "newest" ) echo '<a href="' . BASE_URL . '/creations/newest/1">newest</a> ';
+			if( $mode != "views" ) echo '<a href="' . BASE_URL . '/creations/views/1">top viewed</a> ';
+			if( $mode != "rating" ) echo '<a href="' . BASE_URL . '/creations/rating/1">top rated</a> ';
+			if( $mode != "favourites" ) echo '<a href="' . BASE_URL . '/creations/favourites/1">most favourited</a> ';
+			if( $mode != "random" ) echo '<a href="' . BASE_URL . '/creations/random/1">random</a>';
+			?></h3>
+			<div style="margin:auto;">
+				<?php displayCreations( $creations, $cur_user, $admin, $mysqli );
+				//If the mode isn't "random", show the next and previous buttons if they should be there
+				if ( $mode != "random" ){
+					if( $previous ){
+						echo '<a style="display:block;float:left;font-size:16px;font-weight:bold;" href="' . BASE_URL . '/creations/' . $mode . '/' . ( $page - 1 ) . '">&laquo;previous</a>';
+					}
+					if( $next ){
+						echo '<a style="display:block;float:right;font-size:16px;font-weight:bold;" href="' . BASE_URL . '/creations/' . $mode . '/' . ( $page + 1 ) . '">next&raquo;</a>';
+					}
+				}
+				?>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+	</body>
+</html>
+
+<?php
+//Display the creations
+//Parameters:
+// $mysql - MySQL query containing creations
+// $cur_user - array containing information about the current user
+// $admin - boolean (whether the current user is an admin or not)
+// $mysqli - MySQLi object
 function displayCreations( $mysql, $cur_user, $admin, $mysqli ){
 	if ( isset($mysql ) ){
 		$rows = $mysql->num_rows;
@@ -130,6 +183,7 @@ function displayCreations( $mysql, $cur_user, $admin, $mysqli ){
 				echo '<a href="' . BASE_URL . '/creation/' . $creation['id'] . '"><img class="creationblockthumb" src="' . BASE_URL . '/data/thumbs/default.png"/></a>';
 			}
 			
+			//If the creation name is longer than 20 characters, cut it off & add an ellipsis
 			if ( strlen( stripslashes( $creation['name'] ) ) > 20 ){
 				$creationtitle = substr( stripslashes( $creation['name'] ), 0, 20 ) . "&hellip;";
 			}
@@ -139,9 +193,9 @@ function displayCreations( $mysql, $cur_user, $admin, $mysqli ){
 			
 			echo '<div class="creationblockhead"><a href="' . BASE_URL . '/creation/' . $creation['id'] . '" class="creationblocktitle">' . $creationtitle . '</a>';
 			
-			echo '<div><a href="' . BASE_URL . '/user/'.$user['username'].'">' . $user['username'] . '</a>';
+			echo '<div><a href="' . BASE_URL . '/user/' . $user['username'] . '">' . $user['username'] . '</a>';
 			if ($user['rank'] == "admin" || $user['rank'] == "mod"){
-				echo '<a href="' . BASE_URL . '/info/staff.php" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
+				echo '<a href="' . BASE_URL . '/about/admin" style="text-decoration:none;">' . STAFF_SYMBOL . '</a>';
 			}
 			echo '</div>';
 			
@@ -201,7 +255,7 @@ function displayCreations( $mysql, $cur_user, $admin, $mysqli ){
 		echo '<div style="clear:both;"></div>';
 	}
 	else{
-		echo 'An error occurred. Please try reloading the page or, if the error continues to occur, contact a <a href="' . BASE_URL . '/info/admin.php">site administrator</a>.';
+		echo 'An error occurred. Please try reloading the page or, if the error continues to occur, contact a <a href="' . BASE_URL . '/about/admin">site administrator</a>.';
 	}
 }
 ?>
