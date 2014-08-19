@@ -3,7 +3,6 @@
 Nebulae Infinitum dispatcher file
 Used to display pages; all URLs redirect here to be processed based on the URL entered
 */
-
 require_once( "config/config.php" );
 error_reporting( E_ALL ^ E_NOTICE ); 
 session_start();
@@ -24,19 +23,20 @@ if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 	unset( $cur_user_query );
 }
 
-if ( $cur_user['banstatus'] == "banned" ) {
+//Get URL and explode into pieces for determination of desired page
+//$url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] ); //use if there's a base folder
+$url = $_SERVER['REQUEST_URI']; // use if the base is root
+$url_array = explode( "/", $url );
+
+if ( $cur_user['banstatus'] == "banned" && $url != "/include/style.css" && $url != "/data/errors/ban.png" && $url != "/data/fonts/kabel_bold.ttf" && $url != "/data/header.png" ) {
 	include_once( "errors/ban.php" );
 	exit();
 }
 
-else if ( $cur_user['banstatus'] == "deleted" ) {
+else if ( $cur_user['banstatus'] == "deleted"  && $url != "/include/style.css" && $url != "/data/errors/delete.png" && $url != "/data/fonts/kabel_bold.ttf" && $url != "/data/header.png" ) {
 	include_once( "errors/delete.php" );
 	exit();
 }
-
-//Get URL and explode into pieces for determination of desired page
-$url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] );
-$url_array = explode( "/", $url );
 
 //Determine which page to load based on the URL
 if ( $url != "/") {
@@ -358,7 +358,7 @@ if ( $url != "/") {
 			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
-			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
+			$_GET['returnto'] = BASE_FOLDER . $return_to;
 			require_once( "login.php" );
 		break;
 		
@@ -372,7 +372,7 @@ if ( $url != "/") {
 			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
-			$_GET['returnto'] = "/" . BASE_FOLDER . $return_to;
+			$_GET['returnto'] = BASE_FOLDER . $return_to;
 			$_GET['action'] = "logout";
 			require_once( "login.php" );
 		break;
@@ -494,6 +494,11 @@ if ( $url != "/") {
 		case "robots.txt":
 			header( "Content-Type: text/plain" );
 			echo file_get_contents( "data/robots.txt" );
+		break;
+		
+		case "favicon.ico":
+			header( "Content-Type: image/png" );
+			echo file_get_contents( "data/favicon.ico" );
 		break;
 		
 		default:
