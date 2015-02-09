@@ -85,7 +85,7 @@
 					<?php 
 					echo $user['username'];
 					if ($user['rank']=="admin" || $user['rank']=="mod"){
-						echo '<a href="about/admin" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
+						echo '<a href="../about/admin" style="text-decoration:none;">'.STAFF_SYMBOL.'</a>';
 					}
 					?>
 				</div>

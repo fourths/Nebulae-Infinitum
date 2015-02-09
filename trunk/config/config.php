@@ -7,7 +7,7 @@ Configuration file including global constants such as database information, etc.
 define( "SITE_NAME", "Nebulae Infinitum", true );
 
 //Software version number
-define( "VERSION_NUMBER", "r97", true );
+define( "VERSION_NUMBER", "r105", true );
 
 //Path, from the directory with the CSS, to the header image
 define( "HEADER_IMG", "../data/header.png", true );
@@ -22,18 +22,18 @@ define( "STAFF_SYMBOL", "*", true );
 define( "ADMIN_FLAGS", 10, true );
 
 //Base URL of the site without trailing slash
-define( "BASE_URL", "http://localhost", true );
+define( "BASE_URL", "http://monolithic.tk/neb", true );
 
 //Base folder of the site without trailing slash
-define( "BASE_FOLDER", "", true );
+define( "BASE_FOLDER", "neb", true );
 
 //Base directory of the site's folder on the server including trailing slash
 // "/config" on *nix/Mac, "\config" on Windows
-define( "BASE_DIRECTORY", str_replace( "/config", "", dirname( __FILE__ ) ), true );
+define( "BASE_DIRECTORY", str_replace( "\config", "", dirname( __FILE__ ) ), true );
 
 
 //Database server
-//Note: may be 127.0.0.1 instead of localhost
+//Note: use 127.0.0.1 instead of localhost
 define( "MYSQL_SERVER", "localhost", true );
 
 //Database name
@@ -43,7 +43,7 @@ define( "MYSQL_DATABASE", "nebulae", true );
 define( "MYSQL_USER", "root", true );
 
 //Database password
-define( "MYSQL_PASS", "", true );
+define( "MYSQL_PASS", "ok", true );
 
 //Characters allowed in usernames
 //To-do: check if spaces in usernames would break anything
