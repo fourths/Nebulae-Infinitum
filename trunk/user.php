@@ -209,9 +209,8 @@ function show_creations( $mysqli, $creationlist, $cur_user, $user, $page, $favou
 	}
 }
 
-
-if (isset($_POST['pmsubmit'])){
-	$mysql->query("INSERT INTO messages (recipientid,senderid,message,type) VALUES (".$user['id'].",".$cur_user['id'].",'".addslashes($_POST['pmbody'])."','pm')");
-	die("Your message has been sent.");
+if ( isset( $_POST['pmsubmit'] ) ){
+	$mysql->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $user['id'] . "," . $cur_user['id'] . ",'" . addslashes( $_POST['pmbody'] ) . "','pm')" );
+	die( "Your message has been sent." );
 }
 ?>
