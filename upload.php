@@ -1,4 +1,9 @@
 <?php
+if ( empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
+	require_once( "errors/403.php" );
+	exit();
+}
+
 require_once( "templates/upload_template.php" );
 
 //If form submitted, create new project

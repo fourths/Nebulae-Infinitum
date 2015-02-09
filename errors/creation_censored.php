@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<?php require_once("config/config.php"); ?>
 <html>
 	<head>
 		<title>
@@ -9,7 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="templates/style.php" media="screen" />
 	</head>
 	<body>
-		<?php require_once(BASE_DIRECTORY."/templates/header.php") ?>
+		<?php require_once( BASE_DIRECTORY . "/templates/header.php" ) ?>
 		<div class="container">
 			<h1>Creation censored</h1>
 			<div class="errorimage">

@@ -99,12 +99,12 @@ if ( isset( $_GET['action'] ) ){
 		// Change the user's rating
 		case "rate":
 			if ( empty( $_GET["rating"] ) || $_GET["rating"] < 1 || $_GET["rating"] > 5 ) {
-				header( "Location: ." );
+				header( "Location: .." );
 				exit();
 			}
 			else if ( $mysqli->query( "SELECT * FROM ratings WHERE userid='" . $cur_user['id'] . "' AND creationid='" . $creation['id'] . "'" )->num_rows == 0 ){
 				$mysqli->query( "INSERT INTO ratings (creationid, userid, rating) VALUES (" . $creation['id'] . ", " . $cur_user['id'] . ", " . $_GET['rating'] . ")" ) or die( $mysqli->error );
-				header( "Location: ." );
+				header( "Location: .." );
 				exit();
 			}
 			$mysqli->query( "UPDATE ratings SET rating='" . $_GET["rating"] . "' WHERE userid='" . $cur_user['id'] . "' AND creationid='" . $creation['id'] . "'" ) or die( $mysqli->error );

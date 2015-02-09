@@ -158,7 +158,7 @@ if (isset($_POST['update'])) {
 	if ($hidden=="no"&&($curhid[0]=="flagged"||$curhid[0]=="approved")) $hidden="approved";
 	$mysqli->query("UPDATE creations SET hidden='".$hidden."' WHERE id='$creationid'") or die( $mysqli->error );
 	if ($hidden=="censored") $mysqli->query("DELETE FROM flags WHERE creationid=".$creation['id']." AND type='creation'");
-	echo "<meta http-equiv='Refresh' content='0; URL=creation.php?id=$creationid'>";
+	echo "<meta http-equiv='Refresh' content='0; URL=creation/$creationid'>";
 }
 //Creation deletion/undeletion
 if (isset($_POST['delete'])) {
