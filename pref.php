@@ -65,22 +65,91 @@ if ( isset( $_POST['emailchange'] ) ) {
 
 //If the icon change form is submitted
 if (isset($_POST['iconchange'])) {
-	//TO-DO: check if a valid image (PNG, GIF, JPG, BMP?, TIFF?)
 	//If there is a path in the upload field and it is a valid file
-	if ( !empty($_FILES['newicon'] ) && file_exists( $_FILES['newicon']['tmp_name'] ) ) {
-		//Get the image from the temporary upload
-		$thumbimg = imagecreatefromstring( file_get_contents( $_FILES['newicon']['tmp_name'] ) );
-		//Create a new blank 180x180 image
-		$rzthumbimg = imagecreatetruecolor( 180, 180 );
-		//Rescale the new icon to 180x180 and insert in the new blank image
-		imagecopyresampled($rzthumbimg, $thumbimg, 0, 0, 0, 0, 180, 180, imagesx( $thumbimg ), imagesy( $thumbimg ) );
-		//Save the resized icon as a png
-		imagepng( $rzthumbimg, "data/usericons/" . $user['id'] . ".png", 9);
-		//Insert the path to the new icon in the database
-		$mysqli->query( "UPDATE users SET icon='" . $user['id'] . ".png' WHERE id='" . $user['id'] . "'") or die( $mysqli->error );
-		//Redirect to the user's userpage
-		echo "<meta http-equiv='Refresh' content='0; URL=.'>";
-		exit();
+	$iconfile = $_FILES['newicon']['name'];    //Assign the filename of the uploaded file to $iconfile
+	$iconext = substr($iconfile, strpos($iconfile, ".") + 1);	//Find out the extension of the filename, possibility to break if file contains more than one full stop "."
+	$iconext = strtolower($iconext);	//Convert extension to all lower case to fix issues with file extensions such as .JPG and simplify code
+	//Check if extension is valid, then check if the files are not corrupted
+	if ($iconext == "gif" || $iconext == "png" || $iconext == "apng" || $iconext == "tif" || $iconext == "tiff" || $iconext == "jpg" || $iconext == "jpeg" || $iconext == "jpe" || $iconext == "bmp") {
+	switch( $iconext ){
+			case "jpg":
+			case "jpeg":
+			case "jpe":
+				if ( $_FILES['newicon']['type'] != "image/jpeg" && $_FILES['newicon']['type'] != "image/pjpeg" /*for the silly IE users*/ ) {
+					die( "Your JPEG file appears to be corrupted." );
+				}
+				$jpeg = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				if ( fread( $jpeg, 2 ) != "ÿØ") {
+					die("Your JPEG file appears to be corrupted.");
+				}
+			break;
+
+			case "png":
+			case "apng":
+				if ( $_FILES['newicon']['type'] != "image/png" && $_FILES['newicon']['type'] != "image/x-png" /*for the silly IE users*/ ) {
+					die( "Your PNG file appears to be corrupted." );
+				}
+				$png = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				if ( fread( $png, 4 ) != "PNG" ) {
+					die( "Your PNG file appears to be corrupted." );
+				}
+			break;
+			
+			case "tif":
+			case "tiff":
+				if ( $_FILES['newicon']['type'] != "image/tiff" ) {
+					die( "Your TIFF file appears to be corrupted." );
+				}
+				$tiff = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				if ( fread( $tiff, 3 ) != "II*" /* Intel-type */ && fread( $tiff, 3 ) != "MM*" /* Macintosh-type */ ) {
+					die( "Your TIFF file appears to be corrupted." );
+				}
+			break;
+			
+			case "bmp":
+			case "dib":
+				if ( $_FILES['newicon']['type'] != "image/bmp") {
+					die( "Your BMP file appears to be corrupted." );
+				}
+				$bmp = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				if ( fread( $bmp,2 ) != "BM" ) {
+					die( "Your BMP file appears to be corrupted." );
+				}
+			break;
+			
+			case "gif":
+				if ( $_FILES['newicon']['type'] != "image/gif" ) {
+					die( "Your GIF file appears to be corrupted." );
+				}
+				$gif = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				if ( fread( $gif, 3 ) != "GIF" ) {
+					die( "Your GIF file appears to be corrupted." );
+				}
+			break;
+			
+			case "svg":
+				if ( $_FILES['newicon']['type'] != "image/svg+xml" ) {
+					die( "Your SVG file appears to be corrupted." );
+				}
+				$svg = fopen( $_FILES['newicon']['tmp_name'], "r" );
+				//if (fread($svg,11) != "<svg xmlns=" && fread($svg,14) != "<?xml version=") die("Your SVG file appears to be corrupted.");
+			break;
+		}	
+			if ( !empty($_FILES['newicon'] ) && file_exists( $_FILES['newicon']['tmp_name'] ) ) {
+			//Get the image from the temporary upload
+			$thumbimg = imagecreatefromstring( file_get_contents( $_FILES['newicon']['tmp_name'] ) );
+			//Create a new blank 180x180 image
+			$rzthumbimg = imagecreatetruecolor( 180, 180 );
+			//Rescale the new icon to 180x180 and insert in the new blank image
+			imagecopyresampled($rzthumbimg, $thumbimg, 0, 0, 0, 0, 180, 180, imagesx( $thumbimg ), imagesy( $thumbimg ) );
+			//Save the resized icon as a png
+			imagepng( $rzthumbimg, "data/usericons/" . $user['id'] . ".png", 9);
+			//Insert the path to the new icon in the database
+			$mysqli->query( "UPDATE users SET icon='" . $user['id'] . ".png' WHERE id='" . $user['id'] . "'") or die( $mysqli->error );
+			//Redirect to the user's userpage
+			echo "<meta http-equiv='Refresh' content='0; URL=.'>";
+		}
+		else die( $mysqli->error );
 	}
 	else die( $mysqli->error );
 }
