@@ -25,17 +25,29 @@ if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 		if ( $cur_user['rank']=="admin" || $cur_user['rank']=="mod" ) {
 			echo ' &bull; <a class="head" href="' . BASE_URL . '/admin">admin</a>';
 		}
+		if ( BASE_FOLDER != "" ){
+			$return_url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] ); //use if there's a base folder
+		}
+		else {
+			$return_url = $_SERVER['REQUEST_URI']; // use if the base is root
+		}
+		
 		
 		//If the current user is logged in, show the header links to their userpage (and messages) as well as the upload & logout pages
 		if ( isset( $_SESSION['SESS_MEMBER_ID'] ) || ( trim( $_SESSION['SESS_MEMBER_ID'] ) != '' ) ) {
 			echo '
 			<div style="padding-top:5px;">logged in as <a class="head" href="' . BASE_URL . '/user/' . $cur_user['username'] . '">' . $cur_user['username'] . '</a> (<a href="' . BASE_URL . '/messages" class="head">&#9993;</a>) &bull;
 			<a class="head" href="' . BASE_URL . '/upload">upload</a> &bull;
-			<a class="head" href="' . BASE_URL . '/logout?returnto=' . $_SERVER['REQUEST_URI'] . '">logout</a></div>';
+			<a class="head" href="' . BASE_URL . '/logout?returnto=' . $return_url . '">logout</a></div>';
 		}
 		//Otherwise, show the header link to login
 		else{
-			echo '&bull; <a class="head" href="' . BASE_URL . '/login?returnto=' . $_SERVER['REQUEST_URI'] . '">login</a>';
+			if ( $url_array[1] == "login" ) {
+				echo '&bull; <a class="head" href="' . BASE_URL . '/login">login</a>';
+			}
+			else {
+				echo '&bull; <a class="head" href="' . BASE_URL . '/login?returnto=' . $return_url . '">login</a>';
+			}
 		}
 		?>
 	</div>

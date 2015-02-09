@@ -3,7 +3,7 @@
 if ( isset($_GET['returnto'] ) ){
 	$return_to = BASE_URL . $_GET['returnto'];
 }
-
+//die ($_GET['returnto']);
 //Initialise login/register page variable
 $lr = "login";
 
@@ -21,7 +21,7 @@ if( isset( $_SESSION['SESS_MEMBER_ID'] ) || ( trim( $_SESSION['SESS_MEMBER_ID'] 
 		exit();
 	}
 	//If the action is not "logout", redirect the user to their userpage
-	header( "Location: user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'], $mysqli ) );
+	header( "Location: " . BASE_URL . "/user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'], $mysqli ) );
 	exit();
 }
 
@@ -156,7 +156,7 @@ if ( isset( $_POST['rsubmit'] ) ) {
 	}
 	
 	//Otherwise, redirect them to their userpage
-    header( "location: user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'] ), $mysqli );
+    header( "location: user/" . get_username_from_id( $_SESSION['SESS_MEMBER_ID'], $mysqli ) );
     exit();
 }
 ?>
