@@ -22,7 +22,7 @@ define( "STAFF_SYMBOL", "*", true );
 define( "ADMIN_FLAGS", 10, true );
 
 //Base URL of the site without trailing slash
-define( "BASE_URL", "http://eggbox", true );
+define( "BASE_URL", "http://localhost", true );
 
 //Base folder of the site without trailing slash
 define( "BASE_FOLDER", "", true );
@@ -33,8 +33,8 @@ define( "BASE_DIRECTORY", str_replace( "/config", "", dirname( __FILE__ ) ), tru
 
 
 //Database server
-//Note: use 127.0.0.1 instead of localhost
-define( "MYSQL_SERVER", "127.0.0.1", true );
+//Note: may be 127.0.0.1 instead of localhost
+define( "MYSQL_SERVER", "localhost", true );
 
 //Database name
 define( "MYSQL_DATABASE", "nebulae", true );
