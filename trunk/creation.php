@@ -830,6 +830,8 @@ if ( isset( $_POST['reply'] ) ) {
 				$mysqli->query( "INSERT INTO comments (creationid, userid, comment) VALUES (" . $creation['id'] . ", " . $cur_user['id'] . ", '" . trim( addslashes( $_POST["msgbody" . $comment['id']] ) ) . " " . "')" ) or die( $mysqli->error );
 				$commentid = $mysqli->insert_id;
 				//send notification about the comment
+				
+				// to creator
 				if( $cur_user['id'] != $user['id'] ){
 					$setting = get_notification_setting_from_id( $creation['ownerid'], $mysqli );
 					if( $setting != "none" && $setting != "nocomments" ){
@@ -837,7 +839,9 @@ if ( isset( $_POST['reply'] ) ) {
 						$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
 					}
 				}
-				$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['id'] )->fetch_array();
+				
+				// to original commenter
+				$com_user = $mysqli->query( "SELECT * FROM users WHERE id=" . $comment['userid'] )->fetch_array();
 				if ( $com_user['id'] != $user['id'] ) {
 					if ( $com_user['notifications'] != "none" && $com_user['notifications'] != "noreplies" ) {
 						$notificationmessage = 'Your comment on the creation [url=' . BASE_URL . '/creation/' . $creation['id'] . '#' . $commentid . ']' . addslashes( $creation['name'] ) . '[/url] has been replied to by [url=' . BASE_URL . '/user/' . $cur_user['username'] . ']' . $cur_user['username'] . '[/url]!';

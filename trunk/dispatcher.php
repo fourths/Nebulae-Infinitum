@@ -309,7 +309,7 @@ if ( $url != "/") {
 			}
 			else {
 				if ( isset( $url_array[2] ) ) {
-					$_GET['uid'] = $url_array[2];
+					$visitinguser = get_username_from_id( $url_array[2], $mysqli );
 				}
 				require_once( "messages.php" );
 			}
