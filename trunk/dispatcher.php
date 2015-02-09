@@ -24,8 +24,13 @@ if ( !empty( $_SESSION['SESS_MEMBER_ID'] ) ) {
 }
 
 //Get URL and explode into pieces for determination of desired page
-//$url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] ); //use if there's a base folder
-$url = $_SERVER['REQUEST_URI']; // use if the base is root
+if ( BASE_FOLDER != "" ){
+	$url = str_replace( "/" . BASE_FOLDER, "", $_SERVER['REQUEST_URI'] ); //use if there's a base folder
+}
+else {
+	$url = $_SERVER['REQUEST_URI']; // use if the base is root
+}
+
 $url_array = explode( "/", $url );
 
 if ( $cur_user['banstatus'] == "banned" && $url != "/include/style.css" && $url != "/data/errors/ban.png" && $url != "/data/fonts/kabel_bold.ttf" && $url != "/data/header.png" ) {
@@ -359,7 +364,6 @@ if ( $url != "/") {
 			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
-			$_GET['returnto'] = BASE_FOLDER . $return_to;
 			require_once( "login.php" );
 		break;
 		
@@ -373,7 +377,6 @@ if ( $url != "/") {
 			for ( $i = 2; $i < count( $url_array ); $i++ ) {
 				$return_to .= "/".$url_array[$i];
 			}
-			$_GET['returnto'] = BASE_FOLDER . $return_to;
 			$_GET['action'] = "logout";
 			require_once( "login.php" );
 		break;
