@@ -811,7 +811,7 @@ if ( isset( $_POST['newcomment'] ) ) {
 			$commentid = $mysqli->insert_id;
 			//send notification about the comment
 			if ( $cur_user['id'] != $user['id'] ) {
-				$setting = get_notification_setting_from_id( $creation['ownerid'] );
+				$setting = get_notification_setting_from_id( $creation['ownerid'], $mysqli );
 				if( $setting != "none" && $setting != "nocomments" ) {
 					$notificationmessage = 'You have received a new comment by [url=' . BASE_URL . '/user/' . $cur_user['username'] . ']' . $cur_user['username'] . '[/url] on your creation [url=' . BASE_URL . '/creation/' . $creation['id'] . '#' . $commentid . ']' . $creation['name'] . '[/url]!';
 					$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $creation['ownerid'] . "," . $cur_user['id'] . ",'" . addslashes( $notificationmessage ) . "','notification')" );
