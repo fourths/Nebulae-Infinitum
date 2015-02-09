@@ -79,7 +79,7 @@ if (isset($_POST['iconchange'])) {
 					die( "Your JPEG file appears to be corrupted." );
 				}
 				$jpeg = fopen( $_FILES['newicon']['tmp_name'], "r" );
-				if ( fread( $jpeg, 2 ) != "Ã¿Ã˜") {
+				if ( fread( $jpeg, 2 ) != "ÿØ") {
 					die("Your JPEG file appears to be corrupted.");
 				}
 			break;
@@ -90,7 +90,7 @@ if (isset($_POST['iconchange'])) {
 					die( "Your PNG file appears to be corrupted." );
 				}
 				$png = fopen( $_FILES['newicon']['tmp_name'], "r" );
-				if ( fread( $png, 4 ) != "Â‰PNG" ) {
+				if ( fread( $png, 4 ) != "‰PNG" ) {
 					die( "Your PNG file appears to be corrupted." );
 				}
 			break;
