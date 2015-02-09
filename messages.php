@@ -20,20 +20,29 @@ if ( isset( $_GET["action"] ) && $_GET["action"] == "delete" && isset( $_GET["id
 	if ( !strcspn($_GET['id'], "0123456789" ) ){
 		$msginfo = $mysqli->query( "SELECT recipientid FROM messages WHERE id=" . (int) $_GET['id'] )->fetch_array();
 	}
-	if( $msginfo[0] == $cur_user['id'] || $userrank == "admin" ){
-		if ( $userrank=="admin" ){
-			$mysqli->query( "DELETE FROM messages WHERE id=" . $_GET['id'] ) or die( $mysqli->error );
-		}
-		else{
+	if( $msginfo[0] == $cur_user['id'] || $cur_user['rank'] == "admin" ){
+		// Commented selection permanently deletes message; uncommented only hides it.
+		//if ( $cur_user['rank'] == "admin" ){
+		//	$mysqli->query( "DELETE FROM messages WHERE id=" . $_GET['id'] ) or die( $mysqli->error );
+		//}
+		//else{
 			$mysqli->query( "UPDATE messages SET viewed=2 WHERE id=" . $_GET['id'] );
-		}
+		//}
 	}
-	die( "<meta http-equiv='Refresh' content='0; URL=javascript:history.back(1)'>" );
+	header( "Location: " . $_SERVER['HTTP_REFERER'] );
+	exit();
 }
 
-$notifications = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='notification' ORDER BY timestamp DESC");
-$admin = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='admin' ORDER BY timestamp DESC");
-$private = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='pm' ORDER BY timestamp DESC");
+if ( isset( $visitinguser ) ) {
+	$notifications = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$url_array[2]." AND type='notification' ORDER BY timestamp DESC");
+	$admin = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$url_array[2]." AND type='admin' ORDER BY timestamp DESC");
+	$private = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$url_array[2]." AND type='pm' ORDER BY timestamp DESC");
+}
+else {
+	$notifications = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='notification' ORDER BY timestamp DESC");
+	$admin = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='admin' ORDER BY timestamp DESC");
+	$private = $mysqli->query("SELECT * FROM messages WHERE recipientid=".$cur_user['id']." AND type='pm' ORDER BY timestamp DESC");
+}
 
 if( !empty( $private ) && $private->num_rows>0 ){
 	for ( $i = 0; $i < $private->num_rows; $i++ ){
@@ -70,7 +79,8 @@ if ( isset( $_POST['reply'] ) ){
 	while ( $pmreplydata = $private->fetch_array() ){
 		if ( isset( $_POST['msgsubmit' . $pmreplydata[0]] ) && strlen( trim( $_POST['msgsubmit' . $pmreplydata[0]] ) ) > 0 ){
 			$mysqli->query( "INSERT INTO messages (recipientid,senderid,message,type) VALUES (" . $pmreplydata[2] . ", " . $cur_user['id'] . ", '" . addslashes( $_POST['msgbody' . $pmreplydata[0]] ) . "', 'pm')" ) or die($mysqli->error);
-			die( "<meta http-equiv='Refresh' content='0; URL=javascript:history.back(1)'>" );
+			header( "Location: " . $_SERVER['HTTP_REFERER'] );
+		exit();
 		}
 	}
 }
