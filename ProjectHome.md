@@ -1,0 +1,3 @@
+Nebulae Infinitum is a site devised by [chathello](http://chathello.tk) where users can upload media they've made (such as images, music, writing, Scratch games, etc.) and share them with other members of the community. This is the PHP/HTML/CSS/JS source code for the site, which is currently under heavy development in the alpha stage.
+
+The project was under a heavy period of hibernation but is now being revived and is close to a beta release. A live version of the site is available [here](http://monolithic.tk/neb/).
